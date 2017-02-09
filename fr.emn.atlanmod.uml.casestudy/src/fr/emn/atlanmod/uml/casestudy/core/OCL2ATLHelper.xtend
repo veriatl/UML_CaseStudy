@@ -11,7 +11,7 @@ import org.eclipse.ocl.pivot.PivotPackage
 import org.eclipse.ocl.pivot.internal.resource.OCLASResourceFactory
 import org.eclipse.emf.ecore.EObject
 
-class OCLRewriter {
+class OCL2ATLHelper {
 	
 	static Resource	ocl_resource;
 	
