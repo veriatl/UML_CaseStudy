@@ -1,9 +1,12 @@
 package fr.emn.atlanmod.uml.casestudy.rewrite;
 
+import fr.emn.atlanmod.uml.casestudy.rewrite.OCL;
 import java.util.Arrays;
 import java.util.List;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.ocl.pivot.Constraint;
+import org.eclipse.ocl.pivot.ExpressionInOCL;
+import org.eclipse.ocl.pivot.LanguageExpression;
 import org.eclipse.ocl.pivot.Model;
 import org.eclipse.xtend2.lib.StringConcatenation;
 
@@ -53,8 +56,19 @@ public class rewriterOCL2ATL {
             _builder.append("(): Boolean = ");
             _builder.newLineIfNotEmpty();
             _builder.append("  ");
-            String _body = inv.getOwnedSpecification().getBody();
-            _builder.append(_body, "  ");
+            _builder.append(rewriterOCL2ATL.model, "  ");
+            _builder.append("!");
+            String _name_2 = clazz.getName();
+            _builder.append(_name_2, "  ");
+            _builder.append(".allInstances()->forAll(");
+            String _genIteratorName = rewriterOCL2ATL.genIteratorName(clazz.getName());
+            _builder.append(_genIteratorName, "  ");
+            _builder.append(" |");
+            _builder.newLineIfNotEmpty();
+            _builder.append("    ");
+            LanguageExpression _ownedSpecification = inv.getOwnedSpecification();
+            String _gen = OCL.gen(((ExpressionInOCL) _ownedSpecification).getOwnedBody());
+            _builder.append(_gen, "    ");
             _builder.newLineIfNotEmpty();
             _builder.append("; ");
             _builder.newLine();
@@ -64,6 +78,19 @@ public class rewriterOCL2ATL {
       }
     }
     return _builder.toString();
+  }
+  
+  public static String genIteratorName(final String s) {
+    String rtn = "";
+    for (int i = 0; (i < s.length()); i++) {
+      boolean _isUpperCase = Character.isUpperCase(s.charAt(i));
+      if (_isUpperCase) {
+        String _rtn = rtn;
+        char _lowerCase = Character.toLowerCase(s.charAt(i));
+        rtn = (_rtn + Character.valueOf(_lowerCase));
+      }
+    }
+    return rtn;
   }
   
   public static String rewrite(final EObject m) {
