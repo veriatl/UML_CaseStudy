@@ -1,11 +1,7 @@
 package fr.emn.atlanmod.uml.casestudy.core;
 
-import fr.emn.atlanmod.uml.casestudy.rewrite.rewriterOCL2ATL;
-import fr.emn.atlanmod.uml.casestudy.util.URIs;
 import java.util.Map;
-import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.URI;
-import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
@@ -19,17 +15,9 @@ public class StandAlone {
   private static Resource ocl_resource;
   
   public static void main(final String[] args) {
-    final URI inputURI = URI.createFileURI("./resources/UML.oclas");
-    StandAlone.doEMFSetup(inputURI);
-    String res = "";
-    final URI outputURI = URI.createFileURI("./resources/UML.ocl.atl");
-    EList<EObject> _contents = StandAlone.ocl_resource.getContents();
-    for (final EObject eobject : _contents) {
-      String _res = res;
-      String _rewrite = rewriterOCL2ATL.rewrite(eobject);
-      res = (_res + _rewrite);
-    }
-    URIs.write(outputURI, res);
+    throw new Error("Unresolved compilation problems:"
+      + "\nThe method or field rewriterOCL2ATL is undefined"
+      + "\nrewrite cannot be resolved");
   }
   
   public static Resource doEMFSetup(final URI oclPath) {

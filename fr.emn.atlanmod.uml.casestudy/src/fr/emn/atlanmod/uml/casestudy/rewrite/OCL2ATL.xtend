@@ -4,7 +4,7 @@ import org.eclipse.emf.ecore.EObject
 import org.eclipse.ocl.pivot.*
 
 
-class rewriterOCL2ATL {
+class OCL2ATL {
 	static String model = "UML"
 	// dispatcher
 	def static dispatch String rewrite(EObject o) '''

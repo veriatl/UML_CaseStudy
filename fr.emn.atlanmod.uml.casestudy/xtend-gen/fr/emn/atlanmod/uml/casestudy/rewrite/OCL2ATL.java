@@ -11,7 +11,7 @@ import org.eclipse.ocl.pivot.Model;
 import org.eclipse.xtend2.lib.StringConcatenation;
 
 @SuppressWarnings("all")
-public class rewriterOCL2ATL {
+public class OCL2ATL {
   private static String model = "UML";
   
   protected static String _rewrite(final EObject o) {
@@ -28,7 +28,7 @@ public class rewriterOCL2ATL {
     {
       List<org.eclipse.ocl.pivot.Package> _ownedPackages = m.getOwnedPackages();
       for(final org.eclipse.ocl.pivot.Package pac : _ownedPackages) {
-        String _rewrite = rewriterOCL2ATL.rewrite(pac);
+        String _rewrite = OCL2ATL.rewrite(pac);
         _builder.append(_rewrite);
         _builder.append("\t");
         _builder.newLineIfNotEmpty();
@@ -46,7 +46,7 @@ public class rewriterOCL2ATL {
           List<Constraint> _ownedInvariants = clazz.getOwnedInvariants();
           for(final Constraint inv : _ownedInvariants) {
             _builder.append("helper context ");
-            _builder.append(rewriterOCL2ATL.model);
+            _builder.append(OCL2ATL.model);
             _builder.append("!");
             String _name = clazz.getName();
             _builder.append(_name);
@@ -56,12 +56,12 @@ public class rewriterOCL2ATL {
             _builder.append("(): Boolean = ");
             _builder.newLineIfNotEmpty();
             _builder.append("  ");
-            _builder.append(rewriterOCL2ATL.model, "  ");
+            _builder.append(OCL2ATL.model, "  ");
             _builder.append("!");
             String _name_2 = clazz.getName();
             _builder.append(_name_2, "  ");
             _builder.append(".allInstances()->forAll(");
-            String _genIteratorName = rewriterOCL2ATL.genIteratorName(clazz.getName());
+            String _genIteratorName = OCL2ATL.genIteratorName(clazz.getName());
             _builder.append(_genIteratorName, "  ");
             _builder.append(" |");
             _builder.newLineIfNotEmpty();
