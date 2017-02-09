@@ -10,18 +10,28 @@ import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl
 import org.eclipse.ocl.pivot.PivotPackage
 import org.eclipse.ocl.pivot.internal.resource.OCLASResourceFactory
 import org.eclipse.emf.ecore.EObject
+import fr.emn.atlanmod.uml.casestudy.rewrite.rewriterOCL2ATL
+import fr.emn.atlanmod.uml.casestudy.util.URIs
 
-class OCL2ATLHelper {
+class StandAlone{
 	
 	static Resource	ocl_resource;
 	
-	def static void rewriteEntry(URI input) {
-		val inputURI = URI.createFileURI("./resources/uml.2.5.full.ocl.oclas")
+	
+	def static void main(String[] args) {
+		val inputURI = URI.createFileURI("./resources/UML.oclas")
 		doEMFSetup(inputURI)
 		
-		for (EObject content : ocl_resource.getContents()) {
-			println(content.eClass().toString());
+		var String res = "";
+		val outputURI = URI.createFileURI("./resources/UML.ocl.atl")
+		
+		for (EObject eobject : ocl_resource.getContents()) {
+			res += rewriterOCL2ATL.rewrite(eobject);
 		}
+		
+		
+		URIs.write(outputURI, res); 
+		
 	}
 	
 	def static doEMFSetup(URI oclPath) {
