@@ -7,6 +7,7 @@ import org.eclipse.ocl.pivot.OCLExpression
 import org.eclipse.ocl.pivot.OperationCallExp
 import org.eclipse.ocl.pivot.PropertyCallExp
 import org.eclipse.ocl.pivot.VariableExp
+import org.eclipse.ocl.pivot.Operation
 
 class OCL {
 	// dispatcher
@@ -22,7 +23,7 @@ class OCL {
 	// «o.referredOperation.name»
 	def static dispatch String gen(OperationCallExp o, HashMap<String, VariableExp> consistency) '''
 		«gen(o.ownedSource, consistency)»
-		
+		«gen(o.referredOperation, consistency)»
 		
 	'''
 	
@@ -30,12 +31,14 @@ class OCL {
 		name:«v.name»
 		self:«v.referredProperty.name»
 		type:«if(v.ownedSource instanceof VariableExp) (v.ownedSource as VariableExp).referredVariable»
-		
 	'''
 	
 	def static dispatch String gen(VariableExp v, HashMap<String, VariableExp> consistency) '''
-		«v.name»
-		
+		«v.name»	
+	'''
+	
+	def static dispatch String gen(Operation o, HashMap<String, VariableExp> consistency) '''
+		«o.name»	
 	'''
 	
 	def static dispatch String gen(IntegerLiteralExp i, HashMap<String, VariableExp> consistency) '''«i.integerSymbol»'''

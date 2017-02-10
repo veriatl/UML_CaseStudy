@@ -17,10 +17,10 @@ import java.util.Iterator
 class StandAlone{
 	
 	static Resource	ocl_resource;
-	static Resource	ecore_resource;
+
 	
 	def static void main(String[] args) {
-		val inputURI = URI.createFileURI("./resources/UML2.ocl.oclas")
+		val inputURI = URI.createFileURI("./resources/UML.ocl.oclas")
 		doEMFSetup(inputURI)
 		
 		var String res = "";
@@ -47,15 +47,17 @@ class StandAlone{
 		
 		
 		// get resource from input URI
-		val rs = new ResourceSetImpl
-		ecore_resource = rs.getResource(URI.createFileURI("./resources/UML.ecore.oclas"), true)
+		val rs = new ResourceSetImpl		
 		ocl_resource = rs.getResource(oclPath, true)
 
+		// initialize uri mapping
+		val ecore_resource = rs.getResource(URI.createFileURI("./resources/UML.ecore.oclas"), true)
+		val lib_resource = rs.getResource(URI.createFileURI("./resources/OCL-2.5.oclas"), true)
 		
 		ecore_resource.setURI(URI.createURI("UML.ecore.oclas"));
-
+		lib_resource.setURI(URI.createURI("http://www.eclipse.org/ocl/2015/Library.oclas"));
 		
-
+	
 
 	}
 	

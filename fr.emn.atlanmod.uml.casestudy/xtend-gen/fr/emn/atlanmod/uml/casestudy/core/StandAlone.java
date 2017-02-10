@@ -18,10 +18,8 @@ import org.eclipse.ocl.pivot.internal.resource.OCLASResourceFactory;
 public class StandAlone {
   private static Resource ocl_resource;
   
-  private static Resource ecore_resource;
-  
   public static void main(final String[] args) {
-    final URI inputURI = URI.createFileURI("./resources/UML2.ocl.oclas");
+    final URI inputURI = URI.createFileURI("./resources/UML.ocl.oclas");
     StandAlone.doEMFSetup(inputURI);
     String res = "";
     final URI outputURI = URI.createFileURI("./resources/UML.ocl.atl");
@@ -39,29 +37,22 @@ public class StandAlone {
     Map<String, Object> _extensionToFactoryMap = Resource.Factory.Registry.INSTANCE.getExtensionToFactoryMap();
     XMIResourceFactoryImpl _xMIResourceFactoryImpl = new XMIResourceFactoryImpl();
     _extensionToFactoryMap.put("xmi", _xMIResourceFactoryImpl);
-    Map<String, Object> _extensionToFactoryMap_1 = Resource.Factory.Registry.INSTANCE.getExtensionToFactoryMap();
-    OCLASResourceFactory _instance = OCLASResourceFactory.getInstance();
-    _extensionToFactoryMap_1.put("oclas", _instance);
+    Resource.Factory.Registry.INSTANCE.getExtensionToFactoryMap().put("oclas", OCLASResourceFactory.getInstance());
     final ResourceSetImpl rs = new ResourceSetImpl();
-    URI _createFileURI = URI.createFileURI("./resources/UML.ecore.oclas");
-    Resource _resource = rs.getResource(_createFileURI, true);
-    StandAlone.ecore_resource = _resource;
-    Resource _resource_1 = rs.getResource(oclPath, true);
-    StandAlone.ocl_resource = _resource_1;
-    URI _createURI = URI.createURI("UML.ecore.oclas");
-    StandAlone.ecore_resource.setURI(_createURI);
+    StandAlone.ocl_resource = rs.getResource(oclPath, true);
+    final Resource ecore_resource = rs.getResource(URI.createFileURI("./resources/UML.ecore.oclas"), true);
+    final Resource lib_resource = rs.getResource(URI.createFileURI("./resources/OCL-2.5.oclas"), true);
+    ecore_resource.setURI(URI.createURI("UML.ecore.oclas"));
+    lib_resource.setURI(URI.createURI("http://www.eclipse.org/ocl/2015/Library.oclas"));
   }
   
   public static EPackage loadEcore(final String metamodelPath) throws Exception {
     final ResourceSetImpl rs = new ResourceSetImpl();
-    Resource.Factory.Registry _resourceFactoryRegistry = rs.getResourceFactoryRegistry();
-    Map<String, Object> _extensionToFactoryMap = _resourceFactoryRegistry.getExtensionToFactoryMap();
+    Map<String, Object> _extensionToFactoryMap = rs.getResourceFactoryRegistry().getExtensionToFactoryMap();
     EcoreResourceFactoryImpl _ecoreResourceFactoryImpl = new EcoreResourceFactoryImpl();
     _extensionToFactoryMap.put("ecore", _ecoreResourceFactoryImpl);
-    URI _createFileURI = URI.createFileURI(metamodelPath);
-    final Resource r = rs.getResource(_createFileURI, true);
-    EList<EObject> _contents = r.getContents();
-    final EObject eObject = _contents.get(0);
+    final Resource r = rs.getResource(URI.createFileURI(metamodelPath), true);
+    final EObject eObject = r.getContents().get(0);
     if ((eObject instanceof EPackage)) {
       final EPackage p = ((EPackage) eObject);
       return p;
