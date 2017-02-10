@@ -1,114 +1,220 @@
 package fr.emn.atlanmod.uml.casestudy.rewrite;
 
+import com.google.common.base.Objects;
+import fr.emn.atlanmod.uml.casestudy.rewrite.OCL2ATL;
 import java.util.Arrays;
 import java.util.HashMap;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.ocl.pivot.IntegerLiteralExp;
+import org.eclipse.ocl.pivot.NullLiteralExp;
 import org.eclipse.ocl.pivot.OCLExpression;
 import org.eclipse.ocl.pivot.Operation;
 import org.eclipse.ocl.pivot.OperationCallExp;
 import org.eclipse.ocl.pivot.PropertyCallExp;
-import org.eclipse.ocl.pivot.VariableDeclaration;
+import org.eclipse.ocl.pivot.Type;
 import org.eclipse.ocl.pivot.VariableExp;
 import org.eclipse.xtend2.lib.StringConcatenation;
+import org.eclipse.xtext.xbase.lib.Functions.Function1;
+import org.eclipse.xtext.xbase.lib.IterableExtensions;
+import org.eclipse.xtext.xbase.lib.ListExtensions;
 
 @SuppressWarnings("all")
 public class OCL {
-  protected static String _gen(final EObject o, final HashMap<String, VariableExp> consistency) {
+  protected static String _gen(final EObject e, final HashMap<String, VariableExp> consistency) {
     StringConcatenation _builder = new StringConcatenation();
     _builder.append("// We don\'t understand ");
-    String _name = o.eClass().getName();
+    String _name = e.eClass().getName();
     _builder.append(_name);
     _builder.newLineIfNotEmpty();
     return _builder.toString();
   }
   
-  protected static String _gen(final OCLExpression o, final HashMap<String, VariableExp> consistency) {
+  protected static String _gen(final OCLExpression e, final HashMap<String, VariableExp> consistency) {
     StringConcatenation _builder = new StringConcatenation();
     _builder.append("// We don\'t understand ocl expression ");
-    String _name = o.eClass().getName();
+    String _name = e.eClass().getName();
     _builder.append(_name);
     _builder.newLineIfNotEmpty();
     return _builder.toString();
   }
   
-  protected static String _gen(final OperationCallExp o, final HashMap<String, VariableExp> consistency) {
+  protected static String _gen(final OperationCallExp e, final HashMap<String, VariableExp> consistency) {
     StringConcatenation _builder = new StringConcatenation();
-    String _gen = OCL.gen(o.getOwnedSource(), consistency);
+    final String op = e.getReferredOperation().getName();
+    _builder.newLineIfNotEmpty();
+    final String src = OCL.gen(e.getOwnedSource(), consistency);
+    _builder.newLineIfNotEmpty();
+    String _xifexpression = null;
+    if (((e.getOwnedArguments().size() != 0) && (!Objects.equal(op, null)))) {
+      final Function1<OCLExpression, String> _function = (OCLExpression arg) -> {
+        return OCL.gen(arg, consistency);
+      };
+      _xifexpression = IterableExtensions.join(ListExtensions.<OCLExpression, String>map(e.getOwnedArguments(), _function), op);
+    } else {
+      _xifexpression = "";
+    }
+    final String args = _xifexpression;
+    _builder.newLineIfNotEmpty();
+    String _xifexpression_1 = null;
+    if (((e.getOwnedArguments().size() != 0) && (!Objects.equal(op, null)))) {
+      final Function1<OCLExpression, String> _function_1 = (OCLExpression arg) -> {
+        return OCL.gen(arg, consistency);
+      };
+      _xifexpression_1 = IterableExtensions.join(ListExtensions.<OCLExpression, String>map(e.getOwnedArguments(), _function_1), ",");
+    } else {
+      _xifexpression_1 = "";
+    }
+    final String args_dot = _xifexpression_1;
+    _builder.newLineIfNotEmpty();
+    {
+      if ((Objects.equal(op, "not") || Objects.equal(op, "abs"))) {
+        _builder.append(op);
+        _builder.append("(");
+        String _gen = OCL.gen(e.getOwnedSource(), consistency);
+        _builder.append(_gen);
+        _builder.append(")");
+      } else {
+        if ((((((((((((((((((Objects.equal(op, "+") || Objects.equal(op, "-")) || Objects.equal(op, "*")) || Objects.equal(op, "/")) || Objects.equal(op, "=")) || Objects.equal(op, "<>")) || Objects.equal(op, "implies")) || Objects.equal(op, "and")) || Objects.equal(op, "or")) || Objects.equal(op, "div")) || Objects.equal(op, "mod")) || Objects.equal(op, "implies")) || Objects.equal(op, "implies")) || Objects.equal(op, "and")) || Objects.equal(op, "or")) || Objects.equal(op, "implies")) || Objects.equal(op, "implies")) || Objects.equal(op, "implies"))) {
+          _builder.append(src);
+          _builder.append(" ");
+          _builder.append(op);
+          _builder.append(" ");
+          _builder.append(args);
+        } else {
+          if (((((((((((((((Objects.equal(op, "size") || Objects.equal(op, "flatten")) || Objects.equal(op, "allInstances")) || Objects.equal(op, "xor")) || Objects.equal(op, "asBag")) || Objects.equal(op, "asOrderedSet")) || Objects.equal(op, "asSequence")) || Objects.equal(op, "asSet")) || Objects.equal(op, "isEmpty")) || Objects.equal(op, "max")) || Objects.equal(op, "min")) || Objects.equal(op, "notEmpty")) || Objects.equal(op, "oclIsUndefined")) || Objects.equal(op, "oclType")) || Objects.equal(op, "first"))) {
+            _builder.append(src);
+            _builder.append("->");
+            _builder.append(op);
+            _builder.append("()");
+          } else {
+            if (((((((((Objects.equal(op, "oclIsUndefined") || Objects.equal(op, "oclIsInvalid")) || Objects.equal(op, "toBoolean")) || Objects.equal(op, "toInteger")) || Objects.equal(op, "toLower")) || Objects.equal(op, "toLowerCase")) || Objects.equal(op, "toString")) || Objects.equal(op, "toUpper")) || Objects.equal(op, "toUpperCase"))) {
+              _builder.append(src);
+              _builder.append(".");
+              _builder.append(op);
+              _builder.append("()");
+            } else {
+              if (((((((((Objects.equal(op, "oclAsType") || Objects.equal(op, "oclIsKindOf")) || Objects.equal(op, "oclIsTypeOf")) || Objects.equal(op, "concat")) || Objects.equal(op, "endsWith")) || Objects.equal(op, "indexOf")) || Objects.equal(op, "lastIndexOf")) || Objects.equal(op, "startsWith")) || Objects.equal(op, "substring"))) {
+                _builder.append(src);
+                _builder.append(".");
+                _builder.append(op);
+                _builder.append("(");
+                _builder.append(args_dot);
+                _builder.append(")");
+              } else {
+                if ((((((((((((((((((((Objects.equal(op, "excluding") || Objects.equal(op, "excludingAll")) || Objects.equal(op, "including")) || Objects.equal(op, "includingAll")) || Objects.equal(op, "selectByKind")) || Objects.equal(op, "selectByKind")) || Objects.equal(op, "selectByType")) || Objects.equal(op, "count")) || Objects.equal(op, "excludes")) || Objects.equal(op, "includes")) || Objects.equal(op, "includesAll")) || Objects.equal(op, "intersection")) || Objects.equal(op, "at")) || Objects.equal(op, "indexOf")) || Objects.equal(op, "last")) || Objects.equal(op, "append")) || Objects.equal(op, "appendAll")) || Objects.equal(op, "prepend")) || Objects.equal(op, "prependAll")) || Objects.equal(op, "reverse"))) {
+                  _builder.append(src);
+                  _builder.append("->");
+                  _builder.append(op);
+                  _builder.append("(");
+                  _builder.append(args_dot);
+                  _builder.append(")");
+                } else {
+                  _builder.append("// We don\'t understand OperationCallExp ");
+                  _builder.append(op);
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    _builder.newLineIfNotEmpty();
+    return _builder.toString();
+  }
+  
+  protected static String _gen(final PropertyCallExp e, final HashMap<String, VariableExp> consistency) {
+    StringConcatenation _builder = new StringConcatenation();
+    String _gen = OCL.gen(e.getOwnedSource(), consistency);
     _builder.append(_gen);
-    _builder.newLineIfNotEmpty();
-    String _gen_1 = OCL.gen(o.getReferredOperation(), consistency);
-    _builder.append(_gen_1);
-    _builder.newLineIfNotEmpty();
-    _builder.newLine();
+    _builder.append(".");
+    String _name = e.getReferredProperty().getName();
+    _builder.append(_name);
     return _builder.toString();
   }
   
-  protected static String _gen(final PropertyCallExp v, final HashMap<String, VariableExp> consistency) {
+  protected static String _gen(final VariableExp e, final HashMap<String, VariableExp> consistency) {
     StringConcatenation _builder = new StringConcatenation();
-    _builder.append("name:");
-    String _name = v.getName();
-    _builder.append(_name);
-    _builder.newLineIfNotEmpty();
-    _builder.append("self:");
-    String _name_1 = v.getReferredProperty().getName();
-    _builder.append(_name_1);
-    _builder.newLineIfNotEmpty();
-    _builder.append("type:");
-    VariableDeclaration _xifexpression = null;
-    OCLExpression _ownedSource = v.getOwnedSource();
-    if ((_ownedSource instanceof VariableExp)) {
-      OCLExpression _ownedSource_1 = v.getOwnedSource();
-      _xifexpression = ((VariableExp) _ownedSource_1).getReferredVariable();
+    String _xifexpression = null;
+    boolean _isIsImplicit = e.isIsImplicit();
+    if (_isIsImplicit) {
+      String _xifexpression_1 = null;
+      boolean _isConsistentVariable = OCL.isConsistentVariable(consistency, e);
+      if (_isConsistentVariable) {
+        _xifexpression_1 = OCL.getIteratorName(e);
+      } else {
+        String _iteratorName = OCL.getIteratorName(e);
+        int _hashCode = e.hashCode();
+        _xifexpression_1 = (_iteratorName + Integer.valueOf(_hashCode));
+      }
+      _xifexpression = _xifexpression_1;
+    } else {
+      _xifexpression = OCL.getIteratorName(e);
     }
     _builder.append(_xifexpression);
-    _builder.newLineIfNotEmpty();
     return _builder.toString();
   }
   
-  protected static String _gen(final VariableExp v, final HashMap<String, VariableExp> consistency) {
+  protected static String _gen(final Operation e, final HashMap<String, VariableExp> consistency) {
     StringConcatenation _builder = new StringConcatenation();
-    String _name = v.getName();
+    String _name = e.getName();
     _builder.append(_name);
-    _builder.append("\t");
-    _builder.newLineIfNotEmpty();
     return _builder.toString();
   }
   
-  protected static String _gen(final Operation o, final HashMap<String, VariableExp> consistency) {
+  protected static String _gen(final Type e, final HashMap<String, VariableExp> consistency) {
     StringConcatenation _builder = new StringConcatenation();
-    String _name = o.getName();
+    String _name = e.getName();
     _builder.append(_name);
-    _builder.append("\t");
-    _builder.newLineIfNotEmpty();
     return _builder.toString();
   }
   
-  protected static String _gen(final IntegerLiteralExp i, final HashMap<String, VariableExp> consistency) {
+  protected static String _gen(final IntegerLiteralExp e, final HashMap<String, VariableExp> consistency) {
     StringConcatenation _builder = new StringConcatenation();
-    Number _integerSymbol = i.getIntegerSymbol();
+    Number _integerSymbol = e.getIntegerSymbol();
     _builder.append(_integerSymbol);
     return _builder.toString();
   }
   
-  public static String gen(final EObject i, final HashMap<String, VariableExp> consistency) {
-    if (i instanceof IntegerLiteralExp) {
-      return _gen((IntegerLiteralExp)i, consistency);
-    } else if (i instanceof PropertyCallExp) {
-      return _gen((PropertyCallExp)i, consistency);
-    } else if (i instanceof OperationCallExp) {
-      return _gen((OperationCallExp)i, consistency);
-    } else if (i instanceof Operation) {
-      return _gen((Operation)i, consistency);
-    } else if (i instanceof VariableExp) {
-      return _gen((VariableExp)i, consistency);
-    } else if (i instanceof OCLExpression) {
-      return _gen((OCLExpression)i, consistency);
-    } else if (i != null) {
-      return _gen(i, consistency);
+  protected static String _gen(final NullLiteralExp e, final HashMap<String, VariableExp> consistency) {
+    StringConcatenation _builder = new StringConcatenation();
+    _builder.append("null");
+    return _builder.toString();
+  }
+  
+  public static boolean isConsistentVariable(final HashMap<String, VariableExp> map, final VariableExp exp) {
+    final String itName = OCL.getIteratorName(exp);
+    return ((!map.containsKey(itName)) || Objects.equal(map.get(itName), exp));
+  }
+  
+  public static String getIteratorName(final VariableExp exp) {
+    final Type tp = exp.getType();
+    final String clazz = OCL.gen(tp, null);
+    final String itName = OCL2ATL.genIteratorName(clazz);
+    return itName;
+  }
+  
+  public static String gen(final EObject e, final HashMap<String, VariableExp> consistency) {
+    if (e instanceof IntegerLiteralExp) {
+      return _gen((IntegerLiteralExp)e, consistency);
+    } else if (e instanceof PropertyCallExp) {
+      return _gen((PropertyCallExp)e, consistency);
+    } else if (e instanceof NullLiteralExp) {
+      return _gen((NullLiteralExp)e, consistency);
+    } else if (e instanceof OperationCallExp) {
+      return _gen((OperationCallExp)e, consistency);
+    } else if (e instanceof Operation) {
+      return _gen((Operation)e, consistency);
+    } else if (e instanceof VariableExp) {
+      return _gen((VariableExp)e, consistency);
+    } else if (e instanceof OCLExpression) {
+      return _gen((OCLExpression)e, consistency);
+    } else if (e instanceof Type) {
+      return _gen((Type)e, consistency);
+    } else if (e != null) {
+      return _gen(e, consistency);
     } else {
       throw new IllegalArgumentException("Unhandled parameter types: " +
-        Arrays.<Object>asList(i, consistency).toString());
+        Arrays.<Object>asList(e, consistency).toString());
     }
   }
 }

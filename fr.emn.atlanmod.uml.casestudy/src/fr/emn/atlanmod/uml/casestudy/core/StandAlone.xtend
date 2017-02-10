@@ -20,7 +20,7 @@ class StandAlone{
 
 	
 	def static void main(String[] args) {
-		val inputURI = URI.createFileURI("./resources/UML.ocl.oclas")
+		val inputURI = URI.createFileURI("./resources/UML3.ocl.oclas")
 		doEMFSetup(inputURI)
 		
 		var String res = "";

@@ -19,7 +19,7 @@ public class StandAlone {
   private static Resource ocl_resource;
   
   public static void main(final String[] args) {
-    final URI inputURI = URI.createFileURI("./resources/UML.ocl.oclas");
+    final URI inputURI = URI.createFileURI("./resources/UML3.ocl.oclas");
     StandAlone.doEMFSetup(inputURI);
     String res = "";
     final URI outputURI = URI.createFileURI("./resources/UML.ocl.atl");
