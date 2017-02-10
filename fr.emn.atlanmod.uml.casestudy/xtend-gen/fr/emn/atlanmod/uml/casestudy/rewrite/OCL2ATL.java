@@ -2,6 +2,7 @@ package fr.emn.atlanmod.uml.casestudy.rewrite;
 
 import fr.emn.atlanmod.uml.casestudy.rewrite.OCL;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
@@ -10,6 +11,7 @@ import org.eclipse.ocl.pivot.ExpressionInOCL;
 import org.eclipse.ocl.pivot.LanguageExpression;
 import org.eclipse.ocl.pivot.Model;
 import org.eclipse.ocl.pivot.OCLExpression;
+import org.eclipse.ocl.pivot.VariableExp;
 import org.eclipse.xtend2.lib.StringConcatenation;
 
 @SuppressWarnings("all")
@@ -72,7 +74,8 @@ public class OCL2ATL {
             _builder.append("    ");
             LanguageExpression _ownedSpecification = inv.getOwnedSpecification();
             OCLExpression _ownedBody = ((ExpressionInOCL) _ownedSpecification).getOwnedBody();
-            String _gen = OCL.gen(_ownedBody);
+            HashMap<String, VariableExp> _hashMap = new HashMap<String, VariableExp>();
+            String _gen = OCL.gen(_ownedBody, _hashMap);
             _builder.append(_gen, "    ");
             _builder.newLineIfNotEmpty();
             _builder.append("; ");
@@ -85,14 +88,14 @@ public class OCL2ATL {
     return _builder.toString();
   }
   
-  public static String genIteratorName(final String s) {
+  public static String genIteratorName(final String clazz) {
     String rtn = "";
-    for (int i = 0; (i < s.length()); i++) {
-      char _charAt = s.charAt(i);
+    for (int i = 0; (i < clazz.length()); i++) {
+      char _charAt = clazz.charAt(i);
       boolean _isUpperCase = Character.isUpperCase(_charAt);
       if (_isUpperCase) {
         String _rtn = rtn;
-        char _charAt_1 = s.charAt(i);
+        char _charAt_1 = clazz.charAt(i);
         char _lowerCase = Character.toLowerCase(_charAt_1);
         rtn = (_rtn + Character.valueOf(_lowerCase));
       }

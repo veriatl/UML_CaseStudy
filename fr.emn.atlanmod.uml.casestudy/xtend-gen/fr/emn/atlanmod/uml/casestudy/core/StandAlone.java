@@ -18,8 +18,10 @@ import org.eclipse.ocl.pivot.internal.resource.OCLASResourceFactory;
 public class StandAlone {
   private static Resource ocl_resource;
   
+  private static Resource ecore_resource;
+  
   public static void main(final String[] args) {
-    final URI inputURI = URI.createFileURI("./resources/UML.oclas");
+    final URI inputURI = URI.createFileURI("./resources/UML2.ocl.oclas");
     StandAlone.doEMFSetup(inputURI);
     String res = "";
     final URI outputURI = URI.createFileURI("./resources/UML.ocl.atl");
@@ -32,23 +34,38 @@ public class StandAlone {
     URIs.write(outputURI, res);
   }
   
-  public static Resource doEMFSetup(final URI oclPath) {
-    Resource _xblockexpression = null;
-    {
-      EPackage.Registry.INSTANCE.put(PivotPackage.eNS_URI, PivotPackage.eINSTANCE);
-      Map<String, Object> _extensionToFactoryMap = Resource.Factory.Registry.INSTANCE.getExtensionToFactoryMap();
-      XMIResourceFactoryImpl _xMIResourceFactoryImpl = new XMIResourceFactoryImpl();
-      _extensionToFactoryMap.put("xmi", _xMIResourceFactoryImpl);
-      Map<String, Object> _extensionToFactoryMap_1 = Resource.Factory.Registry.INSTANCE.getExtensionToFactoryMap();
-      OCLASResourceFactory _instance = OCLASResourceFactory.getInstance();
-      _extensionToFactoryMap_1.put("oclas", _instance);
-      Map<String, Object> _extensionToFactoryMap_2 = Resource.Factory.Registry.INSTANCE.getExtensionToFactoryMap();
-      EcoreResourceFactoryImpl _ecoreResourceFactoryImpl = new EcoreResourceFactoryImpl();
-      _extensionToFactoryMap_2.put("ecore", _ecoreResourceFactoryImpl);
-      final ResourceSetImpl rs = new ResourceSetImpl();
-      Resource _resource = rs.getResource(oclPath, true);
-      _xblockexpression = StandAlone.ocl_resource = _resource;
+  public static void doEMFSetup(final URI oclPath) {
+    EPackage.Registry.INSTANCE.put(PivotPackage.eNS_URI, PivotPackage.eINSTANCE);
+    Map<String, Object> _extensionToFactoryMap = Resource.Factory.Registry.INSTANCE.getExtensionToFactoryMap();
+    XMIResourceFactoryImpl _xMIResourceFactoryImpl = new XMIResourceFactoryImpl();
+    _extensionToFactoryMap.put("xmi", _xMIResourceFactoryImpl);
+    Map<String, Object> _extensionToFactoryMap_1 = Resource.Factory.Registry.INSTANCE.getExtensionToFactoryMap();
+    OCLASResourceFactory _instance = OCLASResourceFactory.getInstance();
+    _extensionToFactoryMap_1.put("oclas", _instance);
+    final ResourceSetImpl rs = new ResourceSetImpl();
+    URI _createFileURI = URI.createFileURI("./resources/UML.ecore.oclas");
+    Resource _resource = rs.getResource(_createFileURI, true);
+    StandAlone.ecore_resource = _resource;
+    Resource _resource_1 = rs.getResource(oclPath, true);
+    StandAlone.ocl_resource = _resource_1;
+    URI _createURI = URI.createURI("UML.ecore.oclas");
+    StandAlone.ecore_resource.setURI(_createURI);
+  }
+  
+  public static EPackage loadEcore(final String metamodelPath) throws Exception {
+    final ResourceSetImpl rs = new ResourceSetImpl();
+    Resource.Factory.Registry _resourceFactoryRegistry = rs.getResourceFactoryRegistry();
+    Map<String, Object> _extensionToFactoryMap = _resourceFactoryRegistry.getExtensionToFactoryMap();
+    EcoreResourceFactoryImpl _ecoreResourceFactoryImpl = new EcoreResourceFactoryImpl();
+    _extensionToFactoryMap.put("ecore", _ecoreResourceFactoryImpl);
+    URI _createFileURI = URI.createFileURI(metamodelPath);
+    final Resource r = rs.getResource(_createFileURI, true);
+    EList<EObject> _contents = r.getContents();
+    final EObject eObject = _contents.get(0);
+    if ((eObject instanceof EPackage)) {
+      final EPackage p = ((EPackage) eObject);
+      return p;
     }
-    return _xblockexpression;
+    throw new Exception("reading metamodel fails hard! abort...");
   }
 }

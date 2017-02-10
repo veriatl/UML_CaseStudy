@@ -1,8 +1,10 @@
 package fr.emn.atlanmod.uml.casestudy.rewrite
 
+import java.util.HashMap
 import org.eclipse.emf.ecore.EObject
-import org.eclipse.ocl.pivot.*
-
+import org.eclipse.ocl.pivot.ExpressionInOCL
+import org.eclipse.ocl.pivot.Model
+import org.eclipse.ocl.pivot.Package
 
 class OCL2ATL {
 	static String model = "UML"
@@ -23,19 +25,19 @@ class OCL2ATL {
 		«FOR inv : clazz.ownedInvariants»
 		helper context «model»!«clazz.name» def: «inv.name»(): Boolean = 
 		  «model»!«clazz.name».allInstances()->forAll(«genIteratorName(clazz.name)» |
-		    «OCL.gen((inv.ownedSpecification as ExpressionInOCL).ownedBody)»
+		    «OCL.gen((inv.ownedSpecification as ExpressionInOCL).ownedBody, new HashMap)»
 		; 
 		
 		«ENDFOR»
 	«ENDFOR»
 	'''
 	
-	def static genIteratorName(String s) {
+	def static genIteratorName(String clazz) {
 		var String rtn="";
 		
-		for(var i = 0; i<s.length; i++){
-			if(Character.isUpperCase(s.charAt(i))){
-				rtn += Character.toLowerCase(s.charAt(i))
+		for(var i = 0; i<clazz.length; i++){
+			if(Character.isUpperCase(clazz.charAt(i))){
+				rtn += Character.toLowerCase(clazz.charAt(i))
 			}
 		}
 		
