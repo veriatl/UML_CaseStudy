@@ -10,7 +10,7 @@ import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl
 import org.eclipse.ocl.pivot.PivotPackage
 import org.eclipse.ocl.pivot.internal.resource.OCLASResourceFactory
 import org.eclipse.emf.ecore.EObject
-import fr.emn.atlanmod.uml.casestudy.rewrite.rewriterOCL2ATL
+import fr.emn.atlanmod.uml.casestudy.rewrite.OCL2ATL
 import fr.emn.atlanmod.uml.casestudy.util.URIs
 
 class StandAlone{
@@ -26,7 +26,7 @@ class StandAlone{
 		val outputURI = URI.createFileURI("./resources/UML.ocl.atl")
 		
 		for (EObject eobject : ocl_resource.getContents()) {
-			res += rewriterOCL2ATL.rewrite(eobject);
+			res += OCL2ATL.rewrite(eobject);
 		}
 		
 		

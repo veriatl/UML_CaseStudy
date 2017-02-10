@@ -1,6 +1,7 @@
 package fr.emn.atlanmod.uml.casestudy.rewrite;
 
 import java.util.Arrays;
+import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.ocl.pivot.OCLExpression;
 import org.eclipse.ocl.pivot.OperationCallExp;
@@ -11,8 +12,9 @@ public class OCL {
   protected static String _gen(final EObject o) {
     StringConcatenation _builder = new StringConcatenation();
     _builder.append("// We don\'t understand ");
-    String _name = o.eClass().getName();
-    _builder.append(_name);
+    EClass _eClass = o.eClass();
+    String _name = _eClass.getName();
+    _builder.append(_name, "");
     _builder.newLineIfNotEmpty();
     return _builder.toString();
   }
@@ -20,8 +22,9 @@ public class OCL {
   protected static String _gen(final OCLExpression o) {
     StringConcatenation _builder = new StringConcatenation();
     _builder.append("// We don\'t understand ocl expression ");
-    String _name = o.eClass().getName();
-    _builder.append(_name);
+    EClass _eClass = o.eClass();
+    String _name = _eClass.getName();
+    _builder.append(_name, "");
     _builder.newLineIfNotEmpty();
     return _builder.toString();
   }
@@ -29,7 +32,7 @@ public class OCL {
   protected static String _gen(final OperationCallExp o) {
     StringConcatenation _builder = new StringConcatenation();
     String _name = o.getName();
-    _builder.append(_name);
+    _builder.append(_name, "");
     _builder.newLineIfNotEmpty();
     _builder.newLine();
     return _builder.toString();
