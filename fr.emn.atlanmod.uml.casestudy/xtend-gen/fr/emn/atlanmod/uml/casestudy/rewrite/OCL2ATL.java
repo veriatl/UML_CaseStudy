@@ -15,7 +15,7 @@ import org.eclipse.xtend2.lib.StringConcatenation;
 
 @SuppressWarnings("all")
 public class OCL2ATL {
-  private static String model = "UML";
+  public static String model = "UML";
   
   protected static String _rewrite(final EObject o) {
     StringConcatenation _builder = new StringConcatenation();

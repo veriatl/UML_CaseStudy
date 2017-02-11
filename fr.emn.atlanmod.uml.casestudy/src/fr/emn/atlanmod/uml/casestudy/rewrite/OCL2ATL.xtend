@@ -7,7 +7,7 @@ import org.eclipse.ocl.pivot.Model
 import org.eclipse.ocl.pivot.Package
 
 class OCL2ATL {
-	static String model = "UML"
+	public static String model = "UML"
 	// dispatcher
 	def static dispatch String rewrite(EObject o) '''
 		// We don't understand «o.eClass.name»
