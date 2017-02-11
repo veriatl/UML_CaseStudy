@@ -1,0 +1,2854 @@
+helper context UML!AcceptCallAction def: result_pins(): Boolean = 
+  UML!AcceptCallAction.allInstances()->forAll(aca |
+    // We don't understand ocl expression LetExp
+; 
+
+helper context UML!AcceptCallAction def: trigger_call_event(): Boolean = 
+  UML!AcceptCallAction.allInstances()->forAll(aca |
+    aca.trigger->size()
+     = 1
+     and aca.trigger->asSequence()
+    ->first()
+    .event.oclIsKindOf(// We don't understand ocl expression TypeExp
+    )
+; 
+
+helper context UML!AcceptCallAction def: unmarshall(): Boolean = 
+  UML!AcceptCallAction.allInstances()->forAll(aca |
+    aca.isUnmarshall = // We don't understand ocl expression BooleanLiteralExp
+; 
+
+helper context UML!AcceptEventAction def: one_output_pin(): Boolean = 
+  UML!AcceptEventAction.allInstances()->forAll(aea |
+    not(aea.isUnmarshall)
+     and // We don't understand ocl expression IteratorExp
+     implies aea.output->size()
+     = 1
+     and // We don't understand OperationCallExp is
+; 
+
+helper context UML!AcceptEventAction def: no_input_pins(): Boolean = 
+  UML!AcceptEventAction.allInstances()->forAll(aea |
+    aea.input->size()
+     = 0
+; 
+
+helper context UML!AcceptEventAction def: no_output_pins(): Boolean = 
+  UML!AcceptEventAction.allInstances()->forAll(aea |
+    aea.oclIsTypeOf(// We don't understand ocl expression TypeExp
+    )
+     and // We don't understand ocl expression IteratorExp
+     implies aea.output->size()
+     = 0
+; 
+
+helper context UML!AcceptEventAction def: unmarshall_signal_events(): Boolean = 
+  UML!AcceptEventAction.allInstances()->forAll(aea |
+    aea.isUnmarshall and aea.oclIsTypeOf(// We don't understand ocl expression TypeExp
+    )
+     implies aea.trigger->size()
+     = 1
+     and aea.trigger->asSequence()
+    ->first()
+    .event.oclIsKindOf(// We don't understand ocl expression TypeExp
+    )
+     and // We don't understand ocl expression LetExp
+; 
+
+helper context UML!AcceptEventAction def: conforming_type(): Boolean = 
+  UML!AcceptEventAction.allInstances()->forAll(aea |
+    not(aea.isUnmarshall)
+     implies aea.result->isEmpty()
+     or // We don't understand ocl expression LetExp
+; 
+
+helper context UML!ActionExecutionSpecification def: action_referenced(): Boolean = 
+  UML!ActionExecutionSpecification.allInstances()->forAll(aes |
+    // We don't understand OperationCallExp oclAsSet
+    ->notEmpty()
+     or // We don't understand OperationCallExp oclAsSet
+    ->notEmpty()
+     and // We don't understand ocl expression LetExp
+; 
+
+helper context UML!ActionInputPin def: input_pin(): Boolean = 
+  UML!ActionInputPin.allInstances()->forAll(aip |
+    // We don't understand ocl expression IteratorExp
+; 
+
+helper context UML!ActionInputPin def: one_output_pin(): Boolean = 
+  UML!ActionInputPin.allInstances()->forAll(aip |
+    aip.fromAction.output->size()
+     = 1
+; 
+
+helper context UML!ActionInputPin def: no_control_or_object_flow(): Boolean = 
+  UML!ActionInputPin.allInstances()->forAll(aip |
+    // We don't understand OperationCallExp 
+    ->isEmpty()
+     and // We don't understand ocl expression IteratorExp
+    ->isEmpty()
+     and // We don't understand ocl expression IteratorExp
+    ->isEmpty()
+; 
+
+helper context UML!Activity def: maximum_one_parameter_node(): Boolean = 
+  UML!Activity.allInstances()->forAll(a |
+    // We don't understand ocl expression IteratorExp
+; 
+
+helper context UML!Activity def: maximum_two_parameter_nodes(): Boolean = 
+  UML!Activity.allInstances()->forAll(a |
+    // We don't understand ocl expression IteratorExp
+; 
+
+helper context UML!ActivityEdge def: source_and_target(): Boolean = 
+  UML!ActivityEdge.allInstances()->forAll(ae |
+    ae.activity <> null
+     implies // We don't understand OperationCallExp containingActivity
+     = ae.activity
+     and // We don't understand OperationCallExp containingActivity
+     = ae.activity
+; 
+
+helper context UML!ActivityGroup def: nodes_and_edges(): Boolean = 
+  UML!ActivityGroup.allInstances()->forAll(ag |
+    // We don't understand ocl expression IteratorExp
+     and // We don't understand ocl expression IteratorExp
+; 
+
+helper context UML!ActivityGroup def: not_contained(): Boolean = 
+  UML!ActivityGroup.allInstances()->forAll(ag |
+    // We don't understand OperationCallExp excludesAll
+     and // We don't understand OperationCallExp excludesAll
+     and // We don't understand OperationCallExp excludesAll
+     and // We don't understand OperationCallExp excludesAll
+; 
+
+helper context UML!ActivityParameterNode def: no_outgoing_edges(): Boolean = 
+  UML!ActivityParameterNode.allInstances()->forAll(apn |
+    apn.incoming->notEmpty()
+     and apn.outgoing->isEmpty()
+     implies apn.parameter.direction = // We don't understand ocl expression EnumLiteralExp
+     or apn.parameter.direction = // We don't understand ocl expression EnumLiteralExp
+     or apn.parameter.direction = // We don't understand ocl expression EnumLiteralExp
+; 
+
+helper context UML!ActivityParameterNode def: has_parameters(): Boolean = 
+  UML!ActivityParameterNode.allInstances()->forAll(apn |
+    apn.activity.ownedParameter->includes(apn.parameter)
+; 
+
+helper context UML!ActivityParameterNode def: same_type(): Boolean = 
+  UML!ActivityParameterNode.allInstances()->forAll(apn |
+    apn.type = apn.parameter.type
+; 
+
+helper context UML!ActivityParameterNode def: no_incoming_edges(): Boolean = 
+  UML!ActivityParameterNode.allInstances()->forAll(apn |
+    apn.outgoing->notEmpty()
+     and apn.incoming->isEmpty()
+     implies apn.parameter.direction = // We don't understand ocl expression EnumLiteralExp
+     or apn.parameter.direction = // We don't understand ocl expression EnumLiteralExp
+; 
+
+helper context UML!ActivityParameterNode def: no_edges(): Boolean = 
+  UML!ActivityParameterNode.allInstances()->forAll(apn |
+    apn.incoming->isEmpty()
+     or apn.outgoing->isEmpty()
+; 
+
+helper context UML!ActivityPartition def: represents_classifier(): Boolean = 
+  UML!ActivityPartition.allInstances()->forAll(ap |
+    not(ap.isExternal)
+     and ap.represents.oclIsKindOf(// We don't understand ocl expression TypeExp
+    )
+     and // We don't understand OperationCallExp oclAsSet
+    ->notEmpty()
+     implies // We don't understand ocl expression LetExp
+; 
+
+helper context UML!ActivityPartition def: represents_property_and_is_contained(): Boolean = 
+  UML!ActivityPartition.allInstances()->forAll(ap |
+    ap.represents.oclIsKindOf(// We don't understand ocl expression TypeExp
+    )
+     and // We don't understand OperationCallExp oclAsSet
+    ->notEmpty()
+     implies ap.superPartition.represents.oclIsKindOf(// We don't understand ocl expression TypeExp
+    )
+     and ap.represents.owner = ap.superPartition.represents
+     or ap.superPartition.represents.oclIsKindOf(// We don't understand ocl expression TypeExp
+    )
+     and ap.represents.owner = ap.superPartition.represents.oclAsType(// We don't understand ocl expression TypeExp
+    )
+    .type
+; 
+
+helper context UML!ActivityPartition def: represents_property(): Boolean = 
+  UML!ActivityPartition.allInstances()->forAll(ap |
+    ap.represents.oclIsKindOf(// We don't understand ocl expression TypeExp
+    )
+     and // We don't understand OperationCallExp oclAsSet
+    ->notEmpty()
+     and ap.superPartition.represents.oclIsKindOf(// We don't understand ocl expression TypeExp
+    )
+     implies // We don't understand ocl expression LetExp
+; 
+
+helper context UML!ActivityPartition def: dimension_not_contained(): Boolean = 
+  UML!ActivityPartition.allInstances()->forAll(ap |
+    ap.isDimension implies // We don't understand OperationCallExp oclAsSet
+    ->isEmpty()
+; 
+
+helper context UML!Actor def: associations(): Boolean = 
+  UML!Actor.allInstances()->forAll(a |
+    // We don't understand ocl expression IteratorExp
+; 
+
+helper context UML!Actor def: must_have_name(): Boolean = 
+  UML!Actor.allInstances()->forAll(a |
+    // We don't understand OperationCallExp oclAsSet
+    ->notEmpty()
+; 
+
+helper context UML!AddStructuralFeatureValueAction def: required_value(): Boolean = 
+  UML!AddStructuralFeatureValueAction.allInstances()->forAll(asfva |
+    asfva.value <> null
+; 
+
+helper context UML!AddStructuralFeatureValueAction def: insertAt_pin(): Boolean = 
+  UML!AddStructuralFeatureValueAction.allInstances()->forAll(asfva |
+    // We don't understand ocl expression IfExp
+; 
+
+helper context UML!AddVariableValueAction def: required_value(): Boolean = 
+  UML!AddVariableValueAction.allInstances()->forAll(avva |
+    avva.value <> null
+; 
+
+helper context UML!AddVariableValueAction def: insertAt_pin(): Boolean = 
+  UML!AddVariableValueAction.allInstances()->forAll(avva |
+    // We don't understand ocl expression IfExp
+; 
+
+helper context UML!Association def: specialized_end_number(): Boolean = 
+  UML!Association.allInstances()->forAll(a |
+    // We don't understand ocl expression IteratorExp
+; 
+
+helper context UML!Association def: specialized_end_types(): Boolean = 
+  UML!Association.allInstances()->forAll(a |
+    // We don't understand ocl expression IteratorExp
+; 
+
+helper context UML!Association def: binary_associations(): Boolean = 
+  UML!Association.allInstances()->forAll(a |
+    // We don't understand ocl expression IteratorExp
+     implies a.memberEnd->size()
+     = 2
+     and // We don't understand ocl expression IteratorExp
+; 
+
+helper context UML!Association def: association_ends(): Boolean = 
+  UML!Association.allInstances()->forAll(a |
+    // We don't understand OperationCallExp >
+     implies a.ownedEnd->includesAll(a.memberEnd)
+; 
+
+helper context UML!Association def: ends_must_be_typed(): Boolean = 
+  UML!Association.allInstances()->forAll(a |
+    // We don't understand ocl expression IteratorExp
+; 
+
+helper context UML!AssociationClass def: cannot_be_defined(): Boolean = 
+  UML!AssociationClass.allInstances()->forAll(ac |
+    // We don't understand OperationCallExp endType
+    ->excludes(ac)
+     and // We don't understand ocl expression IteratorExp
+    ->flatten()
+    ->excludes(ac)
+; 
+
+helper context UML!AssociationClass def: disjoint_attributes_ends(): Boolean = 
+  UML!AssociationClass.allInstances()->forAll(ac |
+    ac.ownedAttribute->intersection(ac.ownedEnd)
+    ->isEmpty()
+; 
+
+helper context UML!Behavior def: most_one_behavior(): Boolean = 
+  UML!Behavior.allInstances()->forAll(b |
+    b.specification <> null
+     implies // We don't understand ocl expression IteratorExp
+    ->size()
+     = 1
+; 
+
+helper context UML!Behavior def: parameters_match(): Boolean = 
+  UML!Behavior.allInstances()->forAll(b |
+    b.specification <> null
+     implies b.ownedParameter->size()
+     = b.specification.ownedParameter->size()
+; 
+
+helper context UML!Behavior def: feature_of_context_classifier(): Boolean = 
+  UML!Behavior.allInstances()->forAll(b |
+    b.context.feature->includes(b.specification)
+; 
+
+helper context UML!BehavioralFeature def: abstract_no_method(): Boolean = 
+  UML!BehavioralFeature.allInstances()->forAll(bf |
+    bf.isAbstract implies bf.method->isEmpty()
+; 
+
+helper context UML!BehavioredClassifier def: class_behavior(): Boolean = 
+  UML!BehavioredClassifier.allInstances()->forAll(bc |
+    // We don't understand OperationCallExp oclAsSet
+    ->notEmpty()
+     implies // We don't understand OperationCallExp oclAsSet
+    ->isEmpty()
+; 
+
+helper context UML!BroadcastSignalAction def: number_of_arguments(): Boolean = 
+  UML!BroadcastSignalAction.allInstances()->forAll(bsa |
+    bsa.argument->size()
+     = // We don't understand OperationCallExp allAttributes
+    ->size()
+; 
+
+helper context UML!BroadcastSignalAction def: type_ordering_multiplicity(): Boolean = 
+  UML!BroadcastSignalAction.allInstances()->forAll(bsa |
+    // We don't understand ocl expression LetExp
+; 
+
+helper context UML!BroadcastSignalAction def: no_onport(): Boolean = 
+  UML!BroadcastSignalAction.allInstances()->forAll(bsa |
+    bsa.onPort = null
+; 
+
+helper context UML!CallAction def: argument_pins(): Boolean = 
+  UML!CallAction.allInstances()->forAll(ca |
+    // We don't understand ocl expression LetExp
+; 
+
+helper context UML!CallAction def: result_pins(): Boolean = 
+  UML!CallAction.allInstances()->forAll(ca |
+    // We don't understand ocl expression LetExp
+; 
+
+helper context UML!CallAction def: synchronous_call(): Boolean = 
+  UML!CallAction.allInstances()->forAll(ca |
+    ca.result->notEmpty()
+     implies ca.isSynchronous
+; 
+
+helper context UML!CallBehaviorAction def: no_onport(): Boolean = 
+  UML!CallBehaviorAction.allInstances()->forAll(cba |
+    cba.onPort = null
+; 
+
+helper context UML!CallOperationAction def: type_target_pin(): Boolean = 
+  UML!CallOperationAction.allInstances()->forAll(coa |
+    // We don't understand ocl expression IfExp
+; 
+
+helper context UML!Class def: passive_class(): Boolean = 
+  UML!Class.allInstances()->forAll(c |
+    not(c.isActive)
+     implies c.ownedReception->isEmpty()
+     and c.classifierBehavior = null
+; 
+
+helper context UML!Classifier def: specialize_type(): Boolean = 
+  UML!Classifier.allInstances()->forAll(c |
+    // We don't understand ocl expression IteratorExp
+; 
+
+helper context UML!Classifier def: maps_to_generalization_set(): Boolean = 
+  UML!Classifier.allInstances()->forAll(c |
+    // We don't understand ocl expression IteratorExp
+; 
+
+helper context UML!Classifier def: non_final_parents(): Boolean = 
+  UML!Classifier.allInstances()->forAll(c |
+    // We don't understand ocl expression IteratorExp
+; 
+
+helper context UML!Classifier def: no_cycles_in_generalization(): Boolean = 
+  UML!Classifier.allInstances()->forAll(c |
+    not(// We don't understand OperationCallExp allParents
+    ->includes(c)
+    )
+; 
+
+helper context UML!ClassifierTemplateParameter def: has_constraining_classifier(): Boolean = 
+  UML!ClassifierTemplateParameter.allInstances()->forAll(ctp |
+    ctp.allowSubstitutable implies ctp.constrainingClassifier->notEmpty()
+; 
+
+helper context UML!ClassifierTemplateParameter def: parametered_element_no_features(): Boolean = 
+  UML!ClassifierTemplateParameter.allInstances()->forAll(ctp |
+    ctp.parameteredElement.feature->isEmpty()
+     and ctp.constrainingClassifier->isEmpty()
+     implies // We don't understand OperationCallExp allParents
+    ->isEmpty()
+; 
+
+helper context UML!ClassifierTemplateParameter def: matching_abstract(): Boolean = 
+  UML!ClassifierTemplateParameter.allInstances()->forAll(ctp |
+    not(ctp.parameteredElement.isAbstract)
+     implies // We don't understand ocl expression IteratorExp
+; 
+
+helper context UML!ClassifierTemplateParameter def: actual_is_classifier(): Boolean = 
+  UML!ClassifierTemplateParameter.allInstances()->forAll(ctp |
+    // We don't understand ocl expression IteratorExp
+; 
+
+helper context UML!ClassifierTemplateParameter def: constraining_classifiers_constrain_args(): Boolean = 
+  UML!ClassifierTemplateParameter.allInstances()->forAll(ctp |
+    // We don't understand ocl expression IteratorExp
+; 
+
+helper context UML!ClassifierTemplateParameter def: constraining_classifiers_constrain_parametered_element(): Boolean = 
+  UML!ClassifierTemplateParameter.allInstances()->forAll(ctp |
+    // We don't understand ocl expression IteratorExp
+; 
+
+helper context UML!Clause def: body_output_pins(): Boolean = 
+  UML!Clause.allInstances()->forAll(c |
+    // We don't understand ocl expression IteratorExp
+    ->includesAll(c.bodyOutput)
+; 
+
+helper context UML!Clause def: decider_output(): Boolean = 
+  UML!Clause.allInstances()->forAll(c |
+    // We don't understand ocl expression IteratorExp
+    ->includes(c.decider)
+     and c.decider.type = // We don't understand ocl expression TypeExp
+     and // We don't understand OperationCallExp is
+; 
+
+helper context UML!Clause def: test_and_body(): Boolean = 
+  UML!Clause.allInstances()->forAll(c |
+    c.test->intersection(c.body)
+    ->isEmpty()
+; 
+
+helper context UML!ClearAssociationAction def: multiplicity(): Boolean = 
+  UML!ClearAssociationAction.allInstances()->forAll(caa |
+    // We don't understand OperationCallExp is
+; 
+
+helper context UML!ClearAssociationAction def: same_type(): Boolean = 
+  UML!ClearAssociationAction.allInstances()->forAll(caa |
+    // We don't understand ocl expression IteratorExp
+; 
+
+helper context UML!ClearStructuralFeatureAction def: type_of_result(): Boolean = 
+  UML!ClearStructuralFeatureAction.allInstances()->forAll(csfa |
+    csfa.result <> null
+     implies csfa.result.type = csfa.object.type
+; 
+
+helper context UML!ClearStructuralFeatureAction def: multiplicity_of_result(): Boolean = 
+  UML!ClearStructuralFeatureAction.allInstances()->forAll(csfa |
+    csfa.result <> null
+     implies // We don't understand OperationCallExp is
+; 
+
+helper context UML!CollaborationUse def: client_elements(): Boolean = 
+  UML!CollaborationUse.allInstances()->forAll(cu |
+    // We don't understand ocl expression IteratorExp
+     and // We don't understand ocl expression IteratorExp
+; 
+
+helper context UML!CollaborationUse def: every_role(): Boolean = 
+  UML!CollaborationUse.allInstances()->forAll(cu |
+    // We don't understand ocl expression IteratorExp
+; 
+
+helper context UML!CollaborationUse def: connectors(): Boolean = 
+  UML!CollaborationUse.allInstances()->forAll(cu |
+    // We don't understand ocl expression IteratorExp
+; 
+
+helper context UML!CombinedFragment def: break(): Boolean = 
+  UML!CombinedFragment.allInstances()->forAll(cf |
+    cf.interactionOperator = // We don't understand ocl expression EnumLiteralExp
+     implies // We don't understand ocl expression IteratorExp
+    ->asSet()
+     = cf.covered->asSet()
+; 
+
+helper context UML!CombinedFragment def: consider_and_ignore(): Boolean = 
+  UML!CombinedFragment.allInstances()->forAll(cf |
+    cf.interactionOperator = // We don't understand ocl expression EnumLiteralExp
+     or cf.interactionOperator = // We don't understand ocl expression EnumLiteralExp
+     implies cf.oclIsKindOf(// We don't understand ocl expression TypeExp
+    )
+; 
+
+helper context UML!CombinedFragment def: opt_loop_break_neg(): Boolean = 
+  UML!CombinedFragment.allInstances()->forAll(cf |
+    cf.interactionOperator = // We don't understand ocl expression EnumLiteralExp
+     or cf.interactionOperator = // We don't understand ocl expression EnumLiteralExp
+     or cf.interactionOperator = // We don't understand ocl expression EnumLiteralExp
+     or cf.interactionOperator = // We don't understand ocl expression EnumLiteralExp
+     or cf.interactionOperator = // We don't understand ocl expression EnumLiteralExp
+     implies cf.operand->size()
+     = 1
+; 
+
+helper context UML!CommunicationPath def: association_ends(): Boolean = 
+  UML!CommunicationPath.allInstances()->forAll(cp |
+    // We don't understand ocl expression IteratorExp
+; 
+
+helper context UML!Component def: no_nested_classifiers(): Boolean = 
+  UML!Component.allInstances()->forAll(c |
+    c.nestedClassifier->isEmpty()
+; 
+
+helper context UML!Component def: no_packaged_elements(): Boolean = 
+  UML!Component.allInstances()->forAll(c |
+    // We don't understand ocl expression OppositePropertyCallExp
+     <> null
+     implies c.packagedElement->isEmpty()
+; 
+
+helper context UML!ConditionalNode def: result_no_incoming(): Boolean = 
+  UML!ConditionalNode.allInstances()->forAll(cn |
+    // We don't understand ocl expression IteratorExp
+    ->isEmpty()
+; 
+
+helper context UML!ConditionalNode def: no_input_pins(): Boolean = 
+  UML!ConditionalNode.allInstances()->forAll(cn |
+    cn.input->isEmpty()
+; 
+
+helper context UML!ConditionalNode def: one_clause_with_executable_node(): Boolean = 
+  UML!ConditionalNode.allInstances()->forAll(cn |
+    // We don't understand ocl expression IteratorExp
+; 
+
+helper context UML!ConditionalNode def: matching_output_pins(): Boolean = 
+  UML!ConditionalNode.allInstances()->forAll(cn |
+    // We don't understand ocl expression IteratorExp
+; 
+
+helper context UML!ConditionalNode def: executable_nodes(): Boolean = 
+  UML!ConditionalNode.allInstances()->forAll(cn |
+    // We don't understand OperationCallExp 
+     = // We don't understand ocl expression IteratorExp
+; 
+
+helper context UML!ConditionalNode def: clause_no_predecessor(): Boolean = 
+  UML!ConditionalNode.allInstances()->forAll(cn |
+    // We don't understand ocl expression IteratorExp
+    ->intersection(cn.clause)
+    ->isEmpty()
+; 
+
+helper context UML!ConnectionPointReference def: exit_pseudostates(): Boolean = 
+  UML!ConnectionPointReference.allInstances()->forAll(cpr |
+    // We don't understand ocl expression IteratorExp
+; 
+
+helper context UML!ConnectionPointReference def: entry_pseudostates(): Boolean = 
+  UML!ConnectionPointReference.allInstances()->forAll(cpr |
+    // We don't understand ocl expression IteratorExp
+; 
+
+helper context UML!Connector def: types(): Boolean = 
+  UML!Connector.allInstances()->forAll(c |
+    c.type <> null
+     implies // We don't understand ocl expression LetExp
+; 
+
+helper context UML!Connector def: roles(): Boolean = 
+  UML!Connector.allInstances()->forAll(c |
+    // We don't understand ocl expression OppositePropertyCallExp
+     <> null
+     and // We don't understand ocl expression IteratorExp
+; 
+
+helper context UML!ConnectorEnd def: role_and_part_with_port(): Boolean = 
+  UML!ConnectorEnd.allInstances()->forAll(ce |
+    // We don't understand OperationCallExp oclAsSet
+    ->notEmpty()
+     implies ce.role.oclIsKindOf(// We don't understand ocl expression TypeExp
+    )
+     and ce.partWithPort.type.oclAsType(// We don't understand ocl expression TypeExp
+    )
+    .member->includes(ce.role)
+; 
+
+helper context UML!ConnectorEnd def: part_with_port_empty(): Boolean = 
+  UML!ConnectorEnd.allInstances()->forAll(ce |
+    ce.role.oclIsKindOf(// We don't understand ocl expression TypeExp
+    )
+     and ce.role.owner = // We don't understand ocl expression OppositePropertyCallExp
+    .owner
+     implies // We don't understand OperationCallExp oclAsSet
+    ->isEmpty()
+; 
+
+helper context UML!ConnectorEnd def: multiplicity(): Boolean = 
+  UML!ConnectorEnd.allInstances()->forAll(ce |
+    // We don't understand OperationCallExp compatibleWith
+; 
+
+helper context UML!ConnectorEnd def: self_part_with_port(): Boolean = 
+  UML!ConnectorEnd.allInstances()->forAll(ce |
+    // We don't understand OperationCallExp oclAsSet
+    ->notEmpty()
+     implies not(ce.partWithPort.oclIsKindOf(// We don't understand ocl expression TypeExp
+    )
+    )
+; 
+
+helper context UML!ConsiderIgnoreFragment def: consider_or_ignore(): Boolean = 
+  UML!ConsiderIgnoreFragment.allInstances()->forAll(cif |
+    cif.interactionOperator = // We don't understand ocl expression EnumLiteralExp
+     or cif.interactionOperator = // We don't understand ocl expression EnumLiteralExp
+; 
+
+helper context UML!ConsiderIgnoreFragment def: type(): Boolean = 
+  UML!ConsiderIgnoreFragment.allInstances()->forAll(cif |
+    // We don't understand ocl expression IteratorExp
+; 
+
+helper context UML!Constraint def: boolean_value(): Boolean = 
+  UML!Constraint.allInstances()->forAll(c |
+    null
+; 
+
+helper context UML!Constraint def: no_side_effects(): Boolean = 
+  UML!Constraint.allInstances()->forAll(c |
+    null
+; 
+
+helper context UML!Constraint def: not_apply_to_self(): Boolean = 
+  UML!Constraint.allInstances()->forAll(c |
+    not(c.constrainedElement->includes(c)
+    )
+; 
+
+helper context UML!Continuation def: first_or_last_interaction_fragment(): Boolean = 
+  UML!Continuation.allInstances()->forAll(c |
+    // We don't understand OperationCallExp oclAsSet
+    ->notEmpty()
+     and // We don't understand ocl expression LetExp
+; 
+
+helper context UML!Continuation def: same_name(): Boolean = 
+  UML!Continuation.allInstances()->forAll(c |
+    // We don't understand OperationCallExp oclAsSet
+    ->notEmpty()
+     and // We don't understand ocl expression LetExp
+; 
+
+helper context UML!Continuation def: global(): Boolean = 
+  UML!Continuation.allInstances()->forAll(c |
+    // We don't understand OperationCallExp oclAsSet
+    ->notEmpty()
+     and // We don't understand ocl expression LetExp
+; 
+
+helper context UML!ControlFlow def: object_nodes(): Boolean = 
+  UML!ControlFlow.allInstances()->forAll(cf |
+    cf.source.oclIsKindOf(// We don't understand ocl expression TypeExp
+    )
+     implies cf.source.oclAsType(// We don't understand ocl expression TypeExp
+    )
+    .isControlType
+     and cf.target.oclIsKindOf(// We don't understand ocl expression TypeExp
+    )
+     implies cf.target.oclAsType(// We don't understand ocl expression TypeExp
+    )
+    .isControlType
+; 
+
+helper context UML!CreateLinkAction def: association_not_abstract(): Boolean = 
+  UML!CreateLinkAction.allInstances()->forAll(cla |
+    not(// We don't understand OperationCallExp association
+    .isAbstract)
+; 
+
+helper context UML!CreateLinkObjectAction def: multiplicity(): Boolean = 
+  UML!CreateLinkObjectAction.allInstances()->forAll(cloa |
+    // We don't understand OperationCallExp is
+; 
+
+helper context UML!CreateLinkObjectAction def: type_of_result(): Boolean = 
+  UML!CreateLinkObjectAction.allInstances()->forAll(cloa |
+    cloa.result.type = // We don't understand OperationCallExp association
+; 
+
+helper context UML!CreateLinkObjectAction def: association_class(): Boolean = 
+  UML!CreateLinkObjectAction.allInstances()->forAll(cloa |
+    // We don't understand OperationCallExp association
+    .oclIsKindOf(// We don't understand ocl expression TypeExp
+    )
+; 
+
+helper context UML!CreateObjectAction def: classifier_not_abstract(): Boolean = 
+  UML!CreateObjectAction.allInstances()->forAll(coa |
+    not(coa.classifier.isAbstract)
+; 
+
+helper context UML!CreateObjectAction def: multiplicity(): Boolean = 
+  UML!CreateObjectAction.allInstances()->forAll(coa |
+    // We don't understand OperationCallExp is
+; 
+
+helper context UML!CreateObjectAction def: classifier_not_association_class(): Boolean = 
+  UML!CreateObjectAction.allInstances()->forAll(coa |
+    not(coa.classifier.oclIsKindOf(// We don't understand ocl expression TypeExp
+    )
+    )
+; 
+
+helper context UML!CreateObjectAction def: same_type(): Boolean = 
+  UML!CreateObjectAction.allInstances()->forAll(coa |
+    coa.result.type = coa.classifier
+; 
+
+helper context UML!DecisionNode def: zero_input_parameters(): Boolean = 
+  UML!DecisionNode.allInstances()->forAll(dn |
+    dn.decisionInput <> null
+     and dn.decisionInputFlow = null
+     and // We don't understand ocl expression IteratorExp
+     implies // We don't understand OperationCallExp inputParameters
+    ->isEmpty()
+; 
+
+helper context UML!DecisionNode def: edges(): Boolean = 
+  UML!DecisionNode.allInstances()->forAll(dn |
+    // We don't understand ocl expression LetExp
+; 
+
+helper context UML!DecisionNode def: decision_input_flow_incoming(): Boolean = 
+  UML!DecisionNode.allInstances()->forAll(dn |
+    dn.incoming->includes(dn.decisionInputFlow)
+; 
+
+helper context UML!DecisionNode def: two_input_parameters(): Boolean = 
+  UML!DecisionNode.allInstances()->forAll(dn |
+    dn.decisionInput <> null
+     and dn.decisionInputFlow <> null
+     and // We don't understand ocl expression IteratorExp
+     implies // We don't understand OperationCallExp inputParameters
+    ->size()
+     = 2
+; 
+
+helper context UML!DecisionNode def: incoming_outgoing_edges(): Boolean = 
+  UML!DecisionNode.allInstances()->forAll(dn |
+    dn.incoming->size()
+     = 1
+     or dn.incoming->size()
+     = 2
+     and // We don't understand OperationCallExp >
+; 
+
+helper context UML!DecisionNode def: incoming_control_one_input_parameter(): Boolean = 
+  UML!DecisionNode.allInstances()->forAll(dn |
+    dn.decisionInput <> null
+     and dn.decisionInputFlow <> null
+     and // We don't understand ocl expression IteratorExp
+     implies // We don't understand OperationCallExp inputParameters
+    ->size()
+     = 1
+; 
+
+helper context UML!DecisionNode def: parameters(): Boolean = 
+  UML!DecisionNode.allInstances()->forAll(dn |
+    dn.decisionInput <> null
+     implies // We don't understand ocl expression IteratorExp
+     and // We don't understand ocl expression IteratorExp
+; 
+
+helper context UML!DecisionNode def: incoming_object_one_input_parameter(): Boolean = 
+  UML!DecisionNode.allInstances()->forAll(dn |
+    dn.decisionInput <> null
+     and dn.decisionInputFlow = null
+     and // We don't understand ocl expression IteratorExp
+     implies // We don't understand OperationCallExp inputParameters
+    ->size()
+     = 1
+; 
+
+helper context UML!DeploymentSpecification def: deployment_target(): Boolean = 
+  UML!DeploymentSpecification.allInstances()->forAll(ds |
+    // We don't understand ocl expression IteratorExp
+; 
+
+helper context UML!DeploymentSpecification def: deployed_elements(): Boolean = 
+  UML!DeploymentSpecification.allInstances()->forAll(ds |
+    // We don't understand ocl expression IteratorExp
+; 
+
+helper context UML!DestroyObjectAction def: multiplicity(): Boolean = 
+  UML!DestroyObjectAction.allInstances()->forAll(doa |
+    // We don't understand OperationCallExp is
+; 
+
+helper context UML!DestroyObjectAction def: no_type(): Boolean = 
+  UML!DestroyObjectAction.allInstances()->forAll(doa |
+    doa.target.type = null
+; 
+
+helper context UML!DestructionOccurrenceSpecification def: no_occurrence_specifications_below(): Boolean = 
+  UML!DestructionOccurrenceSpecification.allInstances()->forAll(dos |
+    // We don't understand ocl expression LetExp
+; 
+
+helper context UML!Duration def: no_expr_requires_observation(): Boolean = 
+  UML!Duration.allInstances()->forAll(d |
+    d.expr = null
+     implies d.observation->size()
+     = 1
+     and // We don't understand ocl expression IteratorExp
+; 
+
+helper context UML!DurationConstraint def: first_event_multiplicity(): Boolean = 
+  UML!DurationConstraint.allInstances()->forAll(dc |
+    // We don't understand ocl expression IfExp
+; 
+
+helper context UML!DurationConstraint def: has_one_or_two_constrainedElements(): Boolean = 
+  UML!DurationConstraint.allInstances()->forAll(dc |
+    dc.constrainedElement->size()
+     = 1
+     or dc.constrainedElement->size()
+     = 2
+; 
+
+helper context UML!DurationObservation def: first_event_multiplicity(): Boolean = 
+  UML!DurationObservation.allInstances()->forAll(do |
+    // We don't understand ocl expression IfExp
+; 
+
+helper context UML!Element def: has_owner(): Boolean = 
+  UML!Element.allInstances()->forAll(e |
+    // We don't understand OperationCallExp mustBeOwned
+     implies // We don't understand OperationCallExp oclAsSet
+    ->notEmpty()
+; 
+
+helper context UML!Element def: not_own_self(): Boolean = 
+  UML!Element.allInstances()->forAll(e |
+    not(// We don't understand OperationCallExp allOwnedElements
+    ->includes(e)
+    )
+; 
+
+helper context UML!ElementImport def: imported_element_is_public(): Boolean = 
+  UML!ElementImport.allInstances()->forAll(ei |
+    ei.importedElement.visibility <> null
+     implies ei.importedElement.visibility = // We don't understand ocl expression EnumLiteralExp
+; 
+
+helper context UML!ElementImport def: visibility_public_or_private(): Boolean = 
+  UML!ElementImport.allInstances()->forAll(ei |
+    ei.visibility = // We don't understand ocl expression EnumLiteralExp
+     or ei.visibility = // We don't understand ocl expression EnumLiteralExp
+; 
+
+helper context UML!Enumeration def: immutable(): Boolean = 
+  UML!Enumeration.allInstances()->forAll(e |
+    // We don't understand ocl expression IteratorExp
+; 
+
+helper context UML!ExceptionHandler def: handler_body_edges(): Boolean = 
+  UML!ExceptionHandler.allInstances()->forAll(eh |
+    eh.handlerBody.incoming->isEmpty()
+     and eh.handlerBody.outgoing->isEmpty()
+     and eh.exceptionInput.incoming->isEmpty()
+; 
+
+helper context UML!ExceptionHandler def: output_pins(): Boolean = 
+  UML!ExceptionHandler.allInstances()->forAll(eh |
+    eh.protectedNode.oclIsKindOf(// We don't understand ocl expression TypeExp
+    )
+     and eh.protectedNode.oclAsType(// We don't understand ocl expression TypeExp
+    )
+    .output->notEmpty()
+     implies eh.handlerBody.oclIsKindOf(// We don't understand ocl expression TypeExp
+    )
+     and // We don't understand ocl expression LetExp
+; 
+
+helper context UML!ExceptionHandler def: one_input(): Boolean = 
+  UML!ExceptionHandler.allInstances()->forAll(eh |
+    eh.handlerBody.oclIsKindOf(// We don't understand ocl expression TypeExp
+    )
+     and // We don't understand ocl expression LetExp
+; 
+
+helper context UML!ExceptionHandler def: edge_source_target(): Boolean = 
+  UML!ExceptionHandler.allInstances()->forAll(eh |
+    // We don't understand ocl expression LetExp
+; 
+
+helper context UML!ExceptionHandler def: handler_body_owner(): Boolean = 
+  UML!ExceptionHandler.allInstances()->forAll(eh |
+    eh.handlerBody.owner = eh.protectedNode.owner
+; 
+
+helper context UML!ExceptionHandler def: exception_input_type(): Boolean = 
+  UML!ExceptionHandler.allInstances()->forAll(eh |
+    eh.exceptionInput.type = null
+     or // We don't understand ocl expression IteratorExp
+; 
+
+helper context UML!ExecutionSpecification def: same_lifeline(): Boolean = 
+  UML!ExecutionSpecification.allInstances()->forAll(es |
+    es.start.covered = es.finish.covered
+; 
+
+helper context UML!ExpansionNode def: region_as_input_or_output(): Boolean = 
+  UML!ExpansionNode.allInstances()->forAll(en |
+    // We don't understand OperationCallExp oclAsSet
+    ->notEmpty()
+    ->xor()
+; 
+
+helper context UML!Extend def: extension_points(): Boolean = 
+  UML!Extend.allInstances()->forAll(e |
+    // We don't understand ocl expression IteratorExp
+; 
+
+helper context UML!Extension def: non_owned_end(): Boolean = 
+  UML!Extension.allInstances()->forAll(e |
+    // We don't understand OperationCallExp oclAsSet
+    ->notEmpty()
+     and // We don't understand OperationCallExp metaclassEnd
+    .type.oclIsKindOf(// We don't understand ocl expression TypeExp
+    )
+; 
+
+helper context UML!Extension def: is_binary(): Boolean = 
+  UML!Extension.allInstances()->forAll(e |
+    e.memberEnd->size()
+     = 2
+; 
+
+helper context UML!ExtensionEnd def: multiplicity(): Boolean = 
+  UML!ExtensionEnd.allInstances()->forAll(ee |
+    // We don't understand OperationCallExp lowerBound
+     = 0
+     or // We don't understand OperationCallExp lowerBound
+     = 1
+     and // We don't understand OperationCallExp upperBound
+     = 1
+; 
+
+helper context UML!ExtensionEnd def: aggregation(): Boolean = 
+  UML!ExtensionEnd.allInstances()->forAll(ee |
+    ee.aggregation = // We don't understand ocl expression EnumLiteralExp
+; 
+
+helper context UML!ExtensionPoint def: must_have_name(): Boolean = 
+  UML!ExtensionPoint.allInstances()->forAll(ep |
+    // We don't understand OperationCallExp oclAsSet
+    ->notEmpty()
+; 
+
+helper context UML!FinalNode def: no_outgoing_edges(): Boolean = 
+  UML!FinalNode.allInstances()->forAll(fn |
+    fn.outgoing->isEmpty()
+; 
+
+helper context UML!FinalState def: no_exit_behavior(): Boolean = 
+  UML!FinalState.allInstances()->forAll(fs |
+    // We don't understand OperationCallExp oclAsSet
+    ->isEmpty()
+; 
+
+helper context UML!FinalState def: no_outgoing_transitions(): Boolean = 
+  UML!FinalState.allInstances()->forAll(fs |
+    fs.outgoing->size()
+     = 0
+; 
+
+helper context UML!FinalState def: no_regions(): Boolean = 
+  UML!FinalState.allInstances()->forAll(fs |
+    fs.region->size()
+     = 0
+; 
+
+helper context UML!FinalState def: cannot_reference_submachine(): Boolean = 
+  UML!FinalState.allInstances()->forAll(fs |
+    // We don't understand OperationCallExp oclAsSet
+    ->isEmpty()
+; 
+
+helper context UML!FinalState def: no_entry_behavior(): Boolean = 
+  UML!FinalState.allInstances()->forAll(fs |
+    // We don't understand OperationCallExp oclAsSet
+    ->isEmpty()
+; 
+
+helper context UML!FinalState def: no_state_behavior(): Boolean = 
+  UML!FinalState.allInstances()->forAll(fs |
+    // We don't understand OperationCallExp oclAsSet
+    ->isEmpty()
+; 
+
+helper context UML!ForkNode def: edges(): Boolean = 
+  UML!ForkNode.allInstances()->forAll(fn |
+    // We don't understand ocl expression LetExp
+; 
+
+helper context UML!ForkNode def: one_incoming_edge(): Boolean = 
+  UML!ForkNode.allInstances()->forAll(fn |
+    fn.incoming->size()
+     = 1
+; 
+
+helper context UML!FunctionBehavior def: one_output_parameter(): Boolean = 
+  UML!FunctionBehavior.allInstances()->forAll(fb |
+    // We don't understand OperationCallExp >=
+; 
+
+helper context UML!FunctionBehavior def: types_of_parameters(): Boolean = 
+  UML!FunctionBehavior.allInstances()->forAll(fb |
+    // We don't understand ocl expression IteratorExp
+; 
+
+helper context UML!Gate def: actual_gate_matched(): Boolean = 
+  UML!Gate.allInstances()->forAll(g |
+    // We don't understand OperationCallExp oclAsSet
+    ->notEmpty()
+     implies // We don't understand ocl expression IteratorExp
+    ->size()
+     = 1
+; 
+
+helper context UML!Gate def: inside_cf_matched(): Boolean = 
+  UML!Gate.allInstances()->forAll(g |
+    // We don't understand OperationCallExp isInsideCF
+     implies // We don't understand ocl expression IteratorExp
+    ->size()
+     = 1
+; 
+
+helper context UML!Gate def: outside_cf_matched(): Boolean = 
+  UML!Gate.allInstances()->forAll(g |
+    // We don't understand OperationCallExp isOutsideCF
+     implies // We don't understand ocl expression IfExp
+; 
+
+helper context UML!Gate def: formal_gate_distinguishable(): Boolean = 
+  UML!Gate.allInstances()->forAll(g |
+    // We don't understand OperationCallExp isFormal
+     implies // We don't understand ocl expression IteratorExp
+    ->size()
+     = 1
+; 
+
+helper context UML!Gate def: actual_gate_distinguishable(): Boolean = 
+  UML!Gate.allInstances()->forAll(g |
+    // We don't understand OperationCallExp isActual
+     implies // We don't understand ocl expression IteratorExp
+    ->size()
+     = 1
+; 
+
+helper context UML!Gate def: outside_cf_gate_distinguishable(): Boolean = 
+  UML!Gate.allInstances()->forAll(g |
+    // We don't understand OperationCallExp isOutsideCF
+     implies // We don't understand ocl expression IteratorExp
+    ->size()
+     = 1
+; 
+
+helper context UML!Gate def: inside_cf_gate_distinguishable(): Boolean = 
+  UML!Gate.allInstances()->forAll(g |
+    // We don't understand OperationCallExp isInsideCF
+     implies // We don't understand ocl expression LetExp
+; 
+
+helper context UML!GeneralOrdering def: irreflexive_transitive_closure(): Boolean = 
+  UML!GeneralOrdering.allInstances()->forAll(go |
+    // We don't understand ocl expression IteratorExp
+    ->excludes(go.before)
+; 
+
+helper context UML!GeneralizationSet def: generalization_same_classifier(): Boolean = 
+  UML!GeneralizationSet.allInstances()->forAll(gs |
+    // We don't understand OperationCallExp <=
+; 
+
+helper context UML!GeneralizationSet def: maps_to_generalization_set(): Boolean = 
+  UML!GeneralizationSet.allInstances()->forAll(gs |
+    gs.powertype <> null
+     implies // We don't understand ocl expression IteratorExp
+; 
+
+helper context UML!InformationFlow def: must_conform(): Boolean = 
+  UML!InformationFlow.allInstances()->forAll(if |
+    null
+; 
+
+helper context UML!InformationFlow def: sources_and_targets_kind(): Boolean = 
+  UML!InformationFlow.allInstances()->forAll(if |
+    // We don't understand ocl expression IteratorExp
+     and // We don't understand ocl expression IteratorExp
+; 
+
+helper context UML!InformationFlow def: convey_classifiers(): Boolean = 
+  UML!InformationFlow.allInstances()->forAll(if |
+    // We don't understand ocl expression IteratorExp
+; 
+
+helper context UML!InformationItem def: sources_and_targets(): Boolean = 
+  UML!InformationItem.allInstances()->forAll(ii |
+    // We don't understand ocl expression IteratorExp
+     and // We don't understand ocl expression IteratorExp
+; 
+
+helper context UML!InformationItem def: has_no(): Boolean = 
+  UML!InformationItem.allInstances()->forAll(ii |
+    ii.generalization->isEmpty()
+     and ii.feature->isEmpty()
+; 
+
+helper context UML!InformationItem def: not_instantiable(): Boolean = 
+  UML!InformationItem.allInstances()->forAll(ii |
+    ii.isAbstract
+; 
+
+helper context UML!InitialNode def: no_incoming_edges(): Boolean = 
+  UML!InitialNode.allInstances()->forAll(in |
+    in.incoming->isEmpty()
+; 
+
+helper context UML!InitialNode def: control_edges(): Boolean = 
+  UML!InitialNode.allInstances()->forAll(in |
+    // We don't understand ocl expression IteratorExp
+; 
+
+helper context UML!InputPin def: outgoing_edges_structured_only(): Boolean = 
+  UML!InputPin.allInstances()->forAll(ip |
+    ip.outgoing->notEmpty()
+     implies // We don't understand ocl expression OppositePropertyCallExp
+     <> null
+     and // We don't understand ocl expression OppositePropertyCallExp
+    .oclIsKindOf(// We don't understand ocl expression TypeExp
+    )
+     and // We don't understand OperationCallExp allOwnedNodes
+    ->includesAll(// We don't understand ocl expression IteratorExp
+    )
+; 
+
+helper context UML!InstanceSpecification def: deployment_artifact(): Boolean = 
+  UML!InstanceSpecification.allInstances()->forAll(is |
+    // We don't understand ocl expression OppositePropertyCallExp
+    ->notEmpty()
+     implies // We don't understand ocl expression IteratorExp
+; 
+
+helper context UML!InstanceSpecification def: structural_feature(): Boolean = 
+  UML!InstanceSpecification.allInstances()->forAll(is |
+    // We don't understand ocl expression IteratorExp
+; 
+
+helper context UML!InstanceSpecification def: defining_feature(): Boolean = 
+  UML!InstanceSpecification.allInstances()->forAll(is |
+    // We don't understand ocl expression IteratorExp
+; 
+
+helper context UML!InstanceSpecification def: deployment_target(): Boolean = 
+  UML!InstanceSpecification.allInstances()->forAll(is |
+    is.deployment->notEmpty()
+     implies // We don't understand ocl expression IteratorExp
+; 
+
+helper context UML!Interaction def: not_contained(): Boolean = 
+  UML!Interaction.allInstances()->forAll(i |
+    // We don't understand OperationCallExp oclAsSet
+    ->isEmpty()
+; 
+
+helper context UML!InteractionConstraint def: minint_maxint(): Boolean = 
+  UML!InteractionConstraint.allInstances()->forAll(ic |
+    // We don't understand OperationCallExp oclAsSet
+    ->notEmpty()
+     or // We don't understand OperationCallExp oclAsSet
+    ->notEmpty()
+     implies // We don't understand ocl expression OppositePropertyCallExp
+    .interactionOperator = // We don't understand ocl expression EnumLiteralExp
+; 
+
+helper context UML!InteractionConstraint def: minint_non_negative(): Boolean = 
+  UML!InteractionConstraint.allInstances()->forAll(ic |
+    // We don't understand OperationCallExp oclAsSet
+    ->notEmpty()
+     implies // We don't understand OperationCallExp >=
+; 
+
+helper context UML!InteractionConstraint def: maxint_positive(): Boolean = 
+  UML!InteractionConstraint.allInstances()->forAll(ic |
+    // We don't understand OperationCallExp oclAsSet
+    ->notEmpty()
+     implies // We don't understand OperationCallExp >
+; 
+
+helper context UML!InteractionConstraint def: dynamic_variables(): Boolean = 
+  UML!InteractionConstraint.allInstances()->forAll(ic |
+    null
+; 
+
+helper context UML!InteractionConstraint def: global_data(): Boolean = 
+  UML!InteractionConstraint.allInstances()->forAll(ic |
+    null
+; 
+
+helper context UML!InteractionConstraint def: maxint_greater_equal_minint(): Boolean = 
+  UML!InteractionConstraint.allInstances()->forAll(ic |
+    // We don't understand OperationCallExp oclAsSet
+    ->notEmpty()
+     implies // We don't understand OperationCallExp oclAsSet
+    ->notEmpty()
+     and // We don't understand OperationCallExp >=
+; 
+
+helper context UML!InteractionOperand def: guard_contain_references(): Boolean = 
+  UML!InteractionOperand.allInstances()->forAll(io |
+    null
+; 
+
+helper context UML!InteractionOperand def: guard_directly_prior(): Boolean = 
+  UML!InteractionOperand.allInstances()->forAll(io |
+    null
+; 
+
+helper context UML!InteractionUse def: gates_match(): Boolean = 
+  UML!InteractionUse.allInstances()->forAll(iu |
+    iu.actualGate->notEmpty()
+     implies // We don't understand ocl expression IteratorExp
+     and // We don't understand ocl expression IteratorExp
+; 
+
+helper context UML!InteractionUse def: arguments_are_constants(): Boolean = 
+  UML!InteractionUse.allInstances()->forAll(iu |
+    null
+; 
+
+helper context UML!InteractionUse def: returnValueRecipient_coverage(): Boolean = 
+  UML!InteractionUse.allInstances()->forAll(iu |
+    // We don't understand OperationCallExp oclAsSet
+    ->asSet()
+    ->notEmpty()
+     implies // We don't understand ocl expression LetExp
+; 
+
+helper context UML!InteractionUse def: arguments_correspond_to_parameters(): Boolean = 
+  UML!InteractionUse.allInstances()->forAll(iu |
+    null
+; 
+
+helper context UML!InteractionUse def: returnValue_type_recipient_correspondence(): Boolean = 
+  UML!InteractionUse.allInstances()->forAll(iu |
+    // We don't understand OperationCallExp oclAsSet
+    ->asSequence()
+    ->notEmpty()
+     implies // We don't understand OperationCallExp oclAsSet
+    ->asSequence()
+    ->first()
+     = // We don't understand OperationCallExp oclAsSet
+    ->asSequence()
+    ->first()
+; 
+
+helper context UML!InteractionUse def: all_lifelines(): Boolean = 
+  UML!InteractionUse.allInstances()->forAll(iu |
+    // We don't understand ocl expression LetExp
+; 
+
+helper context UML!Interface def: visibility(): Boolean = 
+  UML!Interface.allInstances()->forAll(i |
+    // We don't understand ocl expression IteratorExp
+; 
+
+helper context UML!InterruptibleActivityRegion def: interrupting_edges(): Boolean = 
+  UML!InterruptibleActivityRegion.allInstances()->forAll(iar |
+    // We don't understand ocl expression IteratorExp
+; 
+
+helper context UML!JoinNode def: one_outgoing_edge(): Boolean = 
+  UML!JoinNode.allInstances()->forAll(jn |
+    jn.outgoing->size()
+     = 1
+; 
+
+helper context UML!JoinNode def: incoming_object_flow(): Boolean = 
+  UML!JoinNode.allInstances()->forAll(jn |
+    // We don't understand ocl expression IfExp
+; 
+
+helper context UML!Lifeline def: selector_specified(): Boolean = 
+  UML!Lifeline.allInstances()->forAll(l |
+    // We don't understand OperationCallExp oclAsSet
+    ->notEmpty()
+     = l.represents.oclIsKindOf(// We don't understand ocl expression TypeExp
+    )
+     and // We don't understand OperationCallExp isMultivalued
+; 
+
+helper context UML!Lifeline def: interaction_uses_share_lifeline(): Boolean = 
+  UML!Lifeline.allInstances()->forAll(l |
+    // We don't understand ocl expression LetExp
+; 
+
+helper context UML!Lifeline def: same_classifier(): Boolean = 
+  UML!Lifeline.allInstances()->forAll(l |
+    // We don't understand ocl expression IteratorExp
+    ->includes(l.interaction.context)
+; 
+
+helper context UML!Lifeline def: selector_int_or_string(): Boolean = 
+  UML!Lifeline.allInstances()->forAll(l |
+    // We don't understand OperationCallExp oclAsSet
+    ->notEmpty()
+     implies l.selector.oclIsKindOf(// We don't understand ocl expression TypeExp
+    )
+     or l.selector.oclIsKindOf(// We don't understand ocl expression TypeExp
+    )
+; 
+
+helper context UML!LinkAction def: same_pins(): Boolean = 
+  UML!LinkAction.allInstances()->forAll(la |
+    la.inputValue->asBag()
+     = // We don't understand ocl expression IteratorExp
+; 
+
+helper context UML!LinkAction def: same_association(): Boolean = 
+  UML!LinkAction.allInstances()->forAll(la |
+    // We don't understand ocl expression IteratorExp
+     = // We don't understand OperationCallExp association
+    .memberEnd->asBag()
+; 
+
+helper context UML!LinkAction def: not_static(): Boolean = 
+  UML!LinkAction.allInstances()->forAll(la |
+    // We don't understand ocl expression IteratorExp
+; 
+
+helper context UML!LinkEndCreationData def: insertAt_pin(): Boolean = 
+  UML!LinkEndCreationData.allInstances()->forAll(lecd |
+    // We don't understand ocl expression IfExp
+; 
+
+helper context UML!LinkEndData def: same_type(): Boolean = 
+  UML!LinkEndData.allInstances()->forAll(led |
+    led.value <> null
+     implies // We don't understand OperationCallExp conformsTo
+; 
+
+helper context UML!LinkEndData def: multiplicity(): Boolean = 
+  UML!LinkEndData.allInstances()->forAll(led |
+    led.value <> null
+     implies // We don't understand OperationCallExp is
+; 
+
+helper context UML!LinkEndData def: end_object_input_pin(): Boolean = 
+  UML!LinkEndData.allInstances()->forAll(led |
+    // We don't understand OperationCallExp excludesAll
+; 
+
+helper context UML!LinkEndData def: property_is_association_end(): Boolean = 
+  UML!LinkEndData.allInstances()->forAll(led |
+    led.end.association <> null
+; 
+
+helper context UML!LinkEndData def: qualifiers(): Boolean = 
+  UML!LinkEndData.allInstances()->forAll(led |
+    led.end.qualifier->includesAll(// We don't understand ocl expression IteratorExp
+    )
+; 
+
+helper context UML!LinkEndDestructionData def: destroyAt_pin(): Boolean = 
+  UML!LinkEndDestructionData.allInstances()->forAll(ledd |
+    // We don't understand ocl expression IfExp
+; 
+
+helper context UML!LoopNode def: result_no_incoming(): Boolean = 
+  UML!LoopNode.allInstances()->forAll(ln |
+    // We don't understand ocl expression IteratorExp
+    ->isEmpty()
+; 
+
+helper context UML!LoopNode def: input_edges(): Boolean = 
+  UML!LoopNode.allInstances()->forAll(ln |
+    // We don't understand ocl expression IteratorExp
+    ->isEmpty()
+; 
+
+helper context UML!LoopNode def: executable_nodes(): Boolean = 
+  UML!LoopNode.allInstances()->forAll(ln |
+    // We don't understand OperationCallExp 
+     = // We don't understand ocl expression IteratorExp
+    ->asSet()
+; 
+
+helper context UML!LoopNode def: body_output_pins(): Boolean = 
+  UML!LoopNode.allInstances()->forAll(ln |
+    // We don't understand ocl expression IteratorExp
+    ->includesAll(ln.bodyOutput)
+; 
+
+helper context UML!LoopNode def: setup_test_and_body(): Boolean = 
+  UML!LoopNode.allInstances()->forAll(ln |
+    ln.setupPart->intersection(ln.test)
+    ->isEmpty()
+     and ln.setupPart->intersection(ln.bodyPart)
+    ->isEmpty()
+     and ln.test->intersection(ln.bodyPart)
+    ->isEmpty()
+; 
+
+helper context UML!LoopNode def: matching_output_pins(): Boolean = 
+  UML!LoopNode.allInstances()->forAll(ln |
+    ln.bodyOutput->size()
+     = ln.loopVariable->size()
+     and // We don't understand ocl expression IteratorExp
+; 
+
+helper context UML!LoopNode def: matching_loop_variables(): Boolean = 
+  UML!LoopNode.allInstances()->forAll(ln |
+    ln.loopVariableInput->size()
+     = ln.loopVariable->size()
+     and // We don't understand ocl expression IteratorExp
+     = // We don't understand ocl expression IteratorExp
+     and // We don't understand ocl expression IteratorExp
+     = // We don't understand ocl expression IteratorExp
+     and // We don't understand ocl expression IteratorExp
+     = // We don't understand ocl expression IteratorExp
+     and // We don't understand ocl expression IteratorExp
+     = // We don't understand ocl expression IteratorExp
+; 
+
+helper context UML!LoopNode def: matching_result_pins(): Boolean = 
+  UML!LoopNode.allInstances()->forAll(ln |
+    ln.result->size()
+     = ln.loopVariable->size()
+     and // We don't understand ocl expression IteratorExp
+     = // We don't understand ocl expression IteratorExp
+     and // We don't understand ocl expression IteratorExp
+     = // We don't understand ocl expression IteratorExp
+     and // We don't understand ocl expression IteratorExp
+     = // We don't understand ocl expression IteratorExp
+     and // We don't understand ocl expression IteratorExp
+     = // We don't understand ocl expression IteratorExp
+; 
+
+helper context UML!LoopNode def: loop_variable_outgoing(): Boolean = 
+  UML!LoopNode.allInstances()->forAll(ln |
+    // We don't understand OperationCallExp allOwnedNodes
+    ->includesAll(// We don't understand ocl expression IteratorExp
+    )
+; 
+
+helper context UML!MergeNode def: one_outgoing_edge(): Boolean = 
+  UML!MergeNode.allInstances()->forAll(mn |
+    mn.outgoing->size()
+     = 1
+; 
+
+helper context UML!MergeNode def: edges(): Boolean = 
+  UML!MergeNode.allInstances()->forAll(mn |
+    // We don't understand ocl expression LetExp
+; 
+
+helper context UML!Message def: sending_receiving_message_event(): Boolean = 
+  UML!Message.allInstances()->forAll(m |
+    m.receiveEvent.oclIsKindOf(// We don't understand ocl expression TypeExp
+    )
+     implies // We don't understand ocl expression LetExp
+; 
+
+helper context UML!Message def: arguments(): Boolean = 
+  UML!Message.allInstances()->forAll(m |
+    null
+; 
+
+helper context UML!Message def: cannot_cross_boundaries(): Boolean = 
+  UML!Message.allInstances()->forAll(m |
+    // We don't understand OperationCallExp oclAsSet
+    ->notEmpty()
+     and // We don't understand OperationCallExp oclAsSet
+    ->notEmpty()
+     implies // We don't understand ocl expression LetExp
+; 
+
+helper context UML!Message def: signature_is_signal(): Boolean = 
+  UML!Message.allInstances()->forAll(m |
+    m.messageSort = // We don't understand ocl expression EnumLiteralExp
+     and m.signature.oclIsKindOf(// We don't understand ocl expression TypeExp
+    )
+     implies // We don't understand ocl expression LetExp
+; 
+
+helper context UML!Message def: occurrence_specifications(): Boolean = 
+  UML!Message.allInstances()->forAll(m |
+    null
+; 
+
+helper context UML!Message def: signature_refer_to(): Boolean = 
+  UML!Message.allInstances()->forAll(m |
+    // We don't understand OperationCallExp oclAsSet
+    ->notEmpty()
+     implies m.signature.oclIsKindOf(// We don't understand ocl expression TypeExp
+    )
+     and m.messageSort = // We don't understand ocl expression EnumLiteralExp
+     or m.messageSort = // We don't understand ocl expression EnumLiteralExp
+     or m.messageSort = // We don't understand ocl expression EnumLiteralExp
+     or m.signature.oclIsKindOf(// We don't understand ocl expression TypeExp
+    )
+     and m.messageSort = // We don't understand ocl expression EnumLiteralExp
+     and m.name = m.signature.name
+; 
+
+helper context UML!Message def: signature_is_operation_request(): Boolean = 
+  UML!Message.allInstances()->forAll(m |
+    m.messageSort = // We don't understand ocl expression EnumLiteralExp
+     or m.messageSort = // We don't understand ocl expression EnumLiteralExp
+     and m.signature.oclIsKindOf(// We don't understand ocl expression TypeExp
+    )
+     implies // We don't understand ocl expression LetExp
+; 
+
+helper context UML!Message def: signature_is_operation_reply(): Boolean = 
+  UML!Message.allInstances()->forAll(m |
+    m.messageSort = // We don't understand ocl expression EnumLiteralExp
+     and m.signature.oclIsKindOf(// We don't understand ocl expression TypeExp
+    )
+     implies // We don't understand ocl expression LetExp
+; 
+
+helper context UML!MultiplicityElement def: upper_ge_lower(): Boolean = 
+  UML!MultiplicityElement.allInstances()->forAll(me |
+    // We don't understand OperationCallExp >=
+; 
+
+helper context UML!MultiplicityElement def: lower_ge_0(): Boolean = 
+  UML!MultiplicityElement.allInstances()->forAll(me |
+    // We don't understand OperationCallExp >=
+; 
+
+helper context UML!MultiplicityElement def: value_specification_no_side_effects(): Boolean = 
+  UML!MultiplicityElement.allInstances()->forAll(me |
+    null
+; 
+
+helper context UML!MultiplicityElement def: value_specification_constant(): Boolean = 
+  UML!MultiplicityElement.allInstances()->forAll(me |
+    null
+; 
+
+helper context UML!MultiplicityElement def: lower_is_integer(): Boolean = 
+  UML!MultiplicityElement.allInstances()->forAll(me |
+    me.lowerValue <> null
+     implies // We don't understand OperationCallExp integerValue
+     <> null
+; 
+
+helper context UML!MultiplicityElement def: upper_is_unlimitedNatural(): Boolean = 
+  UML!MultiplicityElement.allInstances()->forAll(me |
+    me.upperValue <> null
+     implies // We don't understand OperationCallExp unlimitedValue
+     <> null
+; 
+
+helper context UML!NamedElement def: visibility_needs_ownership(): Boolean = 
+  UML!NamedElement.allInstances()->forAll(ne |
+    ne.namespace = null
+     and ne.owner <> null
+     implies ne.visibility = null
+; 
+
+helper context UML!NamedElement def: has_qualified_name(): Boolean = 
+  UML!NamedElement.allInstances()->forAll(ne |
+    ne.name <> null
+     and // We don't understand ocl expression IteratorExp
+    ->isEmpty()
+     implies ne.qualifiedName = // We don't understand ocl expression IterateExp
+; 
+
+helper context UML!NamedElement def: has_no_qualified_name(): Boolean = 
+  UML!NamedElement.allInstances()->forAll(ne |
+    ne.name = null
+     or // We don't understand ocl expression IteratorExp
+    ->notEmpty()
+     implies ne.qualifiedName = null
+; 
+
+helper context UML!Namespace def: members_distinguishable(): Boolean = 
+  UML!Namespace.allInstances()->forAll(n |
+    // We don't understand OperationCallExp membersAreDistinguishable
+; 
+
+helper context UML!Namespace def: cannot_import_self(): Boolean = 
+  UML!Namespace.allInstances()->forAll(n |
+    // We don't understand ocl expression IteratorExp
+    ->excludes(n)
+; 
+
+helper context UML!Namespace def: cannot_import_ownedMembers(): Boolean = 
+  UML!Namespace.allInstances()->forAll(n |
+    // We don't understand OperationCallExp excludesAll
+; 
+
+helper context UML!Node def: internal_structure(): Boolean = 
+  UML!Node.allInstances()->forAll(n |
+    // We don't understand ocl expression IteratorExp
+; 
+
+helper context UML!ObjectFlow def: input_and_output_parameter(): Boolean = 
+  UML!ObjectFlow.allInstances()->forAll(of |
+    of.selection <> null
+     implies // We don't understand OperationCallExp inputParameters
+    ->size()
+     = 1
+     and // We don't understand ocl expression IteratorExp
+     and // We don't understand OperationCallExp outputParameters
+    ->size()
+     = 1
+; 
+
+helper context UML!ObjectFlow def: no_executable_nodes(): Boolean = 
+  UML!ObjectFlow.allInstances()->forAll(of |
+    not(of.source.oclIsKindOf(// We don't understand ocl expression TypeExp
+    )
+     or of.target.oclIsKindOf(// We don't understand ocl expression TypeExp
+    )
+    )
+; 
+
+helper context UML!ObjectFlow def: transformation_behavior(): Boolean = 
+  UML!ObjectFlow.allInstances()->forAll(of |
+    of.transformation <> null
+     implies // We don't understand OperationCallExp inputParameters
+    ->size()
+     = 1
+     and // We don't understand OperationCallExp outputParameters
+    ->size()
+     = 1
+; 
+
+helper context UML!ObjectFlow def: selection_behavior(): Boolean = 
+  UML!ObjectFlow.allInstances()->forAll(of |
+    of.selection <> null
+     implies of.source.oclIsKindOf(// We don't understand ocl expression TypeExp
+    )
+; 
+
+helper context UML!ObjectFlow def: compatible_types(): Boolean = 
+  UML!ObjectFlow.allInstances()->forAll(of |
+    null
+; 
+
+helper context UML!ObjectFlow def: same_upper_bounds(): Boolean = 
+  UML!ObjectFlow.allInstances()->forAll(of |
+    null
+; 
+
+helper context UML!ObjectFlow def: target(): Boolean = 
+  UML!ObjectFlow.allInstances()->forAll(of |
+    null
+; 
+
+helper context UML!ObjectFlow def: is_multicast_or_is_multireceive(): Boolean = 
+  UML!ObjectFlow.allInstances()->forAll(of |
+    not(of.isMulticast and of.isMultireceive
+    )
+; 
+
+helper context UML!ObjectNode def: input_output_parameter(): Boolean = 
+  UML!ObjectNode.allInstances()->forAll(on |
+    on.selection <> null
+     implies // We don't understand OperationCallExp inputParameters
+    ->size()
+     = 1
+     and // We don't understand ocl expression IteratorExp
+     and // We don't understand OperationCallExp outputParameters
+    ->size()
+     = 1
+     and // We don't understand ocl expression IteratorExp
+; 
+
+helper context UML!ObjectNode def: selection_behavior(): Boolean = 
+  UML!ObjectNode.allInstances()->forAll(on |
+    on.selection <> null
+     = on.ordering
+     = // We don't understand ocl expression EnumLiteralExp
+; 
+
+helper context UML!ObjectNode def: object_flow_edges(): Boolean = 
+  UML!ObjectNode.allInstances()->forAll(on |
+    not(on.isControlType)
+     implies // We don't understand ocl expression IteratorExp
+; 
+
+helper context UML!OpaqueAction def: language_body_size(): Boolean = 
+  UML!OpaqueAction.allInstances()->forAll(oa |
+    oa.language->notEmpty()
+     implies oa.body->size()
+     = oa.language->size()
+; 
+
+helper context UML!OpaqueExpression def: language_body_size(): Boolean = 
+  UML!OpaqueExpression.allInstances()->forAll(oe |
+    oe.language->notEmpty()
+     implies oe.body->size()
+     = oe.language->size()
+; 
+
+helper context UML!OpaqueExpression def: one_return_result_parameter(): Boolean = 
+  UML!OpaqueExpression.allInstances()->forAll(oe |
+    oe.behavior <> null
+     implies // We don't understand ocl expression IteratorExp
+    ->size()
+     = 1
+; 
+
+helper context UML!OpaqueExpression def: only_return_result_parameters(): Boolean = 
+  UML!OpaqueExpression.allInstances()->forAll(oe |
+    oe.behavior <> null
+     implies // We don't understand ocl expression IteratorExp
+    ->isEmpty()
+; 
+
+helper context UML!Operation def: at_most_one_return(): Boolean = 
+  UML!Operation.allInstances()->forAll(o |
+    // We don't understand OperationCallExp <=
+; 
+
+helper context UML!Operation def: only_body_for_query(): Boolean = 
+  UML!Operation.allInstances()->forAll(o |
+    o.bodyCondition <> null
+     implies o.isQuery
+; 
+
+helper context UML!OperationTemplateParameter def: match_default_signature(): Boolean = 
+  UML!OperationTemplateParameter.allInstances()->forAll(otp |
+    // We don't understand OperationCallExp oclAsSet
+    ->notEmpty()
+     implies otp.default.oclIsKindOf(// We don't understand ocl expression TypeExp
+    )
+     and // We don't understand ocl expression LetExp
+; 
+
+helper context UML!OutputPin def: incoming_edges_structured_only(): Boolean = 
+  UML!OutputPin.allInstances()->forAll(op |
+    op.incoming->notEmpty()
+     implies // We don't understand ocl expression OppositePropertyCallExp
+     <> null
+     and // We don't understand ocl expression OppositePropertyCallExp
+    .oclIsKindOf(// We don't understand ocl expression TypeExp
+    )
+     and // We don't understand OperationCallExp allOwnedNodes
+    ->includesAll(// We don't understand ocl expression IteratorExp
+    )
+; 
+
+helper context UML!Package def: elements_public_or_private(): Boolean = 
+  UML!Package.allInstances()->forAll(p |
+    // We don't understand ocl expression IteratorExp
+; 
+
+helper context UML!PackageImport def: public_or_private(): Boolean = 
+  UML!PackageImport.allInstances()->forAll(pi |
+    pi.visibility = // We don't understand ocl expression EnumLiteralExp
+     or pi.visibility = // We don't understand ocl expression EnumLiteralExp
+; 
+
+helper context UML!PackageableElement def: namespace_needs_visibility(): Boolean = 
+  UML!PackageableElement.allInstances()->forAll(pe |
+    pe.visibility = null
+     implies pe.namespace = null
+; 
+
+helper context UML!Parameter def: in_and_out(): Boolean = 
+  UML!Parameter.allInstances()->forAll(p |
+    p.effect = // We don't understand ocl expression EnumLiteralExp
+     implies p.direction = // We don't understand ocl expression EnumLiteralExp
+     or p.direction = // We don't understand ocl expression EnumLiteralExp
+     and p.effect = // We don't understand ocl expression EnumLiteralExp
+     implies p.direction = // We don't understand ocl expression EnumLiteralExp
+     or p.direction = // We don't understand ocl expression EnumLiteralExp
+     or p.direction = // We don't understand ocl expression EnumLiteralExp
+; 
+
+helper context UML!Parameter def: not_exception(): Boolean = 
+  UML!Parameter.allInstances()->forAll(p |
+    p.isException implies p.direction <> // We don't understand ocl expression EnumLiteralExp
+     and p.direction <> // We don't understand ocl expression EnumLiteralExp
+; 
+
+helper context UML!Parameter def: connector_end(): Boolean = 
+  UML!Parameter.allInstances()->forAll(p |
+    p.end->notEmpty()
+     implies // We don't understand ocl expression OppositePropertyCallExp
+    ->notEmpty()
+; 
+
+helper context UML!Parameter def: reentrant_behaviors(): Boolean = 
+  UML!Parameter.allInstances()->forAll(p |
+    p.isStream and // We don't understand ocl expression OppositePropertyCallExp
+     <> null
+     implies not(// We don't understand ocl expression OppositePropertyCallExp
+    .isReentrant)
+; 
+
+helper context UML!Parameter def: stream_and_exception(): Boolean = 
+  UML!Parameter.allInstances()->forAll(p |
+    not(p.isException and p.isStream
+    )
+; 
+
+helper context UML!Parameter def: object_effect(): Boolean = 
+  UML!Parameter.allInstances()->forAll(p |
+    p.type.oclIsKindOf(// We don't understand ocl expression TypeExp
+    )
+     implies p.effect = null
+; 
+
+helper context UML!ParameterSet def: same_parameterized_entity(): Boolean = 
+  UML!ParameterSet.allInstances()->forAll(ps |
+    // We don't understand ocl expression IteratorExp
+; 
+
+helper context UML!ParameterSet def: input(): Boolean = 
+  UML!ParameterSet.allInstances()->forAll(ps |
+    // We don't understand ocl expression IteratorExp
+     implies // We don't understand ocl expression IteratorExp
+     and // We don't understand ocl expression IteratorExp
+     implies // We don't understand ocl expression IteratorExp
+; 
+
+helper context UML!ParameterSet def: two_parameter_sets(): Boolean = 
+  UML!ParameterSet.allInstances()->forAll(ps |
+    // We don't understand ocl expression IteratorExp
+; 
+
+helper context UML!Pin def: control_pins(): Boolean = 
+  UML!Pin.allInstances()->forAll(p |
+    p.isControl implies p.isControlType
+; 
+
+helper context UML!Pin def: not_unique(): Boolean = 
+  UML!Pin.allInstances()->forAll(p |
+    not(p.isUnique)
+; 
+
+helper context UML!Port def: port_aggregation(): Boolean = 
+  UML!Port.allInstances()->forAll(p |
+    p.aggregation = // We don't understand ocl expression EnumLiteralExp
+; 
+
+helper context UML!Port def: default_value(): Boolean = 
+  UML!Port.allInstances()->forAll(p |
+    p.type.oclIsKindOf(// We don't understand ocl expression TypeExp
+    )
+     implies // We don't understand OperationCallExp oclAsSet
+    ->isEmpty()
+; 
+
+helper context UML!Port def: encapsulated_owner(): Boolean = 
+  UML!Port.allInstances()->forAll(p |
+    p.owner = // We don't understand ocl expression OppositePropertyCallExp
+; 
+
+helper context UML!Profile def: metaclass_reference_not_specialized(): Boolean = 
+  UML!Profile.allInstances()->forAll(p |
+    // We don't understand ocl expression IteratorExp
+    ->isEmpty()
+     and // We don't understand OperationCallExp 
+    ->isEmpty()
+; 
+
+helper context UML!Profile def: references_same_metamodel(): Boolean = 
+  UML!Profile.allInstances()->forAll(p |
+    // We don't understand OperationCallExp 
+    ->notEmpty()
+; 
+
+helper context UML!Property def: subsetting_context_conforms(): Boolean = 
+  UML!Property.allInstances()->forAll(p |
+    p.subsettedProperty->notEmpty()
+     implies // We don't understand OperationCallExp subsettingContext
+    ->notEmpty()
+     and // We don't understand ocl expression IteratorExp
+; 
+
+helper context UML!Property def: derived_union_is_read_only(): Boolean = 
+  UML!Property.allInstances()->forAll(p |
+    p.isDerivedUnion implies p.isReadOnly
+; 
+
+helper context UML!Property def: multiplicity_of_composite(): Boolean = 
+  UML!Property.allInstances()->forAll(p |
+    p.isComposite and p.association <> null
+     implies // We don't understand OperationCallExp <=
+; 
+
+helper context UML!Property def: redefined_property_inherited(): Boolean = 
+  UML!Property.allInstances()->forAll(p |
+    p.redefinedProperty->notEmpty()
+     implies p.redefinitionContext->notEmpty()
+     and // We don't understand ocl expression IteratorExp
+; 
+
+helper context UML!Property def: subsetting_rules(): Boolean = 
+  UML!Property.allInstances()->forAll(p |
+    // We don't understand ocl expression IteratorExp
+; 
+
+helper context UML!Property def: binding_to_attribute(): Boolean = 
+  UML!Property.allInstances()->forAll(p |
+    // We don't understand OperationCallExp isAttribute
+     and // We don't understand ocl expression OppositePropertyCallExp
+    ->notEmpty()
+     implies // We don't understand ocl expression IteratorExp
+; 
+
+helper context UML!Property def: derived_union_is_derived(): Boolean = 
+  UML!Property.allInstances()->forAll(p |
+    p.isDerivedUnion implies p.isDerived
+; 
+
+helper context UML!Property def: deployment_target(): Boolean = 
+  UML!Property.allInstances()->forAll(p |
+    p.deployment->notEmpty()
+     implies p.owner.oclIsKindOf(// We don't understand ocl expression TypeExp
+    )
+     and // We don't understand ocl expression IteratorExp
+; 
+
+helper context UML!Property def: subsetted_property_names(): Boolean = 
+  UML!Property.allInstances()->forAll(p |
+    // We don't understand ocl expression IteratorExp
+; 
+
+helper context UML!Property def: type_of_opposite_end(): Boolean = 
+  UML!Property.allInstances()->forAll(p |
+    // We don't understand OperationCallExp oclAsSet
+    ->notEmpty()
+     and // We don't understand OperationCallExp oclAsSet
+    ->isEmpty()
+     implies // We don't understand ocl expression OppositePropertyCallExp
+     = p.opposite.type
+; 
+
+helper context UML!Property def: qualified_is_association_end(): Boolean = 
+  UML!Property.allInstances()->forAll(p |
+    p.qualifier->notEmpty()
+     implies // We don't understand OperationCallExp oclAsSet
+    ->notEmpty()
+; 
+
+helper context UML!ProtocolStateMachine def: classifier_context(): Boolean = 
+  UML!ProtocolStateMachine.allInstances()->forAll(psm |
+    psm.context <> null
+     and psm.specification = null
+; 
+
+helper context UML!ProtocolStateMachine def: deep_or_shallow_history(): Boolean = 
+  UML!ProtocolStateMachine.allInstances()->forAll(psm |
+    // We don't understand ocl expression IteratorExp
+; 
+
+helper context UML!ProtocolStateMachine def: entry_exit_do(): Boolean = 
+  UML!ProtocolStateMachine.allInstances()->forAll(psm |
+    // We don't understand ocl expression IteratorExp
+; 
+
+helper context UML!ProtocolStateMachine def: protocol_transitions(): Boolean = 
+  UML!ProtocolStateMachine.allInstances()->forAll(psm |
+    // We don't understand ocl expression IteratorExp
+; 
+
+helper context UML!ProtocolTransition def: refers_to_operation(): Boolean = 
+  UML!ProtocolTransition.allInstances()->forAll(pt |
+    // We don't understand ocl expression IfExp
+; 
+
+helper context UML!ProtocolTransition def: associated_actions(): Boolean = 
+  UML!ProtocolTransition.allInstances()->forAll(pt |
+    pt.effect = null
+; 
+
+helper context UML!ProtocolTransition def: belongs_to_psm(): Boolean = 
+  UML!ProtocolTransition.allInstances()->forAll(pt |
+    // We don't understand OperationCallExp belongsToPSM
+; 
+
+helper context UML!Pseudostate def: transitions_outgoing(): Boolean = 
+  UML!Pseudostate.allInstances()->forAll(p |
+    p.kind = // We don't understand ocl expression EnumLiteralExp
+     implies // We don't understand ocl expression IteratorExp
+; 
+
+helper context UML!Pseudostate def: choice_vertex(): Boolean = 
+  UML!Pseudostate.allInstances()->forAll(p |
+    p.kind = // We don't understand ocl expression EnumLiteralExp
+     implies // We don't understand OperationCallExp >=
+     and // We don't understand OperationCallExp >=
+; 
+
+helper context UML!Pseudostate def: outgoing_from_initial(): Boolean = 
+  UML!Pseudostate.allInstances()->forAll(p |
+    p.kind = // We don't understand ocl expression EnumLiteralExp
+     implies // We don't understand ocl expression IteratorExp
+     = null
+     and // We don't understand ocl expression IteratorExp
+    ->isEmpty()
+; 
+
+helper context UML!Pseudostate def: join_vertex(): Boolean = 
+  UML!Pseudostate.allInstances()->forAll(p |
+    p.kind = // We don't understand ocl expression EnumLiteralExp
+     implies p.outgoing->size()
+     = 1
+     and // We don't understand OperationCallExp >=
+; 
+
+helper context UML!Pseudostate def: junction_vertex(): Boolean = 
+  UML!Pseudostate.allInstances()->forAll(p |
+    p.kind = // We don't understand ocl expression EnumLiteralExp
+     implies // We don't understand OperationCallExp >=
+     and // We don't understand OperationCallExp >=
+; 
+
+helper context UML!Pseudostate def: history_vertices(): Boolean = 
+  UML!Pseudostate.allInstances()->forAll(p |
+    p.kind = // We don't understand ocl expression EnumLiteralExp
+     or p.kind = // We don't understand ocl expression EnumLiteralExp
+     implies // We don't understand OperationCallExp <=
+; 
+
+helper context UML!Pseudostate def: initial_vertex(): Boolean = 
+  UML!Pseudostate.allInstances()->forAll(p |
+    p.kind = // We don't understand ocl expression EnumLiteralExp
+     implies // We don't understand OperationCallExp <=
+; 
+
+helper context UML!Pseudostate def: fork_vertex(): Boolean = 
+  UML!Pseudostate.allInstances()->forAll(p |
+    p.kind = // We don't understand ocl expression EnumLiteralExp
+     implies p.incoming->size()
+     = 1
+     and // We don't understand OperationCallExp >=
+; 
+
+helper context UML!Pseudostate def: transitions_incoming(): Boolean = 
+  UML!Pseudostate.allInstances()->forAll(p |
+    p.kind = // We don't understand ocl expression EnumLiteralExp
+     implies // We don't understand ocl expression IteratorExp
+; 
+
+helper context UML!QualifierValue def: multiplicity_of_qualifier(): Boolean = 
+  UML!QualifierValue.allInstances()->forAll(qv |
+    // We don't understand OperationCallExp is
+; 
+
+helper context UML!QualifierValue def: type_of_qualifier(): Boolean = 
+  UML!QualifierValue.allInstances()->forAll(qv |
+    // We don't understand OperationCallExp conformsTo
+; 
+
+helper context UML!QualifierValue def: qualifier_attribute(): Boolean = 
+  UML!QualifierValue.allInstances()->forAll(qv |
+    // We don't understand ocl expression OppositePropertyCallExp
+    .end.qualifier->includes(qv.qualifier)
+; 
+
+helper context UML!ReadExtentAction def: type_is_classifier(): Boolean = 
+  UML!ReadExtentAction.allInstances()->forAll(rea |
+    rea.result.type = rea.classifier
+; 
+
+helper context UML!ReadExtentAction def: multiplicity_of_result(): Boolean = 
+  UML!ReadExtentAction.allInstances()->forAll(rea |
+    // We don't understand OperationCallExp is
+; 
+
+helper context UML!ReadIsClassifiedObjectAction def: no_type(): Boolean = 
+  UML!ReadIsClassifiedObjectAction.allInstances()->forAll(ricoa |
+    ricoa.object.type = null
+; 
+
+helper context UML!ReadIsClassifiedObjectAction def: multiplicity_of_output(): Boolean = 
+  UML!ReadIsClassifiedObjectAction.allInstances()->forAll(ricoa |
+    // We don't understand OperationCallExp is
+; 
+
+helper context UML!ReadIsClassifiedObjectAction def: boolean_result(): Boolean = 
+  UML!ReadIsClassifiedObjectAction.allInstances()->forAll(ricoa |
+    ricoa.result.type = // We don't understand ocl expression TypeExp
+; 
+
+helper context UML!ReadIsClassifiedObjectAction def: multiplicity_of_input(): Boolean = 
+  UML!ReadIsClassifiedObjectAction.allInstances()->forAll(ricoa |
+    // We don't understand OperationCallExp is
+; 
+
+helper context UML!ReadLinkAction def: type_and_ordering(): Boolean = 
+  UML!ReadLinkAction.allInstances()->forAll(rla |
+    // We don't understand ocl expression IteratorExp
+; 
+
+helper context UML!ReadLinkAction def: compatible_multiplicity(): Boolean = 
+  UML!ReadLinkAction.allInstances()->forAll(rla |
+    // We don't understand OperationCallExp compatibleWith
+; 
+
+helper context UML!ReadLinkAction def: visibility(): Boolean = 
+  UML!ReadLinkAction.allInstances()->forAll(rla |
+    // We don't understand ocl expression LetExp
+; 
+
+helper context UML!ReadLinkAction def: one_open_end(): Boolean = 
+  UML!ReadLinkAction.allInstances()->forAll(rla |
+    // We don't understand OperationCallExp openEnd
+    ->size()
+     = 1
+; 
+
+helper context UML!ReadLinkAction def: navigable_open_end(): Boolean = 
+  UML!ReadLinkAction.allInstances()->forAll(rla |
+    // We don't understand OperationCallExp isNavigable
+; 
+
+helper context UML!ReadLinkObjectEndAction def: property(): Boolean = 
+  UML!ReadLinkObjectEndAction.allInstances()->forAll(rloea |
+    rloea.end.association <> null
+; 
+
+helper context UML!ReadLinkObjectEndAction def: multiplicity_of_object(): Boolean = 
+  UML!ReadLinkObjectEndAction.allInstances()->forAll(rloea |
+    // We don't understand OperationCallExp is
+; 
+
+helper context UML!ReadLinkObjectEndAction def: ends_of_association(): Boolean = 
+  UML!ReadLinkObjectEndAction.allInstances()->forAll(rloea |
+    // We don't understand ocl expression IteratorExp
+; 
+
+helper context UML!ReadLinkObjectEndAction def: type_of_result(): Boolean = 
+  UML!ReadLinkObjectEndAction.allInstances()->forAll(rloea |
+    rloea.result.type = rloea.end.type
+; 
+
+helper context UML!ReadLinkObjectEndAction def: multiplicity_of_result(): Boolean = 
+  UML!ReadLinkObjectEndAction.allInstances()->forAll(rloea |
+    // We don't understand OperationCallExp is
+; 
+
+helper context UML!ReadLinkObjectEndAction def: type_of_object(): Boolean = 
+  UML!ReadLinkObjectEndAction.allInstances()->forAll(rloea |
+    rloea.object.type = rloea.end.association
+; 
+
+helper context UML!ReadLinkObjectEndAction def: association_of_association(): Boolean = 
+  UML!ReadLinkObjectEndAction.allInstances()->forAll(rloea |
+    rloea.end.association.oclIsKindOf(// We don't understand ocl expression TypeExp
+    )
+; 
+
+helper context UML!ReadLinkObjectEndQualifierAction def: multiplicity_of_object(): Boolean = 
+  UML!ReadLinkObjectEndQualifierAction.allInstances()->forAll(rloeqa |
+    // We don't understand OperationCallExp is
+; 
+
+helper context UML!ReadLinkObjectEndQualifierAction def: type_of_object(): Boolean = 
+  UML!ReadLinkObjectEndQualifierAction.allInstances()->forAll(rloeqa |
+    rloeqa.object.type = rloeqa.qualifier.associationEnd.association
+; 
+
+helper context UML!ReadLinkObjectEndQualifierAction def: multiplicity_of_qualifier(): Boolean = 
+  UML!ReadLinkObjectEndQualifierAction.allInstances()->forAll(rloeqa |
+    // We don't understand OperationCallExp is
+; 
+
+helper context UML!ReadLinkObjectEndQualifierAction def: ends_of_association(): Boolean = 
+  UML!ReadLinkObjectEndQualifierAction.allInstances()->forAll(rloeqa |
+    // We don't understand ocl expression IteratorExp
+; 
+
+helper context UML!ReadLinkObjectEndQualifierAction def: multiplicity_of_result(): Boolean = 
+  UML!ReadLinkObjectEndQualifierAction.allInstances()->forAll(rloeqa |
+    // We don't understand OperationCallExp is
+; 
+
+helper context UML!ReadLinkObjectEndQualifierAction def: same_type(): Boolean = 
+  UML!ReadLinkObjectEndQualifierAction.allInstances()->forAll(rloeqa |
+    rloeqa.result.type = rloeqa.qualifier.type
+; 
+
+helper context UML!ReadLinkObjectEndQualifierAction def: association_of_association(): Boolean = 
+  UML!ReadLinkObjectEndQualifierAction.allInstances()->forAll(rloeqa |
+    rloeqa.qualifier.associationEnd.association.oclIsKindOf(// We don't understand ocl expression TypeExp
+    )
+; 
+
+helper context UML!ReadLinkObjectEndQualifierAction def: qualifier_attribute(): Boolean = 
+  UML!ReadLinkObjectEndQualifierAction.allInstances()->forAll(rloeqa |
+    rloeqa.qualifier.associationEnd <> null
+; 
+
+helper context UML!ReadSelfAction def: contained(): Boolean = 
+  UML!ReadSelfAction.allInstances()->forAll(rsa |
+    rsa.context <> null
+; 
+
+helper context UML!ReadSelfAction def: multiplicity(): Boolean = 
+  UML!ReadSelfAction.allInstances()->forAll(rsa |
+    // We don't understand OperationCallExp is
+; 
+
+helper context UML!ReadSelfAction def: not_static(): Boolean = 
+  UML!ReadSelfAction.allInstances()->forAll(rsa |
+    // We don't understand ocl expression LetExp
+; 
+
+helper context UML!ReadSelfAction def: type(): Boolean = 
+  UML!ReadSelfAction.allInstances()->forAll(rsa |
+    rsa.result.type = rsa.context
+; 
+
+helper context UML!ReadStructuralFeatureAction def: multiplicity(): Boolean = 
+  UML!ReadStructuralFeatureAction.allInstances()->forAll(rsfa |
+    // We don't understand OperationCallExp compatibleWith
+; 
+
+helper context UML!ReadStructuralFeatureAction def: type_and_ordering(): Boolean = 
+  UML!ReadStructuralFeatureAction.allInstances()->forAll(rsfa |
+    rsfa.result.type = rsfa.structuralFeature.type
+     and rsfa.result.isOrdered = rsfa.structuralFeature.isOrdered
+; 
+
+helper context UML!ReadVariableAction def: type_and_ordering(): Boolean = 
+  UML!ReadVariableAction.allInstances()->forAll(rva |
+    rva.result.type = rva.variable.type
+     and rva.result.isOrdered = rva.variable.isOrdered
+; 
+
+helper context UML!ReadVariableAction def: compatible_multiplicity(): Boolean = 
+  UML!ReadVariableAction.allInstances()->forAll(rva |
+    // We don't understand OperationCallExp compatibleWith
+; 
+
+helper context UML!Reception def: same_name_as_signal(): Boolean = 
+  UML!Reception.allInstances()->forAll(r |
+    r.name = r.signal.name
+; 
+
+helper context UML!Reception def: same_structure_as_signal(): Boolean = 
+  UML!Reception.allInstances()->forAll(r |
+    r.signal.ownedAttribute->size()
+     = r.ownedParameter->size()
+     and // We don't understand ocl expression IteratorExp
+; 
+
+helper context UML!ReclassifyObjectAction def: input_pin(): Boolean = 
+  UML!ReclassifyObjectAction.allInstances()->forAll(roa |
+    roa.object.type = null
+; 
+
+helper context UML!ReclassifyObjectAction def: classifier_not_abstract(): Boolean = 
+  UML!ReclassifyObjectAction.allInstances()->forAll(roa |
+    not(// We don't understand ocl expression IteratorExp
+    )
+; 
+
+helper context UML!ReclassifyObjectAction def: multiplicity(): Boolean = 
+  UML!ReclassifyObjectAction.allInstances()->forAll(roa |
+    // We don't understand OperationCallExp is
+; 
+
+helper context UML!RedefinableElement def: redefinition_consistent(): Boolean = 
+  UML!RedefinableElement.allInstances()->forAll(re |
+    // We don't understand ocl expression IteratorExp
+; 
+
+helper context UML!RedefinableElement def: non_leaf_redefinition(): Boolean = 
+  UML!RedefinableElement.allInstances()->forAll(re |
+    // We don't understand ocl expression IteratorExp
+; 
+
+helper context UML!RedefinableElement def: redefinition_context_valid(): Boolean = 
+  UML!RedefinableElement.allInstances()->forAll(re |
+    // We don't understand ocl expression IteratorExp
+; 
+
+helper context UML!RedefinableTemplateSignature def: redefines_parents(): Boolean = 
+  UML!RedefinableTemplateSignature.allInstances()->forAll(rts |
+    // We don't understand ocl expression IteratorExp
+; 
+
+helper context UML!ReduceAction def: reducer_inputs_output(): Boolean = 
+  UML!ReduceAction.allInstances()->forAll(ra |
+    // We don't understand ocl expression LetExp
+; 
+
+helper context UML!ReduceAction def: input_type_is_collection(): Boolean = 
+  UML!ReduceAction.allInstances()->forAll(ra |
+    null
+; 
+
+helper context UML!ReduceAction def: output_types_are_compatible(): Boolean = 
+  UML!ReduceAction.allInstances()->forAll(ra |
+    // We don't understand ocl expression IteratorExp
+; 
+
+helper context UML!Region def: deep_history_vertex(): Boolean = 
+  UML!Region.allInstances()->forAll(r |
+    // We don't understand OperationCallExp <=
+; 
+
+helper context UML!Region def: shallow_history_vertex(): Boolean = 
+  UML!Region.allInstances()->forAll(r |
+    // We don't understand OperationCallExp <=
+; 
+
+helper context UML!Region def: owned(): Boolean = 
+  UML!Region.allInstances()->forAll(r |
+    r.stateMachine <> null
+     implies r.state = null
+     and r.state <> null
+     implies r.stateMachine = null
+; 
+
+helper context UML!Region def: initial_vertex(): Boolean = 
+  UML!Region.allInstances()->forAll(r |
+    // We don't understand OperationCallExp <=
+; 
+
+helper context UML!RemoveStructuralFeatureValueAction def: removeAt_and_value(): Boolean = 
+  UML!RemoveStructuralFeatureValueAction.allInstances()->forAll(rsfva |
+    // We don't understand ocl expression IfExp
+; 
+
+helper context UML!RemoveVariableValueAction def: removeAt_and_value(): Boolean = 
+  UML!RemoveVariableValueAction.allInstances()->forAll(rvva |
+    // We don't understand ocl expression IfExp
+; 
+
+helper context UML!ReplyAction def: pins_match_parameter(): Boolean = 
+  UML!ReplyAction.allInstances()->forAll(ra |
+    // We don't understand ocl expression LetExp
+; 
+
+helper context UML!ReplyAction def: event_on_reply_to_call_trigger(): Boolean = 
+  UML!ReplyAction.allInstances()->forAll(ra |
+    ra.replyToCall.event.oclIsKindOf(// We don't understand ocl expression TypeExp
+    )
+; 
+
+helper context UML!SendObjectAction def: type_target_pin(): Boolean = 
+  UML!SendObjectAction.allInstances()->forAll(soa |
+    soa.onPort <> null
+     implies // We don't understand OperationCallExp allFeatures
+    ->includes(soa.onPort)
+; 
+
+helper context UML!SendSignalAction def: type_ordering_multiplicity(): Boolean = 
+  UML!SendSignalAction.allInstances()->forAll(ssa |
+    // We don't understand ocl expression LetExp
+; 
+
+helper context UML!SendSignalAction def: number_order(): Boolean = 
+  UML!SendSignalAction.allInstances()->forAll(ssa |
+    ssa.argument->size()
+     = // We don't understand OperationCallExp allAttributes
+    ->size()
+; 
+
+helper context UML!SendSignalAction def: type_target_pin(): Boolean = 
+  UML!SendSignalAction.allInstances()->forAll(ssa |
+    not(// We don't understand OperationCallExp oclAsSet
+    ->isEmpty()
+    )
+     implies // We don't understand OperationCallExp allFeatures
+    ->includes(ssa.onPort)
+; 
+
+helper context UML!StartClassifierBehaviorAction def: multiplicity(): Boolean = 
+  UML!StartClassifierBehaviorAction.allInstances()->forAll(scba |
+    // We don't understand OperationCallExp is
+; 
+
+helper context UML!StartClassifierBehaviorAction def: type_has_classifier(): Boolean = 
+  UML!StartClassifierBehaviorAction.allInstances()->forAll(scba |
+    // We don't understand OperationCallExp oclAsSet
+    ->notEmpty()
+     implies scba.object.type.oclIsKindOf(// We don't understand ocl expression TypeExp
+    )
+     and scba.object.type.oclAsType(// We don't understand ocl expression TypeExp
+    )
+    .classifierBehavior <> null
+; 
+
+helper context UML!StartObjectBehaviorAction def: multiplicity_of_object(): Boolean = 
+  UML!StartObjectBehaviorAction.allInstances()->forAll(soba |
+    // We don't understand OperationCallExp is
+; 
+
+helper context UML!StartObjectBehaviorAction def: type_of_object(): Boolean = 
+  UML!StartObjectBehaviorAction.allInstances()->forAll(soba |
+    // We don't understand OperationCallExp behavior
+     <> null
+; 
+
+helper context UML!StartObjectBehaviorAction def: no_onport(): Boolean = 
+  UML!StartObjectBehaviorAction.allInstances()->forAll(soba |
+    // We don't understand OperationCallExp oclAsSet
+    ->isEmpty()
+; 
+
+helper context UML!State def: entry_or_exit(): Boolean = 
+  UML!State.allInstances()->forAll(s |
+    // We don't understand ocl expression IteratorExp
+; 
+
+helper context UML!State def: submachine_states(): Boolean = 
+  UML!State.allInstances()->forAll(s |
+    s.isSubmachineState implies s.connection->notEmpty()
+; 
+
+helper context UML!State def: composite_states(): Boolean = 
+  UML!State.allInstances()->forAll(s |
+    s.connectionPoint->notEmpty()
+     implies s.isComposite
+; 
+
+helper context UML!State def: destinations_or_sources_of_transitions(): Boolean = 
+  UML!State.allInstances()->forAll(s |
+    s.isSubmachineState implies // We don't understand ocl expression IteratorExp
+; 
+
+helper context UML!State def: submachine_or_regions(): Boolean = 
+  UML!State.allInstances()->forAll(s |
+    s.isComposite implies not(s.isSubmachineState)
+; 
+
+helper context UML!StateMachine def: connection_points(): Boolean = 
+  UML!StateMachine.allInstances()->forAll(sm |
+    // We don't understand ocl expression IteratorExp
+; 
+
+helper context UML!StateMachine def: classifier_context(): Boolean = 
+  UML!StateMachine.allInstances()->forAll(sm |
+    sm.context <> null
+     implies not(sm.context.oclIsKindOf(// We don't understand ocl expression TypeExp
+    )
+    )
+; 
+
+helper context UML!StateMachine def: method(): Boolean = 
+  UML!StateMachine.allInstances()->forAll(sm |
+    sm.specification <> null
+     implies sm.connectionPoint->isEmpty()
+; 
+
+helper context UML!StateMachine def: context_classifier(): Boolean = 
+  UML!StateMachine.allInstances()->forAll(sm |
+    sm.specification <> null
+     implies sm.context <> null
+     and // We don't understand ocl expression IteratorExp
+; 
+
+helper context UML!Stereotype def: binaryAssociationsOnly(): Boolean = 
+  UML!Stereotype.allInstances()->forAll(s |
+    // We don't understand ocl expression IteratorExp
+; 
+
+helper context UML!Stereotype def: generalize(): Boolean = 
+  UML!Stereotype.allInstances()->forAll(s |
+    // We don't understand ocl expression IteratorExp
+     and // We don't understand ocl expression IteratorExp
+; 
+
+helper context UML!Stereotype def: name_not_clash(): Boolean = 
+  UML!Stereotype.allInstances()->forAll(s |
+    null
+; 
+
+helper context UML!Stereotype def: associationEndOwnership(): Boolean = 
+  UML!Stereotype.allInstances()->forAll(s |
+    // We don't understand ocl expression IteratorExp
+; 
+
+helper context UML!Stereotype def: base_property_upper_bound(): Boolean = 
+  UML!Stereotype.allInstances()->forAll(s |
+    null
+; 
+
+helper context UML!Stereotype def: base_property_multiplicity_single_extension(): Boolean = 
+  UML!Stereotype.allInstances()->forAll(s |
+    null
+; 
+
+helper context UML!Stereotype def: base_property_multiplicity_multiple_extension(): Boolean = 
+  UML!Stereotype.allInstances()->forAll(s |
+    null
+; 
+
+helper context UML!StringExpression def: operands(): Boolean = 
+  UML!StringExpression.allInstances()->forAll(se |
+    // We don't understand ocl expression IteratorExp
+; 
+
+helper context UML!StringExpression def: subexpressions(): Boolean = 
+  UML!StringExpression.allInstances()->forAll(se |
+    // We don't understand ocl expression IfExp
+; 
+
+helper context UML!StructuralFeatureAction def: multiplicity(): Boolean = 
+  UML!StructuralFeatureAction.allInstances()->forAll(sfa |
+    // We don't understand OperationCallExp is
+; 
+
+helper context UML!StructuralFeatureAction def: object_type(): Boolean = 
+  UML!StructuralFeatureAction.allInstances()->forAll(sfa |
+    // We don't understand OperationCallExp allFeatures
+    ->includes(sfa.structuralFeature)
+     or // We don't understand OperationCallExp conformsTo
+; 
+
+helper context UML!StructuralFeatureAction def: visibility(): Boolean = 
+  UML!StructuralFeatureAction.allInstances()->forAll(sfa |
+    sfa.structuralFeature.visibility = // We don't understand ocl expression EnumLiteralExp
+     or // We don't understand OperationCallExp allFeatures
+    ->includes(sfa.structuralFeature)
+     or sfa.structuralFeature.visibility = // We don't understand ocl expression EnumLiteralExp
+     and // We don't understand OperationCallExp conformsTo
+; 
+
+helper context UML!StructuralFeatureAction def: not_static(): Boolean = 
+  UML!StructuralFeatureAction.allInstances()->forAll(sfa |
+    not(sfa.structuralFeature.isStatic)
+; 
+
+helper context UML!StructuralFeatureAction def: one_featuring_classifier(): Boolean = 
+  UML!StructuralFeatureAction.allInstances()->forAll(sfa |
+    // We don't understand OperationCallExp oclAsSet
+    ->size()
+     = 1
+; 
+
+helper context UML!StructuredActivityNode def: output_pin_edges(): Boolean = 
+  UML!StructuredActivityNode.allInstances()->forAll(san |
+    // We don't understand OperationCallExp excludesAll
+; 
+
+helper context UML!StructuredActivityNode def: edges(): Boolean = 
+  UML!StructuredActivityNode.allInstances()->forAll(san |
+    san.edge = // We don't understand OperationCallExp 
+    ->asSet()
+; 
+
+helper context UML!StructuredActivityNode def: input_pin_edges(): Boolean = 
+  UML!StructuredActivityNode.allInstances()->forAll(san |
+    // We don't understand OperationCallExp excludesAll
+; 
+
+helper context UML!TemplateBinding def: parameter_substitution_formal(): Boolean = 
+  UML!TemplateBinding.allInstances()->forAll(tb |
+    // We don't understand ocl expression IteratorExp
+; 
+
+helper context UML!TemplateBinding def: one_parameter_substitution(): Boolean = 
+  UML!TemplateBinding.allInstances()->forAll(tb |
+    // We don't understand ocl expression IteratorExp
+; 
+
+helper context UML!TemplateParameter def: must_be_compatible(): Boolean = 
+  UML!TemplateParameter.allInstances()->forAll(tp |
+    tp.default <> null
+     implies // We don't understand OperationCallExp isCompatibleWith
+; 
+
+helper context UML!TemplateParameterSubstitution def: must_be_compatible(): Boolean = 
+  UML!TemplateParameterSubstitution.allInstances()->forAll(tps |
+    // We don't understand ocl expression IteratorExp
+; 
+
+helper context UML!TemplateSignature def: own_elements(): Boolean = 
+  UML!TemplateSignature.allInstances()->forAll(ts |
+    ts.template.ownedElement->includesAll(// We don't understand ocl expression IteratorExp
+    ->asSet()
+     - // We don't understand ocl expression IteratorExp
+    ->asSet()
+    )
+; 
+
+helper context UML!TemplateSignature def: unique_parameters(): Boolean = 
+  UML!TemplateSignature.allInstances()->forAll(ts |
+    // We don't understand ocl expression IteratorExp
+; 
+
+helper context UML!TestIdentityAction def: multiplicity(): Boolean = 
+  UML!TestIdentityAction.allInstances()->forAll(tia |
+    // We don't understand OperationCallExp is
+     and // We don't understand OperationCallExp is
+; 
+
+helper context UML!TestIdentityAction def: no_type(): Boolean = 
+  UML!TestIdentityAction.allInstances()->forAll(tia |
+    tia.first.type = null
+     and tia.second.type = null
+; 
+
+helper context UML!TestIdentityAction def: result_is_boolean(): Boolean = 
+  UML!TestIdentityAction.allInstances()->forAll(tia |
+    tia.result.type = // We don't understand ocl expression TypeExp
+; 
+
+helper context UML!TimeConstraint def: has_one_constrainedElement(): Boolean = 
+  UML!TimeConstraint.allInstances()->forAll(tc |
+    tc.constrainedElement->size()
+     = 1
+; 
+
+helper context UML!TimeEvent def: when_non_negative(): Boolean = 
+  UML!TimeEvent.allInstances()->forAll(te |
+    // We don't understand OperationCallExp >=
+; 
+
+helper context UML!TimeExpression def: no_expr_requires_observation(): Boolean = 
+  UML!TimeExpression.allInstances()->forAll(te |
+    te.expr = null
+     implies te.observation->size()
+     = 1
+     and // We don't understand ocl expression IteratorExp
+; 
+
+helper context UML!Transition def: state_is_external(): Boolean = 
+  UML!Transition.allInstances()->forAll(t |
+    t.kind = // We don't understand ocl expression EnumLiteralExp
+     implies not(t.source.oclIsKindOf(// We don't understand ocl expression TypeExp
+    )
+     and t.source.oclAsType(// We don't understand ocl expression TypeExp
+    )
+    .kind = // We don't understand ocl expression EnumLiteralExp
+    )
+; 
+
+helper context UML!Transition def: join_segment_guards(): Boolean = 
+  UML!Transition.allInstances()->forAll(t |
+    t.target.oclIsKindOf(// We don't understand ocl expression TypeExp
+    )
+     and t.target.oclAsType(// We don't understand ocl expression TypeExp
+    )
+    .kind = // We don't understand ocl expression EnumLiteralExp
+     implies t.guard = null
+     and t.trigger->isEmpty()
+; 
+
+helper context UML!Transition def: state_is_internal(): Boolean = 
+  UML!Transition.allInstances()->forAll(t |
+    t.kind = // We don't understand ocl expression EnumLiteralExp
+     implies t.source.oclIsKindOf(// We don't understand ocl expression TypeExp
+    )
+     and t.source = t.target
+; 
+
+helper context UML!Transition def: outgoing_pseudostates(): Boolean = 
+  UML!Transition.allInstances()->forAll(t |
+    t.source.oclIsKindOf(// We don't understand ocl expression TypeExp
+    )
+     and t.source.oclAsType(// We don't understand ocl expression TypeExp
+    )
+    .kind <> // We don't understand ocl expression EnumLiteralExp
+     implies t.trigger->isEmpty()
+; 
+
+helper context UML!Transition def: join_segment_state(): Boolean = 
+  UML!Transition.allInstances()->forAll(t |
+    t.target.oclIsKindOf(// We don't understand ocl expression TypeExp
+    )
+     and t.target.oclAsType(// We don't understand ocl expression TypeExp
+    )
+    .kind = // We don't understand ocl expression EnumLiteralExp
+     implies t.source.oclIsKindOf(// We don't understand ocl expression TypeExp
+    )
+; 
+
+helper context UML!Transition def: fork_segment_state(): Boolean = 
+  UML!Transition.allInstances()->forAll(t |
+    t.source.oclIsKindOf(// We don't understand ocl expression TypeExp
+    )
+     and t.source.oclAsType(// We don't understand ocl expression TypeExp
+    )
+    .kind = // We don't understand ocl expression EnumLiteralExp
+     implies t.target.oclIsKindOf(// We don't understand ocl expression TypeExp
+    )
+; 
+
+helper context UML!Transition def: state_is_local(): Boolean = 
+  UML!Transition.allInstances()->forAll(t |
+    t.kind = // We don't understand ocl expression EnumLiteralExp
+     implies t.source.oclIsKindOf(// We don't understand ocl expression TypeExp
+    )
+     and t.source.oclAsType(// We don't understand ocl expression TypeExp
+    )
+    .isComposite
+     or t.source.oclIsKindOf(// We don't understand ocl expression TypeExp
+    )
+     and t.source.oclAsType(// We don't understand ocl expression TypeExp
+    )
+    .kind = // We don't understand ocl expression EnumLiteralExp
+; 
+
+helper context UML!Transition def: initial_transition(): Boolean = 
+  UML!Transition.allInstances()->forAll(t |
+    t.source.oclIsKindOf(// We don't understand ocl expression TypeExp
+    )
+     and // We don't understand OperationCallExp oclAsSet
+    ->notEmpty()
+     implies t.trigger->isEmpty()
+; 
+
+helper context UML!Transition def: fork_segment_guards(): Boolean = 
+  UML!Transition.allInstances()->forAll(t |
+    t.source.oclIsKindOf(// We don't understand ocl expression TypeExp
+    )
+     and t.source.oclAsType(// We don't understand ocl expression TypeExp
+    )
+    .kind = // We don't understand ocl expression EnumLiteralExp
+     implies t.guard = null
+     and t.trigger->isEmpty()
+; 
+
+helper context UML!Trigger def: trigger_with_ports(): Boolean = 
+  UML!Trigger.allInstances()->forAll(t |
+    t.port->notEmpty()
+     implies t.event.oclIsKindOf(// We don't understand ocl expression TypeExp
+    )
+; 
+
+helper context UML!UnmarshallAction def: structural_feature(): Boolean = 
+  UML!UnmarshallAction.allInstances()->forAll(ua |
+    // We don't understand OperationCallExp >=
+; 
+
+helper context UML!UnmarshallAction def: number_of_result(): Boolean = 
+  UML!UnmarshallAction.allInstances()->forAll(ua |
+    // We don't understand OperationCallExp allAttributes
+    ->size()
+     = ua.result->size()
+; 
+
+helper context UML!UnmarshallAction def: type_ordering_and_multiplicity(): Boolean = 
+  UML!UnmarshallAction.allInstances()->forAll(ua |
+    // We don't understand ocl expression LetExp
+; 
+
+helper context UML!UnmarshallAction def: multiplicity_of_object(): Boolean = 
+  UML!UnmarshallAction.allInstances()->forAll(ua |
+    // We don't understand OperationCallExp is
+; 
+
+helper context UML!UnmarshallAction def: object_type(): Boolean = 
+  UML!UnmarshallAction.allInstances()->forAll(ua |
+    // We don't understand OperationCallExp conformsTo
+; 
+
+helper context UML!UseCase def: binary_associations(): Boolean = 
+  UML!UseCase.allInstances()->forAll(uc |
+    // We don't understand ocl expression IteratorExp
+; 
+
+helper context UML!UseCase def: no_association_to_use_case(): Boolean = 
+  UML!UseCase.allInstances()->forAll(uc |
+    // We don't understand ocl expression IteratorExp
+; 
+
+helper context UML!UseCase def: cannot_include_self(): Boolean = 
+  UML!UseCase.allInstances()->forAll(uc |
+    not(// We don't understand OperationCallExp allIncludedUseCases
+    ->includes(uc)
+    )
+; 
+
+helper context UML!UseCase def: must_have_name(): Boolean = 
+  UML!UseCase.allInstances()->forAll(uc |
+    // We don't understand OperationCallExp oclAsSet
+    ->notEmpty()
+; 
+
+helper context UML!ValuePin def: no_incoming_edges(): Boolean = 
+  UML!ValuePin.allInstances()->forAll(vp |
+    vp.incoming->isEmpty()
+; 
+
+helper context UML!ValuePin def: compatible_type(): Boolean = 
+  UML!ValuePin.allInstances()->forAll(vp |
+    // We don't understand OperationCallExp conformsTo
+; 
+
+helper context UML!ValueSpecificationAction def: multiplicity(): Boolean = 
+  UML!ValueSpecificationAction.allInstances()->forAll(vsa |
+    // We don't understand OperationCallExp is
+; 
+
+helper context UML!ValueSpecificationAction def: compatible_type(): Boolean = 
+  UML!ValueSpecificationAction.allInstances()->forAll(vsa |
+    // We don't understand OperationCallExp conformsTo
+; 
+
+helper context UML!VariableAction def: scope_of_variable(): Boolean = 
+  UML!VariableAction.allInstances()->forAll(va |
+    // We don't understand OperationCallExp isAccessibleBy
+; 
+
+helper context UML!WriteLinkAction def: allow_access(): Boolean = 
+  UML!WriteLinkAction.allInstances()->forAll(wla |
+    // We don't understand ocl expression IteratorExp
+; 
+
+helper context UML!WriteStructuralFeatureAction def: multiplicity_of_result(): Boolean = 
+  UML!WriteStructuralFeatureAction.allInstances()->forAll(wsfa |
+    wsfa.result <> null
+     implies // We don't understand OperationCallExp is
+; 
+
+helper context UML!WriteStructuralFeatureAction def: type_of_value(): Boolean = 
+  UML!WriteStructuralFeatureAction.allInstances()->forAll(wsfa |
+    wsfa.value <> null
+     implies // We don't understand OperationCallExp conformsTo
+; 
+
+helper context UML!WriteStructuralFeatureAction def: multiplicity_of_value(): Boolean = 
+  UML!WriteStructuralFeatureAction.allInstances()->forAll(wsfa |
+    wsfa.value <> null
+     implies // We don't understand OperationCallExp is
+; 
+
+helper context UML!WriteStructuralFeatureAction def: type_of_result(): Boolean = 
+  UML!WriteStructuralFeatureAction.allInstances()->forAll(wsfa |
+    wsfa.result <> null
+     implies wsfa.result.type = wsfa.object.type
+; 
+
+helper context UML!WriteVariableAction def: value_type(): Boolean = 
+  UML!WriteVariableAction.allInstances()->forAll(wva |
+    wva.value <> null
+     implies // We don't understand OperationCallExp conformsTo
+; 
+
+helper context UML!WriteVariableAction def: multiplicity(): Boolean = 
+  UML!WriteVariableAction.allInstances()->forAll(wva |
+    wva.value <> null
+     implies // We don't understand OperationCallExp is
+; 
+
