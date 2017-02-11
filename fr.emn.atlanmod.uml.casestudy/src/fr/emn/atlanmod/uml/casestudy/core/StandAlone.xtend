@@ -20,11 +20,11 @@ class StandAlone{
 
 	
 	def static void main(String[] args) {
-		val inputURI = URI.createFileURI("./resources/UML3.ocl.oclas")
+		val inputURI = URI.createFileURI("./resources/UML.normalize.ocl.oclas")
 		doEMFSetup(inputURI)
 		
 		var String res = "";
-		val outputURI = URI.createFileURI("./resources/UML.ocl.atl")
+		val outputURI = URI.createFileURI("./resources/UML.normalize.ocl.atl")
 		
 		for (EObject eobject : ocl_resource.getContents()) {
 			res += OCL2ATL.rewrite(eobject);

@@ -19,10 +19,10 @@ public class StandAlone {
   private static Resource ocl_resource;
   
   public static void main(final String[] args) {
-    final URI inputURI = URI.createFileURI("./resources/UML3.ocl.oclas");
+    final URI inputURI = URI.createFileURI("./resources/UML.normalize.ocl.oclas");
     StandAlone.doEMFSetup(inputURI);
     String res = "";
-    final URI outputURI = URI.createFileURI("./resources/UML.ocl.atl");
+    final URI outputURI = URI.createFileURI("./resources/UML.normalize.ocl.atl");
     EList<EObject> _contents = StandAlone.ocl_resource.getContents();
     for (final EObject eobject : _contents) {
       String _res = res;
