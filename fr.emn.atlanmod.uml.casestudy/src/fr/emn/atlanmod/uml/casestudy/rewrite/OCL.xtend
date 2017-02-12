@@ -3,6 +3,7 @@ package fr.emn.atlanmod.uml.casestudy.rewrite
 import java.util.HashMap
 import org.eclipse.emf.ecore.EObject
 import org.eclipse.ocl.pivot.BooleanLiteralExp
+import org.eclipse.ocl.pivot.CollectionLiteralExp
 import org.eclipse.ocl.pivot.EnumLiteralExp
 import org.eclipse.ocl.pivot.IfExp
 import org.eclipse.ocl.pivot.IntegerLiteralExp
@@ -13,9 +14,11 @@ import org.eclipse.ocl.pivot.NullLiteralExp
 import org.eclipse.ocl.pivot.OCLExpression
 import org.eclipse.ocl.pivot.Operation
 import org.eclipse.ocl.pivot.OperationCallExp
+import org.eclipse.ocl.pivot.OppositePropertyCallExp
 import org.eclipse.ocl.pivot.PropertyCallExp
 import org.eclipse.ocl.pivot.Type
 import org.eclipse.ocl.pivot.TypeExp
+import org.eclipse.ocl.pivot.UnlimitedNaturalLiteralExp
 import org.eclipse.ocl.pivot.VariableExp
 
 class OCL {
@@ -27,9 +30,10 @@ class OCL {
 	def static dispatch String gen(OCLExpression e, HashMap<String, VariableExp> consistency) '''
 		// We dont understand ocl expression «e.eClass.name»'''
 	
-	// TODO size, tostring, some operation depends on type print differentlyy
+	// TODO size, tostring, =(isocltype) some operation depends on type print differently
+	// TODO some collection is not printing properly, e.g. union
 	def static dispatch String gen(OperationCallExp e, HashMap<String, VariableExp> consistency) '''
-	«val op = e.referredOperation.name»
+	«val op = if (e.referredOperation.name =="") e.name else e.referredOperation.name»
 	«val src = gen(e.ownedSource, consistency)»
 	«val args = if(e.ownedArguments.size!=0 && op!=null) e.ownedArguments.map(arg |  gen(arg, consistency) ).join(op) else ""»
 	«val args_dot = if(e.ownedArguments.size!=0 && op!=null) e.ownedArguments.map(arg |  gen(arg, consistency) ).join(',') else ""»«
@@ -42,7 +46,7 @@ class OCL {
 	»«src» «op» «args»«
 	ELSEIF op=="size" || op=="flatten"  || op=="allInstances"  || op=="xor"  || op=="asBag"  || op=="asOrderedSet"  
 	|| op=="asSequence"  || op=="asSet"  || op=="isEmpty"  || op=="max" || op=="min"  || op=="notEmpty"  || op=="oclIsUndefined"  || op=="oclType" 
-	|| op=="first"  
+	|| op=="first"  || op=="last" 
 	|| op=="oclAsSet" 
 	»«src»->«op»()«
 	ELSEIF op=="oclIsUndefined"  || op=="oclIsInvalid" 
@@ -55,8 +59,8 @@ class OCL {
 	»«src».«op»(«args_dot»)«
 	ELSEIF op=="excluding" || op=="excludingAll" || op=="including" || op=="includingAll"  || op=="selectByKind"  || op=="selectByKind"  || op=="selectByType"  
 	|| op=="count"  || op=="excludes"  || op=="includes"  || op=="includesAll" || op=="intersection"  
-	|| op=="at"  || op=="indexOf"  || op=="last" 
-	|| op=="append" || op=="appendAll"  || op=="prepend"  || op=="prependAll"  || op=="reverse" 
+	|| op=="at"  || op=="indexOf"  
+	|| op=="append" || op=="appendAll"  || op=="prepend"  || op=="prependAll"  || op=="reverse" || op=="union" 
 	|| op=="is" || op=="excludesAll" 
 	»«src»->«op»(«args_dot»)«
 	ELSE»«src».«op»(«args_dot»)«
@@ -64,9 +68,13 @@ class OCL {
 	
 	def static dispatch String gen(PropertyCallExp e, HashMap<String, VariableExp> consistency) '''«gen(e.ownedSource, consistency)».«e.referredProperty.name»'''
 	
+	def static dispatch String gen(OppositePropertyCallExp e, HashMap<String, VariableExp> consistency) '''«gen(e.ownedSource, consistency)».«e.referredProperty.name»'''
+	
+	
 	//TODO use a systematic approach to generate new bound variable
+
 	def static dispatch String gen(VariableExp e, HashMap<String, VariableExp> consistency) '''«
-		if (e.isIsImplicit) {if (isConsistentVariable(consistency, e)) {getIteratorName(e)} else getIteratorName(e)+e.hashCode} else e.referredVariable.name
+		if (e.isIsImplicit) {if (isConsistentVariable(consistency, e)) {getIteratorName(e)} else getIteratorName(e)+e.hashCode} else if (e.referredVariable.name=="self") getIteratorName(e) else e.referredVariable.name
 	»'''
 	
 	def static dispatch String gen(IteratorVariable e, HashMap<String, VariableExp> consistency) '''«
@@ -86,6 +94,12 @@ class OCL {
 	def static dispatch String gen(NullLiteralExp e, HashMap<String, VariableExp> consistency) '''OclUndefined'''
 	
 	def static dispatch String gen(TypeExp e, HashMap<String, VariableExp> consistency) '''«e.referredType.toString().replace("::", "!")»'''
+	
+	// TODO ATL supported?
+	def static dispatch String gen(CollectionLiteralExp e, HashMap<String, VariableExp> consistency) '''Sequence{}'''
+	
+	// TODO dont know what is this means, put it to *. since sometimes is set to 1, see `multiplicity_of_output`
+	def static dispatch String gen(UnlimitedNaturalLiteralExp e, HashMap<String, VariableExp> consistency) '''*'''
 	
 	def static dispatch String gen(LetExp e, HashMap<String, VariableExp> consistency) '''let «e.ownedVariable.name» : «e.ownedVariable.type.toString().replace("::", "!")» = 
   «gen(e.ownedVariable.ownedInit, consistency)» in 

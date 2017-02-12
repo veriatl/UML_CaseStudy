@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.ocl.pivot.BooleanLiteralExp;
+import org.eclipse.ocl.pivot.CollectionLiteralExp;
 import org.eclipse.ocl.pivot.EnumLiteralExp;
 import org.eclipse.ocl.pivot.IfExp;
 import org.eclipse.ocl.pivot.IntegerLiteralExp;
@@ -16,9 +17,11 @@ import org.eclipse.ocl.pivot.NullLiteralExp;
 import org.eclipse.ocl.pivot.OCLExpression;
 import org.eclipse.ocl.pivot.Operation;
 import org.eclipse.ocl.pivot.OperationCallExp;
+import org.eclipse.ocl.pivot.OppositePropertyCallExp;
 import org.eclipse.ocl.pivot.PropertyCallExp;
 import org.eclipse.ocl.pivot.Type;
 import org.eclipse.ocl.pivot.TypeExp;
+import org.eclipse.ocl.pivot.UnlimitedNaturalLiteralExp;
 import org.eclipse.ocl.pivot.Variable;
 import org.eclipse.ocl.pivot.VariableExp;
 import org.eclipse.xtend2.lib.StringConcatenation;
@@ -46,31 +49,39 @@ public class OCL {
   
   protected static String _gen(final OperationCallExp e, final HashMap<String, VariableExp> consistency) {
     StringConcatenation _builder = new StringConcatenation();
-    final String op = e.getReferredOperation().getName();
+    String _xifexpression = null;
+    String _name = e.getReferredOperation().getName();
+    boolean _equals = Objects.equal(_name, "");
+    if (_equals) {
+      _xifexpression = e.getName();
+    } else {
+      _xifexpression = e.getReferredOperation().getName();
+    }
+    final String op = _xifexpression;
     _builder.newLineIfNotEmpty();
     final String src = OCL.gen(e.getOwnedSource(), consistency);
     _builder.newLineIfNotEmpty();
-    String _xifexpression = null;
+    String _xifexpression_1 = null;
     if (((e.getOwnedArguments().size() != 0) && (!Objects.equal(op, null)))) {
       final Function1<OCLExpression, String> _function = (OCLExpression arg) -> {
         return OCL.gen(arg, consistency);
       };
-      _xifexpression = IterableExtensions.join(ListExtensions.<OCLExpression, String>map(e.getOwnedArguments(), _function), op);
+      _xifexpression_1 = IterableExtensions.join(ListExtensions.<OCLExpression, String>map(e.getOwnedArguments(), _function), op);
     } else {
-      _xifexpression = "";
+      _xifexpression_1 = "";
     }
-    final String args = _xifexpression;
+    final String args = _xifexpression_1;
     _builder.newLineIfNotEmpty();
-    String _xifexpression_1 = null;
+    String _xifexpression_2 = null;
     if (((e.getOwnedArguments().size() != 0) && (!Objects.equal(op, null)))) {
       final Function1<OCLExpression, String> _function_1 = (OCLExpression arg) -> {
         return OCL.gen(arg, consistency);
       };
-      _xifexpression_1 = IterableExtensions.join(ListExtensions.<OCLExpression, String>map(e.getOwnedArguments(), _function_1), ",");
+      _xifexpression_2 = IterableExtensions.join(ListExtensions.<OCLExpression, String>map(e.getOwnedArguments(), _function_1), ",");
     } else {
-      _xifexpression_1 = "";
+      _xifexpression_2 = "";
     }
-    final String args_dot = _xifexpression_1;
+    final String args_dot = _xifexpression_2;
     {
       if ((Objects.equal(op, "not") || Objects.equal(op, "abs"))) {
         _builder.append(op);
@@ -86,7 +97,7 @@ public class OCL {
           _builder.append(" ");
           _builder.append(args);
         } else {
-          if ((((((((((((((((Objects.equal(op, "size") || Objects.equal(op, "flatten")) || Objects.equal(op, "allInstances")) || Objects.equal(op, "xor")) || Objects.equal(op, "asBag")) || Objects.equal(op, "asOrderedSet")) || Objects.equal(op, "asSequence")) || Objects.equal(op, "asSet")) || Objects.equal(op, "isEmpty")) || Objects.equal(op, "max")) || Objects.equal(op, "min")) || Objects.equal(op, "notEmpty")) || Objects.equal(op, "oclIsUndefined")) || Objects.equal(op, "oclType")) || Objects.equal(op, "first")) || Objects.equal(op, "oclAsSet"))) {
+          if (((((((((((((((((Objects.equal(op, "size") || Objects.equal(op, "flatten")) || Objects.equal(op, "allInstances")) || Objects.equal(op, "xor")) || Objects.equal(op, "asBag")) || Objects.equal(op, "asOrderedSet")) || Objects.equal(op, "asSequence")) || Objects.equal(op, "asSet")) || Objects.equal(op, "isEmpty")) || Objects.equal(op, "max")) || Objects.equal(op, "min")) || Objects.equal(op, "notEmpty")) || Objects.equal(op, "oclIsUndefined")) || Objects.equal(op, "oclType")) || Objects.equal(op, "first")) || Objects.equal(op, "last")) || Objects.equal(op, "oclAsSet"))) {
             _builder.append(src);
             _builder.append("->");
             _builder.append(op);
@@ -106,7 +117,7 @@ public class OCL {
                 _builder.append(args_dot);
                 _builder.append(")");
               } else {
-                if ((((((((((((((((((((((Objects.equal(op, "excluding") || Objects.equal(op, "excludingAll")) || Objects.equal(op, "including")) || Objects.equal(op, "includingAll")) || Objects.equal(op, "selectByKind")) || Objects.equal(op, "selectByKind")) || Objects.equal(op, "selectByType")) || Objects.equal(op, "count")) || Objects.equal(op, "excludes")) || Objects.equal(op, "includes")) || Objects.equal(op, "includesAll")) || Objects.equal(op, "intersection")) || Objects.equal(op, "at")) || Objects.equal(op, "indexOf")) || Objects.equal(op, "last")) || Objects.equal(op, "append")) || Objects.equal(op, "appendAll")) || Objects.equal(op, "prepend")) || Objects.equal(op, "prependAll")) || Objects.equal(op, "reverse")) || Objects.equal(op, "is")) || Objects.equal(op, "excludesAll"))) {
+                if ((((((((((((((((((((((Objects.equal(op, "excluding") || Objects.equal(op, "excludingAll")) || Objects.equal(op, "including")) || Objects.equal(op, "includingAll")) || Objects.equal(op, "selectByKind")) || Objects.equal(op, "selectByKind")) || Objects.equal(op, "selectByType")) || Objects.equal(op, "count")) || Objects.equal(op, "excludes")) || Objects.equal(op, "includes")) || Objects.equal(op, "includesAll")) || Objects.equal(op, "intersection")) || Objects.equal(op, "at")) || Objects.equal(op, "indexOf")) || Objects.equal(op, "append")) || Objects.equal(op, "appendAll")) || Objects.equal(op, "prepend")) || Objects.equal(op, "prependAll")) || Objects.equal(op, "reverse")) || Objects.equal(op, "union")) || Objects.equal(op, "is")) || Objects.equal(op, "excludesAll"))) {
                   _builder.append(src);
                   _builder.append("->");
                   _builder.append(op);
@@ -140,6 +151,16 @@ public class OCL {
     return _builder.toString();
   }
   
+  protected static String _gen(final OppositePropertyCallExp e, final HashMap<String, VariableExp> consistency) {
+    StringConcatenation _builder = new StringConcatenation();
+    String _gen = OCL.gen(e.getOwnedSource(), consistency);
+    _builder.append(_gen);
+    _builder.append(".");
+    String _name = e.getReferredProperty().getName();
+    _builder.append(_name);
+    return _builder.toString();
+  }
+  
   protected static String _gen(final VariableExp e, final HashMap<String, VariableExp> consistency) {
     StringConcatenation _builder = new StringConcatenation();
     String _xifexpression = null;
@@ -156,7 +177,15 @@ public class OCL {
       }
       _xifexpression = _xifexpression_1;
     } else {
-      _xifexpression = e.getReferredVariable().getName();
+      String _xifexpression_2 = null;
+      String _name = e.getReferredVariable().getName();
+      boolean _equals = Objects.equal(_name, "self");
+      if (_equals) {
+        _xifexpression_2 = OCL.getIteratorName(e);
+      } else {
+        _xifexpression_2 = e.getReferredVariable().getName();
+      }
+      _xifexpression = _xifexpression_2;
     }
     _builder.append(_xifexpression);
     return _builder.toString();
@@ -223,6 +252,18 @@ public class OCL {
     StringConcatenation _builder = new StringConcatenation();
     String _replace = e.getReferredType().toString().replace("::", "!");
     _builder.append(_replace);
+    return _builder.toString();
+  }
+  
+  protected static String _gen(final CollectionLiteralExp e, final HashMap<String, VariableExp> consistency) {
+    StringConcatenation _builder = new StringConcatenation();
+    _builder.append("Sequence{}");
+    return _builder.toString();
+  }
+  
+  protected static String _gen(final UnlimitedNaturalLiteralExp e, final HashMap<String, VariableExp> consistency) {
+    StringConcatenation _builder = new StringConcatenation();
+    _builder.append("*");
     return _builder.toString();
   }
   
@@ -322,8 +363,12 @@ public class OCL {
   public static String gen(final EObject e, final HashMap<String, VariableExp> consistency) {
     if (e instanceof IntegerLiteralExp) {
       return _gen((IntegerLiteralExp)e, consistency);
+    } else if (e instanceof OppositePropertyCallExp) {
+      return _gen((OppositePropertyCallExp)e, consistency);
     } else if (e instanceof PropertyCallExp) {
       return _gen((PropertyCallExp)e, consistency);
+    } else if (e instanceof UnlimitedNaturalLiteralExp) {
+      return _gen((UnlimitedNaturalLiteralExp)e, consistency);
     } else if (e instanceof BooleanLiteralExp) {
       return _gen((BooleanLiteralExp)e, consistency);
     } else if (e instanceof IteratorExp) {
@@ -332,6 +377,8 @@ public class OCL {
       return _gen((NullLiteralExp)e, consistency);
     } else if (e instanceof OperationCallExp) {
       return _gen((OperationCallExp)e, consistency);
+    } else if (e instanceof CollectionLiteralExp) {
+      return _gen((CollectionLiteralExp)e, consistency);
     } else if (e instanceof EnumLiteralExp) {
       return _gen((EnumLiteralExp)e, consistency);
     } else if (e instanceof IteratorVariable) {
