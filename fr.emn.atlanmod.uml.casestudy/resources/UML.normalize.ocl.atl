@@ -1,15 +1,13 @@
 helper context UML!AcceptCallAction def: result_pins(): Boolean = 
   UML!AcceptCallAction.allInstances()->forAll(aca |
-    // We dont understand ocl expression LetExp
+    let parameter : OrderedSet(UML::Parameter) = 
+    	  // We dont understand OperationCallExp inputParameters in 
+    	    aca.result->size() = parameter->size() and // We dont understand ocl expression IteratorExp
 ; 
 
 helper context UML!AcceptCallAction def: trigger_call_event(): Boolean = 
   UML!AcceptCallAction.allInstances()->forAll(aca |
-    aca.trigger->size()
-     = 1
-     and aca.trigger->asSequence()
-    ->first()
-    .event.oclIsKindOf(UML!CallEvent)
+    aca.trigger->size() = 1 and aca.trigger->asSequence()->first().event.oclIsKindOf(UML!CallEvent)
 ; 
 
 helper context UML!AcceptCallAction def: unmarshall(): Boolean = 
@@ -19,54 +17,38 @@ helper context UML!AcceptCallAction def: unmarshall(): Boolean =
 
 helper context UML!AcceptEventAction def: one_output_pin(): Boolean = 
   UML!AcceptEventAction.allInstances()->forAll(aea |
-    not(aea.isUnmarshall)
-     and // We dont understand ocl expression IteratorExp
-     implies aea.output->size()
-     = 1
-     and aea.output->first()
-    ->is(1,// We dont understand OperationCallExp toUnlimitedNatural
-    )
+    not(aea.isUnmarshall) and // We dont understand ocl expression IteratorExp implies aea.output->size() = 1 and aea.output->first()->is(1,// We dont understand OperationCallExp toUnlimitedNatural)
 ; 
 
 helper context UML!AcceptEventAction def: no_input_pins(): Boolean = 
   UML!AcceptEventAction.allInstances()->forAll(aea |
-    aea.input->size()
-     = 0
+    aea.input->size() = 0
 ; 
 
 helper context UML!AcceptEventAction def: no_output_pins(): Boolean = 
   UML!AcceptEventAction.allInstances()->forAll(aea |
-    aea.oclIsTypeOf(UML!AcceptEventAction)
-     and // We dont understand ocl expression IteratorExp
-     implies aea.output->size()
-     = 0
+    self.oclIsTypeOf(UML!AcceptEventAction) and // We dont understand ocl expression IteratorExp implies aea.output->size() = 0
 ; 
 
 helper context UML!AcceptEventAction def: unmarshall_signal_events(): Boolean = 
   UML!AcceptEventAction.allInstances()->forAll(aea |
-    aea.isUnmarshall and aea.oclIsTypeOf(UML!AcceptEventAction)
-     implies aea.trigger->size()
-     = 1
-     and aea.trigger->asSequence()
-    ->first()
-    .event.oclIsKindOf(UML!SignalEvent)
-     and // We dont understand ocl expression LetExp
+    aea.isUnmarshall and self.oclIsTypeOf(UML!AcceptEventAction) implies aea.trigger->size() = 1 and aea.trigger->asSequence()->first().event.oclIsKindOf(UML!SignalEvent) and let attribute : OrderedSet(UML::Property) = 
+    	  // We dont understand OperationCallExp allAttributes in 
+    	    attribute->size() > 0 and aea.result->size() = attribute->size() and // We dont understand ocl expression IteratorExp
 ; 
 
 helper context UML!AcceptEventAction def: conforming_type(): Boolean = 
   UML!AcceptEventAction.allInstances()->forAll(aea |
-    not(aea.isUnmarshall)
-     implies aea.result->isEmpty()
-     or // We dont understand ocl expression LetExp
+    not(aea.isUnmarshall) implies aea.result->isEmpty() or let type : UML::Type = 
+    	  aea.result->first().type in 
+    	    type = OclUndefined or // We dont understand ocl expression IteratorExp and // We dont understand ocl expression IteratorExp
 ; 
 
 helper context UML!ActionExecutionSpecification def: action_referenced(): Boolean = 
   UML!ActionExecutionSpecification.allInstances()->forAll(aes |
-    aes.enclosingInteraction->oclAsSet()
-    ->notEmpty()
-     or // We dont understand ocl expression OppositePropertyCallExp->oclAsSet()
-    ->notEmpty()
-     and // We dont understand ocl expression LetExp
+    aes.enclosingInteraction->oclAsSet()->notEmpty() or // We dont understand ocl expression OppositePropertyCallExp->oclAsSet()->notEmpty() and let parentInteraction : Set(UML::Interaction) = 
+    	  // We dont understand OperationCallExp  in 
+    	    parentInteraction->size() = 1 and // We dont understand ocl expression OppositePropertyCallExp->oclAsSet()->asSet() = parentInteraction
 ; 
 
 helper context UML!ActionInputPin def: input_pin(): Boolean = 
@@ -76,16 +58,12 @@ helper context UML!ActionInputPin def: input_pin(): Boolean =
 
 helper context UML!ActionInputPin def: one_output_pin(): Boolean = 
   UML!ActionInputPin.allInstances()->forAll(aip |
-    aip.fromAction.output->size()
-     = 1
+    aip.fromAction.output->size() = 1
 ; 
 
 helper context UML!ActionInputPin def: no_control_or_object_flow(): Boolean = 
   UML!ActionInputPin.allInstances()->forAll(aip |
-    // We dont understand OperationCallExp 
-    ->isEmpty()
-     and // We dont understand ocl expression IteratorExp->isEmpty()
-     and // We dont understand ocl expression IteratorExp->isEmpty()
+    // We dont understand OperationCallExp ->isEmpty() and // We dont understand ocl expression IteratorExp->isEmpty() and // We dont understand ocl expression IteratorExp->isEmpty()
 ; 
 
 helper context UML!Activity def: maximum_one_parameter_node(): Boolean = 
@@ -100,11 +78,7 @@ helper context UML!Activity def: maximum_two_parameter_nodes(): Boolean =
 
 helper context UML!ActivityEdge def: source_and_target(): Boolean = 
   UML!ActivityEdge.allInstances()->forAll(ae |
-    ae.activity <> OclUndefined
-     implies // We dont understand OperationCallExp containingActivity
-     = ae.activity
-     and // We dont understand OperationCallExp containingActivity
-     = ae.activity
+    ae.activity <> OclUndefined implies // We dont understand OperationCallExp containingActivity = ae.activity and // We dont understand OperationCallExp containingActivity = ae.activity
 ; 
 
 helper context UML!ActivityGroup def: nodes_and_edges(): Boolean = 
@@ -114,19 +88,12 @@ helper context UML!ActivityGroup def: nodes_and_edges(): Boolean =
 
 helper context UML!ActivityGroup def: not_contained(): Boolean = 
   UML!ActivityGroup.allInstances()->forAll(ag |
-    // We dont understand ocl expression IteratorExp->excludesAll(ag.containedNode)
-     and // We dont understand ocl expression IteratorExp->excludesAll(ag.containedNode)
-     and // We dont understand ocl expression IteratorExp->excludesAll(ag.containedEdge)
-     and // We dont understand ocl expression IteratorExp->excludesAll(ag.containedEdge)
+    // We dont understand ocl expression IteratorExp->excludesAll(ag.containedNode) and // We dont understand ocl expression IteratorExp->excludesAll(ag.containedNode) and // We dont understand ocl expression IteratorExp->excludesAll(ag.containedEdge) and // We dont understand ocl expression IteratorExp->excludesAll(ag.containedEdge)
 ; 
 
 helper context UML!ActivityParameterNode def: no_outgoing_edges(): Boolean = 
   UML!ActivityParameterNode.allInstances()->forAll(apn |
-    apn.incoming->notEmpty()
-     and apn.outgoing->isEmpty()
-     implies apn.parameter.direction = ParameterDirectionKind.out
-     or apn.parameter.direction = ParameterDirectionKind.inout
-     or apn.parameter.direction = ParameterDirectionKind.return
+    apn.incoming->notEmpty() and apn.outgoing->isEmpty() implies apn.parameter.direction = ParameterDirectionKind.out or apn.parameter.direction = ParameterDirectionKind.inout or apn.parameter.direction = ParameterDirectionKind.return
 ; 
 
 helper context UML!ActivityParameterNode def: has_parameters(): Boolean = 
@@ -141,52 +108,38 @@ helper context UML!ActivityParameterNode def: same_type(): Boolean =
 
 helper context UML!ActivityParameterNode def: no_incoming_edges(): Boolean = 
   UML!ActivityParameterNode.allInstances()->forAll(apn |
-    apn.outgoing->notEmpty()
-     and apn.incoming->isEmpty()
-     implies apn.parameter.direction = ParameterDirectionKind.in
-     or apn.parameter.direction = ParameterDirectionKind.inout
+    apn.outgoing->notEmpty() and apn.incoming->isEmpty() implies apn.parameter.direction = ParameterDirectionKind.in or apn.parameter.direction = ParameterDirectionKind.inout
 ; 
 
 helper context UML!ActivityParameterNode def: no_edges(): Boolean = 
   UML!ActivityParameterNode.allInstances()->forAll(apn |
-    apn.incoming->isEmpty()
-     or apn.outgoing->isEmpty()
+    apn.incoming->isEmpty() or apn.outgoing->isEmpty()
 ; 
 
 helper context UML!ActivityPartition def: represents_classifier(): Boolean = 
   UML!ActivityPartition.allInstances()->forAll(ap |
-    not(ap.isExternal)
-     and ap.represents.oclIsKindOf(UML!Classifier)
-     and ap.superPartition->oclAsSet()
-    ->notEmpty()
-     implies // We dont understand ocl expression LetExp
+    not(ap.isExternal) and ap.represents.oclIsKindOf(UML!Classifier) and ap.superPartition->oclAsSet()->notEmpty() implies let representedClassifier : UML::Classifier = 
+    	  ap.represents.oclAsType(UML!Classifier) in 
+    	    ap.superPartition.represents.oclIsKindOf(UML!Classifier) and let representedSuperClassifier : UML::Classifier = 
+    	    	  ap.superPartition.represents.oclAsType(UML!Classifier) in 
+    	    	    representedSuperClassifier.oclIsKindOf(UML!BehavioredClassifier) and representedClassifier.oclIsKindOf(UML!Behavior) and representedSuperClassifier.oclAsType(UML!BehavioredClassifier).ownedBehavior->includes(representedClassifier.oclAsType(UML!Behavior)) or representedSuperClassifier.oclIsKindOf(UML!Class) and representedSuperClassifier.oclAsType(UML!Class).nestedClassifier->includes(representedClassifier) or // We dont understand ocl expression IteratorExp
 ; 
 
 helper context UML!ActivityPartition def: represents_property_and_is_contained(): Boolean = 
   UML!ActivityPartition.allInstances()->forAll(ap |
-    ap.represents.oclIsKindOf(UML!Property)
-     and ap.superPartition->oclAsSet()
-    ->notEmpty()
-     implies ap.superPartition.represents.oclIsKindOf(UML!Classifier)
-     and ap.represents.owner = ap.superPartition.represents
-     or ap.superPartition.represents.oclIsKindOf(UML!Property)
-     and ap.represents.owner = ap.superPartition.represents.oclAsType(UML!Property)
-    .type
+    ap.represents.oclIsKindOf(UML!Property) and ap.superPartition->oclAsSet()->notEmpty() implies ap.superPartition.represents.oclIsKindOf(UML!Classifier) and ap.represents.owner = ap.superPartition.represents or ap.superPartition.represents.oclIsKindOf(UML!Property) and ap.represents.owner = ap.superPartition.represents.oclAsType(UML!Property).type
 ; 
 
 helper context UML!ActivityPartition def: represents_property(): Boolean = 
   UML!ActivityPartition.allInstances()->forAll(ap |
-    ap.represents.oclIsKindOf(UML!Property)
-     and ap.superPartition->oclAsSet()
-    ->notEmpty()
-     and ap.superPartition.represents.oclIsKindOf(UML!Classifier)
-     implies // We dont understand ocl expression LetExp
+    ap.represents.oclIsKindOf(UML!Property) and ap.superPartition->oclAsSet()->notEmpty() and ap.superPartition.represents.oclIsKindOf(UML!Classifier) implies let representedClassifier : UML::Classifier = 
+    	  ap.superPartition.represents.oclAsType(UML!Classifier) in 
+    	    // We dont understand ocl expression IteratorExp
 ; 
 
 helper context UML!ActivityPartition def: dimension_not_contained(): Boolean = 
   UML!ActivityPartition.allInstances()->forAll(ap |
-    ap.isDimension implies ap.superPartition->oclAsSet()
-    ->isEmpty()
+    ap.isDimension implies ap.superPartition->oclAsSet()->isEmpty()
 ; 
 
 helper context UML!Actor def: associations(): Boolean = 
@@ -196,8 +149,7 @@ helper context UML!Actor def: associations(): Boolean =
 
 helper context UML!Actor def: must_have_name(): Boolean = 
   UML!Actor.allInstances()->forAll(a |
-    a.name->oclAsSet()
-    ->notEmpty()
+    a.name->oclAsSet()->notEmpty()
 ; 
 
 helper context UML!AddStructuralFeatureValueAction def: required_value(): Boolean = 
@@ -232,16 +184,12 @@ helper context UML!Association def: specialized_end_types(): Boolean =
 
 helper context UML!Association def: binary_associations(): Boolean = 
   UML!Association.allInstances()->forAll(a |
-    // We dont understand ocl expression IteratorExp implies a.memberEnd->size()
-     = 2
-     and // We dont understand ocl expression IteratorExp
+    // We dont understand ocl expression IteratorExp implies a.memberEnd->size() = 2 and // We dont understand ocl expression IteratorExp
 ; 
 
 helper context UML!Association def: association_ends(): Boolean = 
   UML!Association.allInstances()->forAll(a |
-    a.memberEnd->size()
-     > 2
-     implies a.ownedEnd->includesAll(a.memberEnd)
+    a.memberEnd->size() > 2 implies a.ownedEnd->includesAll(a.memberEnd)
 ; 
 
 helper context UML!Association def: ends_must_be_typed(): Boolean = 
@@ -251,30 +199,22 @@ helper context UML!Association def: ends_must_be_typed(): Boolean =
 
 helper context UML!AssociationClass def: cannot_be_defined(): Boolean = 
   UML!AssociationClass.allInstances()->forAll(ac |
-    // We dont understand OperationCallExp endType
-    ->excludes(ac)
-     and // We dont understand ocl expression IteratorExp->flatten()
-    ->excludes(ac)
+    // We dont understand OperationCallExp endType->excludes(self) and // We dont understand ocl expression IteratorExp->flatten()->excludes(self)
 ; 
 
 helper context UML!AssociationClass def: disjoint_attributes_ends(): Boolean = 
   UML!AssociationClass.allInstances()->forAll(ac |
-    ac.ownedAttribute->intersection(ac.ownedEnd)
-    ->isEmpty()
+    ac.ownedAttribute->intersection(ac.ownedEnd)->isEmpty()
 ; 
 
 helper context UML!Behavior def: most_one_behavior(): Boolean = 
   UML!Behavior.allInstances()->forAll(b |
-    b.specification <> OclUndefined
-     implies // We dont understand ocl expression IteratorExp->size()
-     = 1
+    b.specification <> OclUndefined implies // We dont understand ocl expression IteratorExp->size() = 1
 ; 
 
 helper context UML!Behavior def: parameters_match(): Boolean = 
   UML!Behavior.allInstances()->forAll(b |
-    b.specification <> OclUndefined
-     implies b.ownedParameter->size()
-     = b.specification.ownedParameter->size()
+    b.specification <> OclUndefined implies b.ownedParameter->size() = b.specification.ownedParameter->size()
 ; 
 
 helper context UML!Behavior def: feature_of_context_classifier(): Boolean = 
@@ -289,22 +229,19 @@ helper context UML!BehavioralFeature def: abstract_no_method(): Boolean =
 
 helper context UML!BehavioredClassifier def: class_behavior(): Boolean = 
   UML!BehavioredClassifier.allInstances()->forAll(bc |
-    bc.classifierBehavior->oclAsSet()
-    ->notEmpty()
-     implies bc.classifierBehavior.specification->oclAsSet()
-    ->isEmpty()
+    bc.classifierBehavior->oclAsSet()->notEmpty() implies bc.classifierBehavior.specification->oclAsSet()->isEmpty()
 ; 
 
 helper context UML!BroadcastSignalAction def: number_of_arguments(): Boolean = 
   UML!BroadcastSignalAction.allInstances()->forAll(bsa |
-    bsa.argument->size()
-     = // We dont understand OperationCallExp allAttributes
-    ->size()
+    bsa.argument->size() = // We dont understand OperationCallExp allAttributes->size()
 ; 
 
 helper context UML!BroadcastSignalAction def: type_ordering_multiplicity(): Boolean = 
   UML!BroadcastSignalAction.allInstances()->forAll(bsa |
-    // We dont understand ocl expression LetExp
+    let attribute : OrderedSet(UML::Property) = 
+    	  // We dont understand OperationCallExp allAttributes in 
+    	    // We dont understand ocl expression IteratorExp
 ; 
 
 helper context UML!BroadcastSignalAction def: no_onport(): Boolean = 
@@ -314,18 +251,21 @@ helper context UML!BroadcastSignalAction def: no_onport(): Boolean =
 
 helper context UML!CallAction def: argument_pins(): Boolean = 
   UML!CallAction.allInstances()->forAll(ca |
-    // We dont understand ocl expression LetExp
+    let parameter : OrderedSet(UML::Parameter) = 
+    	  // We dont understand OperationCallExp inputParameters in 
+    	    ca.argument->size() = parameter->size() and // We dont understand ocl expression IteratorExp
 ; 
 
 helper context UML!CallAction def: result_pins(): Boolean = 
   UML!CallAction.allInstances()->forAll(ca |
-    // We dont understand ocl expression LetExp
+    let parameter : OrderedSet(UML::Parameter) = 
+    	  // We dont understand OperationCallExp outputParameters in 
+    	    ca.result->size() = parameter->size() and // We dont understand ocl expression IteratorExp
 ; 
 
 helper context UML!CallAction def: synchronous_call(): Boolean = 
   UML!CallAction.allInstances()->forAll(ca |
-    ca.result->notEmpty()
-     implies ca.isSynchronous
+    ca.result->notEmpty() implies ca.isSynchronous
 ; 
 
 helper context UML!CallBehaviorAction def: no_onport(): Boolean = 
@@ -340,9 +280,7 @@ helper context UML!CallOperationAction def: type_target_pin(): Boolean =
 
 helper context UML!Class def: passive_class(): Boolean = 
   UML!Class.allInstances()->forAll(c |
-    not(c.isActive)
-     implies c.ownedReception->isEmpty()
-     and c.classifierBehavior = OclUndefined
+    not(c.isActive) implies c.ownedReception->isEmpty() and c.classifierBehavior = OclUndefined
 ; 
 
 helper context UML!Classifier def: specialize_type(): Boolean = 
@@ -362,9 +300,7 @@ helper context UML!Classifier def: non_final_parents(): Boolean =
 
 helper context UML!Classifier def: no_cycles_in_generalization(): Boolean = 
   UML!Classifier.allInstances()->forAll(c |
-    not(// We dont understand OperationCallExp allParents
-    ->includes(c)
-    )
+    not(// We dont understand OperationCallExp allParents->includes(self))
 ; 
 
 helper context UML!ClassifierTemplateParameter def: has_constraining_classifier(): Boolean = 
@@ -374,16 +310,12 @@ helper context UML!ClassifierTemplateParameter def: has_constraining_classifier(
 
 helper context UML!ClassifierTemplateParameter def: parametered_element_no_features(): Boolean = 
   UML!ClassifierTemplateParameter.allInstances()->forAll(ctp |
-    ctp.parameteredElement.feature->isEmpty()
-     and ctp.constrainingClassifier->isEmpty()
-     implies // We dont understand OperationCallExp allParents
-    ->isEmpty()
+    ctp.parameteredElement.feature->isEmpty() and ctp.constrainingClassifier->isEmpty() implies // We dont understand OperationCallExp allParents->isEmpty()
 ; 
 
 helper context UML!ClassifierTemplateParameter def: matching_abstract(): Boolean = 
   UML!ClassifierTemplateParameter.allInstances()->forAll(ctp |
-    not(ctp.parameteredElement.isAbstract)
-     implies // We dont understand ocl expression IteratorExp
+    not(ctp.parameteredElement.isAbstract) implies // We dont understand ocl expression IteratorExp
 ; 
 
 helper context UML!ClassifierTemplateParameter def: actual_is_classifier(): Boolean = 
@@ -408,22 +340,17 @@ helper context UML!Clause def: body_output_pins(): Boolean =
 
 helper context UML!Clause def: decider_output(): Boolean = 
   UML!Clause.allInstances()->forAll(c |
-    // We dont understand ocl expression IteratorExp->includes(c.decider)
-     and c.decider.type = UML!Boolean
-     and c.decider->is(1,// We dont understand OperationCallExp toUnlimitedNatural
-    )
+    // We dont understand ocl expression IteratorExp->includes(c.decider) and c.decider.type = Boolean and c.decider->is(1,// We dont understand OperationCallExp toUnlimitedNatural)
 ; 
 
 helper context UML!Clause def: test_and_body(): Boolean = 
   UML!Clause.allInstances()->forAll(c |
-    c.test->intersection(c.body)
-    ->isEmpty()
+    c.test->intersection(c.body)->isEmpty()
 ; 
 
 helper context UML!ClearAssociationAction def: multiplicity(): Boolean = 
   UML!ClearAssociationAction.allInstances()->forAll(caa |
-    caa.object->is(1,// We dont understand OperationCallExp toUnlimitedNatural
-    )
+    caa.object->is(1,// We dont understand OperationCallExp toUnlimitedNatural)
 ; 
 
 helper context UML!ClearAssociationAction def: same_type(): Boolean = 
@@ -433,15 +360,12 @@ helper context UML!ClearAssociationAction def: same_type(): Boolean =
 
 helper context UML!ClearStructuralFeatureAction def: type_of_result(): Boolean = 
   UML!ClearStructuralFeatureAction.allInstances()->forAll(csfa |
-    csfa.result <> OclUndefined
-     implies csfa.result.type = csfa.object.type
+    csfa.result <> OclUndefined implies csfa.result.type = csfa.object.type
 ; 
 
 helper context UML!ClearStructuralFeatureAction def: multiplicity_of_result(): Boolean = 
   UML!ClearStructuralFeatureAction.allInstances()->forAll(csfa |
-    csfa.result <> OclUndefined
-     implies csfa.result->is(1,// We dont understand OperationCallExp toUnlimitedNatural
-    )
+    csfa.result <> OclUndefined implies csfa.result->is(1,// We dont understand OperationCallExp toUnlimitedNatural)
 ; 
 
 helper context UML!CollaborationUse def: client_elements(): Boolean = 
@@ -461,27 +385,17 @@ helper context UML!CollaborationUse def: connectors(): Boolean =
 
 helper context UML!CombinedFragment def: break(): Boolean = 
   UML!CombinedFragment.allInstances()->forAll(cf |
-    cf.interactionOperator = InteractionOperatorKind.break
-     implies // We dont understand ocl expression IteratorExp->asSet()
-     = cf.covered->asSet()
+    cf.interactionOperator = InteractionOperatorKind.break implies // We dont understand ocl expression IteratorExp->asSet() = self.covered->asSet()
 ; 
 
 helper context UML!CombinedFragment def: consider_and_ignore(): Boolean = 
   UML!CombinedFragment.allInstances()->forAll(cf |
-    cf.interactionOperator = InteractionOperatorKind.consider
-     or cf.interactionOperator = InteractionOperatorKind.ignore
-     implies cf.oclIsKindOf(UML!ConsiderIgnoreFragment)
+    cf.interactionOperator = InteractionOperatorKind.consider or cf.interactionOperator = InteractionOperatorKind.ignore implies cf.oclIsKindOf(UML!ConsiderIgnoreFragment)
 ; 
 
 helper context UML!CombinedFragment def: opt_loop_break_neg(): Boolean = 
   UML!CombinedFragment.allInstances()->forAll(cf |
-    cf.interactionOperator = InteractionOperatorKind.opt
-     or cf.interactionOperator = InteractionOperatorKind.loop
-     or cf.interactionOperator = InteractionOperatorKind.break
-     or cf.interactionOperator = InteractionOperatorKind.assert
-     or cf.interactionOperator = InteractionOperatorKind.neg
-     implies cf.operand->size()
-     = 1
+    cf.interactionOperator = InteractionOperatorKind.opt or cf.interactionOperator = InteractionOperatorKind.loop or cf.interactionOperator = InteractionOperatorKind.break or cf.interactionOperator = InteractionOperatorKind.assert or cf.interactionOperator = InteractionOperatorKind.neg implies cf.operand->size() = 1
 ; 
 
 helper context UML!CommunicationPath def: association_ends(): Boolean = 
@@ -496,8 +410,7 @@ helper context UML!Component def: no_nested_classifiers(): Boolean =
 
 helper context UML!Component def: no_packaged_elements(): Boolean = 
   UML!Component.allInstances()->forAll(c |
-    // We dont understand ocl expression OppositePropertyCallExp <> OclUndefined
-     implies c.packagedElement->isEmpty()
+    // We dont understand ocl expression OppositePropertyCallExp <> OclUndefined implies c.packagedElement->isEmpty()
 ; 
 
 helper context UML!ConditionalNode def: result_no_incoming(): Boolean = 
@@ -522,14 +435,12 @@ helper context UML!ConditionalNode def: matching_output_pins(): Boolean =
 
 helper context UML!ConditionalNode def: executable_nodes(): Boolean = 
   UML!ConditionalNode.allInstances()->forAll(cn |
-    // We dont understand OperationCallExp 
-     = // We dont understand ocl expression IteratorExp
+    // We dont understand OperationCallExp  = // We dont understand ocl expression IteratorExp
 ; 
 
 helper context UML!ConditionalNode def: clause_no_predecessor(): Boolean = 
   UML!ConditionalNode.allInstances()->forAll(cn |
-    // We dont understand ocl expression IteratorExp->intersection(cn.clause)
-    ->isEmpty()
+    // We dont understand ocl expression IteratorExp->intersection(cn.clause)->isEmpty()
 ; 
 
 helper context UML!ConnectionPointReference def: exit_pseudostates(): Boolean = 
@@ -544,31 +455,24 @@ helper context UML!ConnectionPointReference def: entry_pseudostates(): Boolean =
 
 helper context UML!Connector def: types(): Boolean = 
   UML!Connector.allInstances()->forAll(c |
-    c.type <> OclUndefined
-     implies // We dont understand ocl expression LetExp
+    c.type <> OclUndefined implies let noOfEnds : Integer = 
+    	  c.end->size() in 
+    	    c.type.memberEnd->size() = noOfEnds and // We dont understand ocl expression IteratorExp
 ; 
 
 helper context UML!Connector def: roles(): Boolean = 
   UML!Connector.allInstances()->forAll(c |
-    // We dont understand ocl expression OppositePropertyCallExp <> OclUndefined
-     and // We dont understand ocl expression IteratorExp
+    // We dont understand ocl expression OppositePropertyCallExp <> OclUndefined and // We dont understand ocl expression IteratorExp
 ; 
 
 helper context UML!ConnectorEnd def: role_and_part_with_port(): Boolean = 
   UML!ConnectorEnd.allInstances()->forAll(ce |
-    ce.partWithPort->oclAsSet()
-    ->notEmpty()
-     implies ce.role.oclIsKindOf(UML!Port)
-     and ce.partWithPort.type.oclAsType(UML!Namespace)
-    .member->includes(ce.role)
+    ce.partWithPort->oclAsSet()->notEmpty() implies ce.role.oclIsKindOf(UML!Port) and ce.partWithPort.type.oclAsType(UML!Namespace).member->includes(ce.role)
 ; 
 
 helper context UML!ConnectorEnd def: part_with_port_empty(): Boolean = 
   UML!ConnectorEnd.allInstances()->forAll(ce |
-    ce.role.oclIsKindOf(UML!Port)
-     and ce.role.owner = // We dont understand ocl expression OppositePropertyCallExp.owner
-     implies ce.partWithPort->oclAsSet()
-    ->isEmpty()
+    ce.role.oclIsKindOf(UML!Port) and ce.role.owner = // We dont understand ocl expression OppositePropertyCallExp.owner implies ce.partWithPort->oclAsSet()->isEmpty()
 ; 
 
 helper context UML!ConnectorEnd def: multiplicity(): Boolean = 
@@ -578,16 +482,12 @@ helper context UML!ConnectorEnd def: multiplicity(): Boolean =
 
 helper context UML!ConnectorEnd def: self_part_with_port(): Boolean = 
   UML!ConnectorEnd.allInstances()->forAll(ce |
-    ce.partWithPort->oclAsSet()
-    ->notEmpty()
-     implies not(ce.partWithPort.oclIsKindOf(UML!Port)
-    )
+    ce.partWithPort->oclAsSet()->notEmpty() implies not(ce.partWithPort.oclIsKindOf(UML!Port))
 ; 
 
 helper context UML!ConsiderIgnoreFragment def: consider_or_ignore(): Boolean = 
   UML!ConsiderIgnoreFragment.allInstances()->forAll(cif |
-    cif.interactionOperator = InteractionOperatorKind.consider
-     or cif.interactionOperator = InteractionOperatorKind.ignore
+    cif.interactionOperator = InteractionOperatorKind.consider or cif.interactionOperator = InteractionOperatorKind.ignore
 ; 
 
 helper context UML!ConsiderIgnoreFragment def: type(): Boolean = 
@@ -607,51 +507,47 @@ helper context UML!Constraint def: no_side_effects(): Boolean =
 
 helper context UML!Constraint def: not_apply_to_self(): Boolean = 
   UML!Constraint.allInstances()->forAll(c |
-    not(c.constrainedElement->includes(c)
-    )
+    not(c.constrainedElement->includes(self))
 ; 
 
 helper context UML!Continuation def: first_or_last_interaction_fragment(): Boolean = 
   UML!Continuation.allInstances()->forAll(c |
-    c.enclosingOperand->oclAsSet()
-    ->notEmpty()
-     and // We dont understand ocl expression LetExp
+    c.enclosingOperand->oclAsSet()->notEmpty() and let peerFragments : OrderedSet(UML::InteractionFragment) = 
+    	  c.enclosingOperand.fragment in 
+    	    peerFragments->notEmpty() and peerFragments->first() = self or peerFragments->last() = self
 ; 
 
 helper context UML!Continuation def: same_name(): Boolean = 
   UML!Continuation.allInstances()->forAll(c |
-    // We dont understand ocl expression OppositePropertyCallExp->oclAsSet()
-    ->notEmpty()
-     and // We dont understand ocl expression LetExp
+    // We dont understand ocl expression OppositePropertyCallExp->oclAsSet()->notEmpty() and let parentInteraction : Set(UML::Interaction) = 
+    	  // We dont understand ocl expression IteratorExp->asSet() in 
+    	    parentInteraction->size() = 1 and let peerInteractions : Set(UML::Interaction) = 
+    	    	  // We dont understand OperationCallExp ->asSet() in 
+    	    	    peerInteractions->notEmpty() and let combinedFragments1 : Set(UML::CombinedFragment) = 
+    	    	    	  // We dont understand ocl expression IteratorExp->asSet() in 
+    	    	    	    combinedFragments1->notEmpty() and // We dont understand ocl expression IteratorExp
 ; 
 
 helper context UML!Continuation def: global(): Boolean = 
   UML!Continuation.allInstances()->forAll(c |
-    c.enclosingOperand->oclAsSet()
-    ->notEmpty()
-     and // We dont understand ocl expression LetExp
+    c.enclosingOperand->oclAsSet()->notEmpty() and let operandLifelines : Set(UML::Lifeline) = 
+    	  c.enclosingOperand.covered in 
+    	    operandLifelines->notEmpty() and // We dont understand ocl expression IteratorExp
 ; 
 
 helper context UML!ControlFlow def: object_nodes(): Boolean = 
   UML!ControlFlow.allInstances()->forAll(cf |
-    cf.source.oclIsKindOf(UML!ObjectNode)
-     implies cf.source.oclAsType(UML!ObjectNode)
-    .isControlType
-     and cf.target.oclIsKindOf(UML!ObjectNode)
-     implies cf.target.oclAsType(UML!ObjectNode)
-    .isControlType
+    cf.source.oclIsKindOf(UML!ObjectNode) implies cf.source.oclAsType(UML!ObjectNode).isControlType and cf.target.oclIsKindOf(UML!ObjectNode) implies cf.target.oclAsType(UML!ObjectNode).isControlType
 ; 
 
 helper context UML!CreateLinkAction def: association_not_abstract(): Boolean = 
   UML!CreateLinkAction.allInstances()->forAll(cla |
-    not(// We dont understand OperationCallExp association
-    .isAbstract)
+    not(// We dont understand OperationCallExp association.isAbstract)
 ; 
 
 helper context UML!CreateLinkObjectAction def: multiplicity(): Boolean = 
   UML!CreateLinkObjectAction.allInstances()->forAll(cloa |
-    cloa.result->is(1,// We dont understand OperationCallExp toUnlimitedNatural
-    )
+    cloa.result->is(1,// We dont understand OperationCallExp toUnlimitedNatural)
 ; 
 
 helper context UML!CreateLinkObjectAction def: type_of_result(): Boolean = 
@@ -661,8 +557,7 @@ helper context UML!CreateLinkObjectAction def: type_of_result(): Boolean =
 
 helper context UML!CreateLinkObjectAction def: association_class(): Boolean = 
   UML!CreateLinkObjectAction.allInstances()->forAll(cloa |
-    // We dont understand OperationCallExp association
-    .oclIsKindOf(UML!AssociationClass)
+    // We dont understand OperationCallExp association.oclIsKindOf(UML!AssociationClass)
 ; 
 
 helper context UML!CreateObjectAction def: classifier_not_abstract(): Boolean = 
@@ -672,14 +567,12 @@ helper context UML!CreateObjectAction def: classifier_not_abstract(): Boolean =
 
 helper context UML!CreateObjectAction def: multiplicity(): Boolean = 
   UML!CreateObjectAction.allInstances()->forAll(coa |
-    coa.result->is(1,// We dont understand OperationCallExp toUnlimitedNatural
-    )
+    coa.result->is(1,// We dont understand OperationCallExp toUnlimitedNatural)
 ; 
 
 helper context UML!CreateObjectAction def: classifier_not_association_class(): Boolean = 
   UML!CreateObjectAction.allInstances()->forAll(coa |
-    not(coa.classifier.oclIsKindOf(UML!AssociationClass)
-    )
+    not(coa.classifier.oclIsKindOf(UML!AssociationClass))
 ; 
 
 helper context UML!CreateObjectAction def: same_type(): Boolean = 
@@ -689,16 +582,16 @@ helper context UML!CreateObjectAction def: same_type(): Boolean =
 
 helper context UML!DecisionNode def: zero_input_parameters(): Boolean = 
   UML!DecisionNode.allInstances()->forAll(dn |
-    dn.decisionInput <> OclUndefined
-     and dn.decisionInputFlow = OclUndefined
-     and // We dont understand ocl expression IteratorExp
-     implies // We dont understand OperationCallExp inputParameters
-    ->isEmpty()
+    dn.decisionInput <> OclUndefined and dn.decisionInputFlow = OclUndefined and // We dont understand ocl expression IteratorExp implies // We dont understand OperationCallExp inputParameters->isEmpty()
 ; 
 
 helper context UML!DecisionNode def: edges(): Boolean = 
   UML!DecisionNode.allInstances()->forAll(dn |
-    // We dont understand ocl expression LetExp
+    let allEdges : Set(UML::ActivityEdge) = 
+    	  // We dont understand OperationCallExp  in 
+    	    let allRelevantEdges : Set(UML::ActivityEdge) = 
+    	    	  // We dont understand ocl expression IfExp in 
+    	    	    // We dont understand ocl expression IteratorExp or // We dont understand ocl expression IteratorExp
 ; 
 
 helper context UML!DecisionNode def: decision_input_flow_incoming(): Boolean = 
@@ -708,48 +601,27 @@ helper context UML!DecisionNode def: decision_input_flow_incoming(): Boolean =
 
 helper context UML!DecisionNode def: two_input_parameters(): Boolean = 
   UML!DecisionNode.allInstances()->forAll(dn |
-    dn.decisionInput <> OclUndefined
-     and dn.decisionInputFlow <> OclUndefined
-     and // We dont understand ocl expression IteratorExp
-     implies // We dont understand OperationCallExp inputParameters
-    ->size()
-     = 2
+    dn.decisionInput <> OclUndefined and dn.decisionInputFlow <> OclUndefined and // We dont understand ocl expression IteratorExp implies // We dont understand OperationCallExp inputParameters->size() = 2
 ; 
 
 helper context UML!DecisionNode def: incoming_outgoing_edges(): Boolean = 
   UML!DecisionNode.allInstances()->forAll(dn |
-    dn.incoming->size()
-     = 1
-     or dn.incoming->size()
-     = 2
-     and dn.outgoing->size()
-     > 0
+    dn.incoming->size() = 1 or dn.incoming->size() = 2 and dn.outgoing->size() > 0
 ; 
 
 helper context UML!DecisionNode def: incoming_control_one_input_parameter(): Boolean = 
   UML!DecisionNode.allInstances()->forAll(dn |
-    dn.decisionInput <> OclUndefined
-     and dn.decisionInputFlow <> OclUndefined
-     and // We dont understand ocl expression IteratorExp
-     implies // We dont understand OperationCallExp inputParameters
-    ->size()
-     = 1
+    dn.decisionInput <> OclUndefined and dn.decisionInputFlow <> OclUndefined and // We dont understand ocl expression IteratorExp implies // We dont understand OperationCallExp inputParameters->size() = 1
 ; 
 
 helper context UML!DecisionNode def: parameters(): Boolean = 
   UML!DecisionNode.allInstances()->forAll(dn |
-    dn.decisionInput <> OclUndefined
-     implies // We dont understand ocl expression IteratorExp and // We dont understand ocl expression IteratorExp
+    dn.decisionInput <> OclUndefined implies // We dont understand ocl expression IteratorExp and // We dont understand ocl expression IteratorExp
 ; 
 
 helper context UML!DecisionNode def: incoming_object_one_input_parameter(): Boolean = 
   UML!DecisionNode.allInstances()->forAll(dn |
-    dn.decisionInput <> OclUndefined
-     and dn.decisionInputFlow = OclUndefined
-     and // We dont understand ocl expression IteratorExp
-     implies // We dont understand OperationCallExp inputParameters
-    ->size()
-     = 1
+    dn.decisionInput <> OclUndefined and dn.decisionInputFlow = OclUndefined and // We dont understand ocl expression IteratorExp implies // We dont understand OperationCallExp inputParameters->size() = 1
 ; 
 
 helper context UML!DeploymentSpecification def: deployment_target(): Boolean = 
@@ -764,8 +636,7 @@ helper context UML!DeploymentSpecification def: deployed_elements(): Boolean =
 
 helper context UML!DestroyObjectAction def: multiplicity(): Boolean = 
   UML!DestroyObjectAction.allInstances()->forAll(doa |
-    doa.target->is(1,// We dont understand OperationCallExp toUnlimitedNatural
-    )
+    doa.target->is(1,// We dont understand OperationCallExp toUnlimitedNatural)
 ; 
 
 helper context UML!DestroyObjectAction def: no_type(): Boolean = 
@@ -775,15 +646,16 @@ helper context UML!DestroyObjectAction def: no_type(): Boolean =
 
 helper context UML!DestructionOccurrenceSpecification def: no_occurrence_specifications_below(): Boolean = 
   UML!DestructionOccurrenceSpecification.allInstances()->forAll(dos |
-    // We dont understand ocl expression LetExp
+    let o : UML::InteractionOperand = 
+    	  dos.enclosingOperand in 
+    	    o->oclAsSet()->notEmpty() and let peerEvents : OrderedSet(UML::OccurrenceSpecification) = 
+    	    	  // We dont understand ocl expression IteratorExp in 
+    	    	    peerEvents->last() = self
 ; 
 
 helper context UML!Duration def: no_expr_requires_observation(): Boolean = 
   UML!Duration.allInstances()->forAll(d |
-    d.expr = OclUndefined
-     implies d.observation->size()
-     = 1
-     and // We dont understand ocl expression IteratorExp
+    d.expr = OclUndefined implies d.observation->size() = 1 and // We dont understand ocl expression IteratorExp
 ; 
 
 helper context UML!DurationConstraint def: first_event_multiplicity(): Boolean = 
@@ -793,10 +665,7 @@ helper context UML!DurationConstraint def: first_event_multiplicity(): Boolean =
 
 helper context UML!DurationConstraint def: has_one_or_two_constrainedElements(): Boolean = 
   UML!DurationConstraint.allInstances()->forAll(dc |
-    dc.constrainedElement->size()
-     = 1
-     or dc.constrainedElement->size()
-     = 2
+    dc.constrainedElement->size() = 1 or dc.constrainedElement->size() = 2
 ; 
 
 helper context UML!DurationObservation def: first_event_multiplicity(): Boolean = 
@@ -806,28 +675,22 @@ helper context UML!DurationObservation def: first_event_multiplicity(): Boolean 
 
 helper context UML!Element def: has_owner(): Boolean = 
   UML!Element.allInstances()->forAll(e |
-    // We dont understand OperationCallExp mustBeOwned
-     implies e.owner->oclAsSet()
-    ->notEmpty()
+    // We dont understand OperationCallExp mustBeOwned implies e.owner->oclAsSet()->notEmpty()
 ; 
 
 helper context UML!Element def: not_own_self(): Boolean = 
   UML!Element.allInstances()->forAll(e |
-    not(// We dont understand OperationCallExp allOwnedElements
-    ->includes(e)
-    )
+    not(// We dont understand OperationCallExp allOwnedElements->includes(self))
 ; 
 
 helper context UML!ElementImport def: imported_element_is_public(): Boolean = 
   UML!ElementImport.allInstances()->forAll(ei |
-    ei.importedElement.visibility <> OclUndefined
-     implies ei.importedElement.visibility = VisibilityKind.public
+    ei.importedElement.visibility <> OclUndefined implies ei.importedElement.visibility = VisibilityKind.public
 ; 
 
 helper context UML!ElementImport def: visibility_public_or_private(): Boolean = 
   UML!ElementImport.allInstances()->forAll(ei |
-    ei.visibility = VisibilityKind.public
-     or ei.visibility = VisibilityKind.private
+    ei.visibility = VisibilityKind.public or ei.visibility = VisibilityKind.private
 ; 
 
 helper context UML!Enumeration def: immutable(): Boolean = 
@@ -837,29 +700,30 @@ helper context UML!Enumeration def: immutable(): Boolean =
 
 helper context UML!ExceptionHandler def: handler_body_edges(): Boolean = 
   UML!ExceptionHandler.allInstances()->forAll(eh |
-    eh.handlerBody.incoming->isEmpty()
-     and eh.handlerBody.outgoing->isEmpty()
-     and eh.exceptionInput.incoming->isEmpty()
+    eh.handlerBody.incoming->isEmpty() and eh.handlerBody.outgoing->isEmpty() and eh.exceptionInput.incoming->isEmpty()
 ; 
 
 helper context UML!ExceptionHandler def: output_pins(): Boolean = 
   UML!ExceptionHandler.allInstances()->forAll(eh |
-    eh.protectedNode.oclIsKindOf(UML!Action)
-     and eh.protectedNode.oclAsType(UML!Action)
-    .output->notEmpty()
-     implies eh.handlerBody.oclIsKindOf(UML!Action)
-     and // We dont understand ocl expression LetExp
+    eh.protectedNode.oclIsKindOf(UML!Action) and eh.protectedNode.oclAsType(UML!Action).output->notEmpty() implies eh.handlerBody.oclIsKindOf(UML!Action) and let protectedNodeOutput : OrderedSet(UML::OutputPin) = 
+    	  eh.protectedNode.oclAsType(UML!Action).output in 
+    	    let handlerBodyOutput : OrderedSet(UML::OutputPin) = 
+    	    	  eh.handlerBody.oclAsType(UML!Action).output in 
+    	    	    protectedNodeOutput->size() = handlerBodyOutput->size() and // We dont understand ocl expression IteratorExp
 ; 
 
 helper context UML!ExceptionHandler def: one_input(): Boolean = 
   UML!ExceptionHandler.allInstances()->forAll(eh |
-    eh.handlerBody.oclIsKindOf(UML!Action)
-     and // We dont understand ocl expression LetExp
+    eh.handlerBody.oclIsKindOf(UML!Action) and let inputs : OrderedSet(UML::InputPin) = 
+    	  eh.handlerBody.oclAsType(UML!Action).input in 
+    	    inputs->size() = 1 and inputs->first() = eh.exceptionInput
 ; 
 
 helper context UML!ExceptionHandler def: edge_source_target(): Boolean = 
   UML!ExceptionHandler.allInstances()->forAll(eh |
-    // We dont understand ocl expression LetExp
+    let nodes : Set(UML::ActivityNode) = 
+    	  // We dont understand OperationCallExp allOwnedNodes in 
+    	    // We dont understand ocl expression IteratorExp and // We dont understand ocl expression IteratorExp
 ; 
 
 helper context UML!ExceptionHandler def: handler_body_owner(): Boolean = 
@@ -869,8 +733,7 @@ helper context UML!ExceptionHandler def: handler_body_owner(): Boolean =
 
 helper context UML!ExceptionHandler def: exception_input_type(): Boolean = 
   UML!ExceptionHandler.allInstances()->forAll(eh |
-    eh.exceptionInput.type = OclUndefined
-     or // We dont understand ocl expression IteratorExp
+    eh.exceptionInput.type = OclUndefined or // We dont understand ocl expression IteratorExp
 ; 
 
 helper context UML!ExecutionSpecification def: same_lifeline(): Boolean = 
@@ -880,9 +743,7 @@ helper context UML!ExecutionSpecification def: same_lifeline(): Boolean =
 
 helper context UML!ExpansionNode def: region_as_input_or_output(): Boolean = 
   UML!ExpansionNode.allInstances()->forAll(en |
-    en.regionAsInput->oclAsSet()
-    ->notEmpty()
-    ->xor()
+    en.regionAsInput->oclAsSet()->notEmpty()->xor()
 ; 
 
 helper context UML!Extend def: extension_points(): Boolean = 
@@ -892,38 +753,27 @@ helper context UML!Extend def: extension_points(): Boolean =
 
 helper context UML!Extension def: non_owned_end(): Boolean = 
   UML!Extension.allInstances()->forAll(e |
-    // We dont understand OperationCallExp metaclassEnd
-    ->oclAsSet()
-    ->notEmpty()
-     and // We dont understand OperationCallExp metaclassEnd
-    .type.oclIsKindOf(UML!Class)
+    // We dont understand OperationCallExp metaclassEnd->oclAsSet()->notEmpty() and // We dont understand OperationCallExp metaclassEnd.type.oclIsKindOf(UML!Class)
 ; 
 
 helper context UML!Extension def: is_binary(): Boolean = 
   UML!Extension.allInstances()->forAll(e |
-    e.memberEnd->size()
-     = 2
+    e.memberEnd->size() = 2
 ; 
 
 helper context UML!ExtensionEnd def: multiplicity(): Boolean = 
   UML!ExtensionEnd.allInstances()->forAll(ee |
-    // We dont understand OperationCallExp lowerBound
-     = 0
-     or // We dont understand OperationCallExp lowerBound
-     = 1
-     and // We dont understand OperationCallExp upperBound
-     = 1
+    // We dont understand OperationCallExp lowerBound = 0 or // We dont understand OperationCallExp lowerBound = 1 and // We dont understand OperationCallExp upperBound = 1
 ; 
 
 helper context UML!ExtensionEnd def: aggregation(): Boolean = 
   UML!ExtensionEnd.allInstances()->forAll(ee |
-    ee.aggregation = AggregationKind.composite
+    self.aggregation = AggregationKind.composite
 ; 
 
 helper context UML!ExtensionPoint def: must_have_name(): Boolean = 
   UML!ExtensionPoint.allInstances()->forAll(ep |
-    ep.name->oclAsSet()
-    ->notEmpty()
+    ep.name->oclAsSet()->notEmpty()
 ; 
 
 helper context UML!FinalNode def: no_outgoing_edges(): Boolean = 
@@ -933,49 +783,44 @@ helper context UML!FinalNode def: no_outgoing_edges(): Boolean =
 
 helper context UML!FinalState def: no_exit_behavior(): Boolean = 
   UML!FinalState.allInstances()->forAll(fs |
-    fs.exit->oclAsSet()
-    ->isEmpty()
+    fs.exit->oclAsSet()->isEmpty()
 ; 
 
 helper context UML!FinalState def: no_outgoing_transitions(): Boolean = 
   UML!FinalState.allInstances()->forAll(fs |
-    fs.outgoing->size()
-     = 0
+    fs.outgoing->size() = 0
 ; 
 
 helper context UML!FinalState def: no_regions(): Boolean = 
   UML!FinalState.allInstances()->forAll(fs |
-    fs.region->size()
-     = 0
+    fs.region->size() = 0
 ; 
 
 helper context UML!FinalState def: cannot_reference_submachine(): Boolean = 
   UML!FinalState.allInstances()->forAll(fs |
-    fs.submachine->oclAsSet()
-    ->isEmpty()
+    fs.submachine->oclAsSet()->isEmpty()
 ; 
 
 helper context UML!FinalState def: no_entry_behavior(): Boolean = 
   UML!FinalState.allInstances()->forAll(fs |
-    fs.entry->oclAsSet()
-    ->isEmpty()
+    fs.entry->oclAsSet()->isEmpty()
 ; 
 
 helper context UML!FinalState def: no_state_behavior(): Boolean = 
   UML!FinalState.allInstances()->forAll(fs |
-    fs.doActivity->oclAsSet()
-    ->isEmpty()
+    fs.doActivity->oclAsSet()->isEmpty()
 ; 
 
 helper context UML!ForkNode def: edges(): Boolean = 
   UML!ForkNode.allInstances()->forAll(fn |
-    // We dont understand ocl expression LetExp
+    let allEdges : Set(UML::ActivityEdge) = 
+    	  // We dont understand OperationCallExp  in 
+    	    // We dont understand ocl expression IteratorExp or // We dont understand ocl expression IteratorExp
 ; 
 
 helper context UML!ForkNode def: one_incoming_edge(): Boolean = 
   UML!ForkNode.allInstances()->forAll(fn |
-    fn.incoming->size()
-     = 1
+    fn.incoming->size() = 1
 ; 
 
 helper context UML!FunctionBehavior def: one_output_parameter(): Boolean = 
@@ -990,50 +835,39 @@ helper context UML!FunctionBehavior def: types_of_parameters(): Boolean =
 
 helper context UML!Gate def: actual_gate_matched(): Boolean = 
   UML!Gate.allInstances()->forAll(g |
-    // We dont understand ocl expression OppositePropertyCallExp->oclAsSet()
-    ->notEmpty()
-     implies // We dont understand ocl expression IteratorExp->size()
-     = 1
+    // We dont understand ocl expression OppositePropertyCallExp->oclAsSet()->notEmpty() implies // We dont understand ocl expression IteratorExp->size() = 1
 ; 
 
 helper context UML!Gate def: inside_cf_matched(): Boolean = 
   UML!Gate.allInstances()->forAll(g |
-    // We dont understand OperationCallExp isInsideCF
-     implies // We dont understand ocl expression IteratorExp->size()
-     = 1
+    // We dont understand OperationCallExp isInsideCF implies // We dont understand ocl expression IteratorExp->size() = 1
 ; 
 
 helper context UML!Gate def: outside_cf_matched(): Boolean = 
   UML!Gate.allInstances()->forAll(g |
-    // We dont understand OperationCallExp isOutsideCF
-     implies // We dont understand ocl expression IfExp
+    // We dont understand OperationCallExp isOutsideCF implies // We dont understand ocl expression IfExp
 ; 
 
 helper context UML!Gate def: formal_gate_distinguishable(): Boolean = 
   UML!Gate.allInstances()->forAll(g |
-    // We dont understand OperationCallExp isFormal
-     implies // We dont understand ocl expression IteratorExp->size()
-     = 1
+    // We dont understand OperationCallExp isFormal implies // We dont understand ocl expression IteratorExp->size() = 1
 ; 
 
 helper context UML!Gate def: actual_gate_distinguishable(): Boolean = 
   UML!Gate.allInstances()->forAll(g |
-    // We dont understand OperationCallExp isActual
-     implies // We dont understand ocl expression IteratorExp->size()
-     = 1
+    // We dont understand OperationCallExp isActual implies // We dont understand ocl expression IteratorExp->size() = 1
 ; 
 
 helper context UML!Gate def: outside_cf_gate_distinguishable(): Boolean = 
   UML!Gate.allInstances()->forAll(g |
-    // We dont understand OperationCallExp isOutsideCF
-     implies // We dont understand ocl expression IteratorExp->size()
-     = 1
+    // We dont understand OperationCallExp isOutsideCF implies // We dont understand ocl expression IteratorExp->size() = 1
 ; 
 
 helper context UML!Gate def: inside_cf_gate_distinguishable(): Boolean = 
   UML!Gate.allInstances()->forAll(g |
-    // We dont understand OperationCallExp isInsideCF
-     implies // We dont understand ocl expression LetExp
+    // We dont understand OperationCallExp isInsideCF implies let selfOperand : UML::InteractionOperand = 
+    	  // We dont understand OperationCallExp getOperand in 
+    	    // We dont understand ocl expression IteratorExp->size() = 1
 ; 
 
 helper context UML!GeneralOrdering def: irreflexive_transitive_closure(): Boolean = 
@@ -1048,8 +882,7 @@ helper context UML!GeneralizationSet def: generalization_same_classifier(): Bool
 
 helper context UML!GeneralizationSet def: maps_to_generalization_set(): Boolean = 
   UML!GeneralizationSet.allInstances()->forAll(gs |
-    gs.powertype <> OclUndefined
-     implies // We dont understand ocl expression IteratorExp
+    gs.powertype <> OclUndefined implies // We dont understand ocl expression IteratorExp
 ; 
 
 helper context UML!InformationFlow def: must_conform(): Boolean = 
@@ -1074,8 +907,7 @@ helper context UML!InformationItem def: sources_and_targets(): Boolean =
 
 helper context UML!InformationItem def: has_no(): Boolean = 
   UML!InformationItem.allInstances()->forAll(ii |
-    ii.generalization->isEmpty()
-     and ii.feature->isEmpty()
+    self.generalization->isEmpty() and self.feature->isEmpty()
 ; 
 
 helper context UML!InformationItem def: not_instantiable(): Boolean = 
@@ -1095,17 +927,12 @@ helper context UML!InitialNode def: control_edges(): Boolean =
 
 helper context UML!InputPin def: outgoing_edges_structured_only(): Boolean = 
   UML!InputPin.allInstances()->forAll(ip |
-    ip.outgoing->notEmpty()
-     implies // We dont understand ocl expression OppositePropertyCallExp <> OclUndefined
-     and // We dont understand ocl expression OppositePropertyCallExp.oclIsKindOf(UML!StructuredActivityNode)
-     and // We dont understand OperationCallExp allOwnedNodes
-    ->includesAll(// We dont understand ocl expression IteratorExp)
+    ip.outgoing->notEmpty() implies // We dont understand ocl expression OppositePropertyCallExp <> OclUndefined and // We dont understand ocl expression OppositePropertyCallExp.oclIsKindOf(UML!StructuredActivityNode) and // We dont understand OperationCallExp allOwnedNodes->includesAll(// We dont understand ocl expression IteratorExp)
 ; 
 
 helper context UML!InstanceSpecification def: deployment_artifact(): Boolean = 
   UML!InstanceSpecification.allInstances()->forAll(is |
-    // We dont understand ocl expression OppositePropertyCallExp->notEmpty()
-     implies // We dont understand ocl expression IteratorExp
+    // We dont understand ocl expression OppositePropertyCallExp->notEmpty() implies // We dont understand ocl expression IteratorExp
 ; 
 
 helper context UML!InstanceSpecification def: structural_feature(): Boolean = 
@@ -1120,38 +947,27 @@ helper context UML!InstanceSpecification def: defining_feature(): Boolean =
 
 helper context UML!InstanceSpecification def: deployment_target(): Boolean = 
   UML!InstanceSpecification.allInstances()->forAll(is |
-    is.deployment->notEmpty()
-     implies // We dont understand ocl expression IteratorExp
+    is.deployment->notEmpty() implies // We dont understand ocl expression IteratorExp
 ; 
 
 helper context UML!Interaction def: not_contained(): Boolean = 
   UML!Interaction.allInstances()->forAll(i |
-    i.enclosingInteraction->oclAsSet()
-    ->isEmpty()
+    i.enclosingInteraction->oclAsSet()->isEmpty()
 ; 
 
 helper context UML!InteractionConstraint def: minint_maxint(): Boolean = 
   UML!InteractionConstraint.allInstances()->forAll(ic |
-    ic.maxint->oclAsSet()
-    ->notEmpty()
-     or ic.minint->oclAsSet()
-    ->notEmpty()
-     implies // We dont understand ocl expression OppositePropertyCallExp.interactionOperator = InteractionOperatorKind.loop
+    ic.maxint->oclAsSet()->notEmpty() or ic.minint->oclAsSet()->notEmpty() implies // We dont understand ocl expression OppositePropertyCallExp.interactionOperator = InteractionOperatorKind.loop
 ; 
 
 helper context UML!InteractionConstraint def: minint_non_negative(): Boolean = 
   UML!InteractionConstraint.allInstances()->forAll(ic |
-    ic.minint->oclAsSet()
-    ->notEmpty()
-     implies // We dont understand OperationCallExp >=
+    ic.minint->oclAsSet()->notEmpty() implies // We dont understand OperationCallExp >=
 ; 
 
 helper context UML!InteractionConstraint def: maxint_positive(): Boolean = 
   UML!InteractionConstraint.allInstances()->forAll(ic |
-    ic.maxint->oclAsSet()
-    ->notEmpty()
-     implies // We dont understand OperationCallExp integerValue
-     > 0
+    ic.maxint->oclAsSet()->notEmpty() implies // We dont understand OperationCallExp integerValue > 0
 ; 
 
 helper context UML!InteractionConstraint def: dynamic_variables(): Boolean = 
@@ -1166,11 +982,7 @@ helper context UML!InteractionConstraint def: global_data(): Boolean =
 
 helper context UML!InteractionConstraint def: maxint_greater_equal_minint(): Boolean = 
   UML!InteractionConstraint.allInstances()->forAll(ic |
-    ic.maxint->oclAsSet()
-    ->notEmpty()
-     implies ic.minint->oclAsSet()
-    ->notEmpty()
-     and // We dont understand OperationCallExp >=
+    ic.maxint->oclAsSet()->notEmpty() implies ic.minint->oclAsSet()->notEmpty() and // We dont understand OperationCallExp >=
 ; 
 
 helper context UML!InteractionOperand def: guard_contain_references(): Boolean = 
@@ -1185,8 +997,7 @@ helper context UML!InteractionOperand def: guard_directly_prior(): Boolean =
 
 helper context UML!InteractionUse def: gates_match(): Boolean = 
   UML!InteractionUse.allInstances()->forAll(iu |
-    iu.actualGate->notEmpty()
-     implies // We dont understand ocl expression IteratorExp and // We dont understand ocl expression IteratorExp
+    iu.actualGate->notEmpty() implies // We dont understand ocl expression IteratorExp and // We dont understand ocl expression IteratorExp
 ; 
 
 helper context UML!InteractionUse def: arguments_are_constants(): Boolean = 
@@ -1196,10 +1007,13 @@ helper context UML!InteractionUse def: arguments_are_constants(): Boolean =
 
 helper context UML!InteractionUse def: returnValueRecipient_coverage(): Boolean = 
   UML!InteractionUse.allInstances()->forAll(iu |
-    iu.returnValueRecipient->oclAsSet()
-    ->asSet()
-    ->notEmpty()
-     implies // We dont understand ocl expression LetExp
+    iu.returnValueRecipient->oclAsSet()->asSet()->notEmpty() implies let covCE : Set(UML::ConnectableElement) = 
+    	  // We dont understand ocl expression IteratorExp->asSet() in 
+    	    covCE->notEmpty() and let classes : Set(UML::Classifier) = 
+    	    	  // We dont understand ocl expression IteratorExp->asSet() in 
+    	    	    let allProps : Set(UML::Property) = 
+    	    	    	  // We dont understand OperationCallExp ->asSet() in 
+    	    	    	    allProps->includes(iu.returnValueRecipient)
 ; 
 
 helper context UML!InteractionUse def: arguments_correspond_to_parameters(): Boolean = 
@@ -1209,20 +1023,16 @@ helper context UML!InteractionUse def: arguments_correspond_to_parameters(): Boo
 
 helper context UML!InteractionUse def: returnValue_type_recipient_correspondence(): Boolean = 
   UML!InteractionUse.allInstances()->forAll(iu |
-    iu.returnValue.type->oclAsSet()
-    ->asSequence()
-    ->notEmpty()
-     implies iu.returnValue.type->oclAsSet()
-    ->asSequence()
-    ->first()
-     = iu.returnValueRecipient.type->oclAsSet()
-    ->asSequence()
-    ->first()
+    iu.returnValue.type->oclAsSet()->asSequence()->notEmpty() implies iu.returnValue.type->oclAsSet()->asSequence()->first() = iu.returnValueRecipient.type->oclAsSet()->asSequence()->first()
 ; 
 
 helper context UML!InteractionUse def: all_lifelines(): Boolean = 
   UML!InteractionUse.allInstances()->forAll(iu |
-    // We dont understand ocl expression LetExp
+    let parentInteraction : Set(UML::Interaction) = 
+    	  // We dont understand OperationCallExp  in 
+    	    parentInteraction->size() = 1 and let refInteraction : UML::Interaction = 
+    	    	  iu.refersTo in 
+    	    	    // We dont understand ocl expression IteratorExp
 ; 
 
 helper context UML!Interface def: visibility(): Boolean = 
@@ -1237,8 +1047,7 @@ helper context UML!InterruptibleActivityRegion def: interrupting_edges(): Boolea
 
 helper context UML!JoinNode def: one_outgoing_edge(): Boolean = 
   UML!JoinNode.allInstances()->forAll(jn |
-    jn.outgoing->size()
-     = 1
+    jn.outgoing->size() = 1
 ; 
 
 helper context UML!JoinNode def: incoming_object_flow(): Boolean = 
@@ -1248,15 +1057,14 @@ helper context UML!JoinNode def: incoming_object_flow(): Boolean =
 
 helper context UML!Lifeline def: selector_specified(): Boolean = 
   UML!Lifeline.allInstances()->forAll(l |
-    l.selector->oclAsSet()
-    ->notEmpty()
-     = l.represents.oclIsKindOf(UML!MultiplicityElement)
-     and // We dont understand OperationCallExp isMultivalued
+    self.selector->oclAsSet()->notEmpty() = self.represents.oclIsKindOf(UML!MultiplicityElement) and // We dont understand OperationCallExp isMultivalued
 ; 
 
 helper context UML!Lifeline def: interaction_uses_share_lifeline(): Boolean = 
   UML!Lifeline.allInstances()->forAll(l |
-    // We dont understand ocl expression LetExp
+    let intUses : Set(UML::InteractionUse) = 
+    	  // We dont understand ocl expression OppositePropertyCallExp in 
+    	    // We dont understand ocl expression IteratorExp
 ; 
 
 helper context UML!Lifeline def: same_classifier(): Boolean = 
@@ -1266,22 +1074,17 @@ helper context UML!Lifeline def: same_classifier(): Boolean =
 
 helper context UML!Lifeline def: selector_int_or_string(): Boolean = 
   UML!Lifeline.allInstances()->forAll(l |
-    l.selector->oclAsSet()
-    ->notEmpty()
-     implies l.selector.oclIsKindOf(UML!LiteralInteger)
-     or l.selector.oclIsKindOf(UML!LiteralString)
+    self.selector->oclAsSet()->notEmpty() implies self.selector.oclIsKindOf(UML!LiteralInteger) or self.selector.oclIsKindOf(UML!LiteralString)
 ; 
 
 helper context UML!LinkAction def: same_pins(): Boolean = 
   UML!LinkAction.allInstances()->forAll(la |
-    la.inputValue->asBag()
-     = // We dont understand ocl expression IteratorExp
+    la.inputValue->asBag() = // We dont understand ocl expression IteratorExp
 ; 
 
 helper context UML!LinkAction def: same_association(): Boolean = 
   UML!LinkAction.allInstances()->forAll(la |
-    // We dont understand ocl expression IteratorExp = // We dont understand OperationCallExp association
-    .memberEnd->asBag()
+    // We dont understand ocl expression IteratorExp = // We dont understand OperationCallExp association.memberEnd->asBag()
 ; 
 
 helper context UML!LinkAction def: not_static(): Boolean = 
@@ -1296,21 +1099,17 @@ helper context UML!LinkEndCreationData def: insertAt_pin(): Boolean =
 
 helper context UML!LinkEndData def: same_type(): Boolean = 
   UML!LinkEndData.allInstances()->forAll(led |
-    led.value <> OclUndefined
-     implies // We dont understand OperationCallExp conformsTo
+    led.value <> OclUndefined implies led.value.type.conformsTo(led.end.type)
 ; 
 
 helper context UML!LinkEndData def: multiplicity(): Boolean = 
   UML!LinkEndData.allInstances()->forAll(led |
-    led.value <> OclUndefined
-     implies led.value->is(1,// We dont understand OperationCallExp toUnlimitedNatural
-    )
+    led.value <> OclUndefined implies led.value->is(1,// We dont understand OperationCallExp toUnlimitedNatural)
 ; 
 
 helper context UML!LinkEndData def: end_object_input_pin(): Boolean = 
   UML!LinkEndData.allInstances()->forAll(led |
-    led.value->oclAsSet()
-    ->excludesAll(// We dont understand ocl expression IteratorExp)
+    led.value->oclAsSet()->excludesAll(// We dont understand ocl expression IteratorExp)
 ; 
 
 helper context UML!LinkEndData def: property_is_association_end(): Boolean = 
@@ -1340,8 +1139,7 @@ helper context UML!LoopNode def: input_edges(): Boolean =
 
 helper context UML!LoopNode def: executable_nodes(): Boolean = 
   UML!LoopNode.allInstances()->forAll(ln |
-    // We dont understand OperationCallExp 
-     = // We dont understand ocl expression IteratorExp->asSet()
+    // We dont understand OperationCallExp  = // We dont understand ocl expression IteratorExp->asSet()
 ; 
 
 helper context UML!LoopNode def: body_output_pins(): Boolean = 
@@ -1351,62 +1149,46 @@ helper context UML!LoopNode def: body_output_pins(): Boolean =
 
 helper context UML!LoopNode def: setup_test_and_body(): Boolean = 
   UML!LoopNode.allInstances()->forAll(ln |
-    ln.setupPart->intersection(ln.test)
-    ->isEmpty()
-     and ln.setupPart->intersection(ln.bodyPart)
-    ->isEmpty()
-     and ln.test->intersection(ln.bodyPart)
-    ->isEmpty()
+    ln.setupPart->intersection(ln.test)->isEmpty() and ln.setupPart->intersection(ln.bodyPart)->isEmpty() and ln.test->intersection(ln.bodyPart)->isEmpty()
 ; 
 
 helper context UML!LoopNode def: matching_output_pins(): Boolean = 
   UML!LoopNode.allInstances()->forAll(ln |
-    ln.bodyOutput->size()
-     = ln.loopVariable->size()
-     and // We dont understand ocl expression IteratorExp
+    ln.bodyOutput->size() = ln.loopVariable->size() and // We dont understand ocl expression IteratorExp
 ; 
 
 helper context UML!LoopNode def: matching_loop_variables(): Boolean = 
   UML!LoopNode.allInstances()->forAll(ln |
-    ln.loopVariableInput->size()
-     = ln.loopVariable->size()
-     and // We dont understand ocl expression IteratorExp = // We dont understand ocl expression IteratorExp
-     and // We dont understand ocl expression IteratorExp = // We dont understand ocl expression IteratorExp
-     and // We dont understand ocl expression IteratorExp = // We dont understand ocl expression IteratorExp
-     and // We dont understand ocl expression IteratorExp = // We dont understand ocl expression IteratorExp
+    ln.loopVariableInput->size() = ln.loopVariable->size() and // We dont understand ocl expression IteratorExp = // We dont understand ocl expression IteratorExp and // We dont understand ocl expression IteratorExp = // We dont understand ocl expression IteratorExp and // We dont understand ocl expression IteratorExp = // We dont understand ocl expression IteratorExp and // We dont understand ocl expression IteratorExp = // We dont understand ocl expression IteratorExp
 ; 
 
 helper context UML!LoopNode def: matching_result_pins(): Boolean = 
   UML!LoopNode.allInstances()->forAll(ln |
-    ln.result->size()
-     = ln.loopVariable->size()
-     and // We dont understand ocl expression IteratorExp = // We dont understand ocl expression IteratorExp
-     and // We dont understand ocl expression IteratorExp = // We dont understand ocl expression IteratorExp
-     and // We dont understand ocl expression IteratorExp = // We dont understand ocl expression IteratorExp
-     and // We dont understand ocl expression IteratorExp = // We dont understand ocl expression IteratorExp
+    ln.result->size() = ln.loopVariable->size() and // We dont understand ocl expression IteratorExp = // We dont understand ocl expression IteratorExp and // We dont understand ocl expression IteratorExp = // We dont understand ocl expression IteratorExp and // We dont understand ocl expression IteratorExp = // We dont understand ocl expression IteratorExp and // We dont understand ocl expression IteratorExp = // We dont understand ocl expression IteratorExp
 ; 
 
 helper context UML!LoopNode def: loop_variable_outgoing(): Boolean = 
   UML!LoopNode.allInstances()->forAll(ln |
-    // We dont understand OperationCallExp allOwnedNodes
-    ->includesAll(// We dont understand ocl expression IteratorExp)
+    // We dont understand OperationCallExp allOwnedNodes->includesAll(// We dont understand ocl expression IteratorExp)
 ; 
 
 helper context UML!MergeNode def: one_outgoing_edge(): Boolean = 
   UML!MergeNode.allInstances()->forAll(mn |
-    mn.outgoing->size()
-     = 1
+    mn.outgoing->size() = 1
 ; 
 
 helper context UML!MergeNode def: edges(): Boolean = 
   UML!MergeNode.allInstances()->forAll(mn |
-    // We dont understand ocl expression LetExp
+    let allEdges : Set(UML::ActivityEdge) = 
+    	  // We dont understand OperationCallExp  in 
+    	    // We dont understand ocl expression IteratorExp or // We dont understand ocl expression IteratorExp
 ; 
 
 helper context UML!Message def: sending_receiving_message_event(): Boolean = 
   UML!Message.allInstances()->forAll(m |
-    m.receiveEvent.oclIsKindOf(UML!MessageOccurrenceSpecification)
-     implies // We dont understand ocl expression LetExp
+    m.receiveEvent.oclIsKindOf(UML!MessageOccurrenceSpecification) implies let f : UML::Lifeline = 
+    	  // We dont understand ocl expression IteratorExp->asOrderedSet()->first().covered in 
+    	    f = // We dont understand ocl expression IteratorExp->asOrderedSet()->first().covered implies // We dont understand ocl expression OppositePropertyCallExp.indexOf(m.sendEvent.oclAsType(UML!MessageOccurrenceSpecification)->oclAsSet()->asOrderedSet()->first()) < // We dont understand ocl expression OppositePropertyCallExp.indexOf(m.receiveEvent.oclAsType(UML!MessageOccurrenceSpecification)->oclAsSet()->asOrderedSet()->first())
 ; 
 
 helper context UML!Message def: arguments(): Boolean = 
@@ -1416,18 +1198,18 @@ helper context UML!Message def: arguments(): Boolean =
 
 helper context UML!Message def: cannot_cross_boundaries(): Boolean = 
   UML!Message.allInstances()->forAll(m |
-    m.sendEvent->oclAsSet()
-    ->notEmpty()
-     and m.receiveEvent->oclAsSet()
-    ->notEmpty()
-     implies // We dont understand ocl expression LetExp
+    m.sendEvent->oclAsSet()->notEmpty() and m.receiveEvent->oclAsSet()->notEmpty() implies let sendEnclosingFrag : Set(UML::InteractionFragment) = 
+    	  // We dont understand OperationCallExp enclosingFragment in 
+    	    let receiveEnclosingFrag : Set(UML::InteractionFragment) = 
+    	    	  // We dont understand OperationCallExp enclosingFragment in 
+    	    	    sendEnclosingFrag = receiveEnclosingFrag
 ; 
 
 helper context UML!Message def: signature_is_signal(): Boolean = 
   UML!Message.allInstances()->forAll(m |
-    m.messageSort = MessageSort.asynchSignal
-     and m.signature.oclIsKindOf(UML!Signal)
-     implies // We dont understand ocl expression LetExp
+    m.messageSort = MessageSort.asynchSignal and m.signature.oclIsKindOf(UML!Signal) implies let signalAttributes : OrderedSet(UML::Property) = 
+    	  // We dont understand ocl expression IteratorExp->asOrderedSet() in 
+    	    signalAttributes->size() = self.argument->size() and // We dont understand ocl expression IteratorExp
 ; 
 
 helper context UML!Message def: occurrence_specifications(): Boolean = 
@@ -1437,30 +1219,21 @@ helper context UML!Message def: occurrence_specifications(): Boolean =
 
 helper context UML!Message def: signature_refer_to(): Boolean = 
   UML!Message.allInstances()->forAll(m |
-    m.signature->oclAsSet()
-    ->notEmpty()
-     implies m.signature.oclIsKindOf(UML!Operation)
-     and m.messageSort = MessageSort.asynchCall
-     or m.messageSort = MessageSort.synchCall
-     or m.messageSort = MessageSort.reply
-     or m.signature.oclIsKindOf(UML!Signal)
-     and m.messageSort = MessageSort.asynchSignal
-     and m.name = m.signature.name
+    m.signature->oclAsSet()->notEmpty() implies m.signature.oclIsKindOf(UML!Operation) and m.messageSort = MessageSort.asynchCall or m.messageSort = MessageSort.synchCall or m.messageSort = MessageSort.reply or m.signature.oclIsKindOf(UML!Signal) and m.messageSort = MessageSort.asynchSignal and m.name = m.signature.name
 ; 
 
 helper context UML!Message def: signature_is_operation_request(): Boolean = 
   UML!Message.allInstances()->forAll(m |
-    m.messageSort = MessageSort.asynchCall
-     or m.messageSort = MessageSort.synchCall
-     and m.signature.oclIsKindOf(UML!Operation)
-     implies // We dont understand ocl expression LetExp
+    m.messageSort = MessageSort.asynchCall or m.messageSort = MessageSort.synchCall and m.signature.oclIsKindOf(UML!Operation) implies let requestParms : OrderedSet(UML::Parameter) = 
+    	  // We dont understand ocl expression IteratorExp in 
+    	    requestParms->size() = self.argument->size() and // We dont understand ocl expression IteratorExp
 ; 
 
 helper context UML!Message def: signature_is_operation_reply(): Boolean = 
   UML!Message.allInstances()->forAll(m |
-    m.messageSort = MessageSort.reply
-     and m.signature.oclIsKindOf(UML!Operation)
-     implies // We dont understand ocl expression LetExp
+    m.messageSort = MessageSort.reply and m.signature.oclIsKindOf(UML!Operation) implies let replyParms : OrderedSet(UML::Parameter) = 
+    	  // We dont understand ocl expression IteratorExp in 
+    	    replyParms->size() = self.argument->size() and // We dont understand ocl expression IteratorExp
 ; 
 
 helper context UML!MultiplicityElement def: upper_ge_lower(): Boolean = 
@@ -1485,37 +1258,27 @@ helper context UML!MultiplicityElement def: value_specification_constant(): Bool
 
 helper context UML!MultiplicityElement def: lower_is_integer(): Boolean = 
   UML!MultiplicityElement.allInstances()->forAll(me |
-    me.lowerValue <> OclUndefined
-     implies // We dont understand OperationCallExp integerValue
-     <> OclUndefined
+    me.lowerValue <> OclUndefined implies // We dont understand OperationCallExp integerValue <> OclUndefined
 ; 
 
 helper context UML!MultiplicityElement def: upper_is_unlimitedNatural(): Boolean = 
   UML!MultiplicityElement.allInstances()->forAll(me |
-    me.upperValue <> OclUndefined
-     implies // We dont understand OperationCallExp unlimitedValue
-     <> OclUndefined
+    me.upperValue <> OclUndefined implies // We dont understand OperationCallExp unlimitedValue <> OclUndefined
 ; 
 
 helper context UML!NamedElement def: visibility_needs_ownership(): Boolean = 
   UML!NamedElement.allInstances()->forAll(ne |
-    ne.namespace = OclUndefined
-     and ne.owner <> OclUndefined
-     implies ne.visibility = OclUndefined
+    ne.namespace = OclUndefined and ne.owner <> OclUndefined implies ne.visibility = OclUndefined
 ; 
 
 helper context UML!NamedElement def: has_qualified_name(): Boolean = 
   UML!NamedElement.allInstances()->forAll(ne |
-    ne.name <> OclUndefined
-     and // We dont understand ocl expression IteratorExp->isEmpty()
-     implies ne.qualifiedName = // We dont understand ocl expression IterateExp
+    ne.name <> OclUndefined and // We dont understand ocl expression IteratorExp->isEmpty() implies ne.qualifiedName = // We dont understand ocl expression IterateExp
 ; 
 
 helper context UML!NamedElement def: has_no_qualified_name(): Boolean = 
   UML!NamedElement.allInstances()->forAll(ne |
-    ne.name = OclUndefined
-     or // We dont understand ocl expression IteratorExp->notEmpty()
-     implies ne.qualifiedName = OclUndefined
+    ne.name = OclUndefined or // We dont understand ocl expression IteratorExp->notEmpty() implies ne.qualifiedName = OclUndefined
 ; 
 
 helper context UML!Namespace def: members_distinguishable(): Boolean = 
@@ -1525,7 +1288,7 @@ helper context UML!Namespace def: members_distinguishable(): Boolean =
 
 helper context UML!Namespace def: cannot_import_self(): Boolean = 
   UML!Namespace.allInstances()->forAll(n |
-    // We dont understand ocl expression IteratorExp->excludes(n)
+    // We dont understand ocl expression IteratorExp->excludes(self)
 ; 
 
 helper context UML!Namespace def: cannot_import_ownedMembers(): Boolean = 
@@ -1540,38 +1303,22 @@ helper context UML!Node def: internal_structure(): Boolean =
 
 helper context UML!ObjectFlow def: input_and_output_parameter(): Boolean = 
   UML!ObjectFlow.allInstances()->forAll(of |
-    of.selection <> OclUndefined
-     implies // We dont understand OperationCallExp inputParameters
-    ->size()
-     = 1
-     and // We dont understand ocl expression IteratorExp
-     and // We dont understand OperationCallExp outputParameters
-    ->size()
-     = 1
+    of.selection <> OclUndefined implies // We dont understand OperationCallExp inputParameters->size() = 1 and // We dont understand ocl expression IteratorExp and // We dont understand OperationCallExp outputParameters->size() = 1
 ; 
 
 helper context UML!ObjectFlow def: no_executable_nodes(): Boolean = 
   UML!ObjectFlow.allInstances()->forAll(of |
-    not(of.source.oclIsKindOf(UML!ExecutableNode)
-     or of.target.oclIsKindOf(UML!ExecutableNode)
-    )
+    not(of.source.oclIsKindOf(UML!ExecutableNode) or of.target.oclIsKindOf(UML!ExecutableNode))
 ; 
 
 helper context UML!ObjectFlow def: transformation_behavior(): Boolean = 
   UML!ObjectFlow.allInstances()->forAll(of |
-    of.transformation <> OclUndefined
-     implies // We dont understand OperationCallExp inputParameters
-    ->size()
-     = 1
-     and // We dont understand OperationCallExp outputParameters
-    ->size()
-     = 1
+    of.transformation <> OclUndefined implies // We dont understand OperationCallExp inputParameters->size() = 1 and // We dont understand OperationCallExp outputParameters->size() = 1
 ; 
 
 helper context UML!ObjectFlow def: selection_behavior(): Boolean = 
   UML!ObjectFlow.allInstances()->forAll(of |
-    of.selection <> OclUndefined
-     implies of.source.oclIsKindOf(UML!ObjectNode)
+    of.selection <> OclUndefined implies of.source.oclIsKindOf(UML!ObjectNode)
 ; 
 
 helper context UML!ObjectFlow def: compatible_types(): Boolean = 
@@ -1591,61 +1338,42 @@ helper context UML!ObjectFlow def: target(): Boolean =
 
 helper context UML!ObjectFlow def: is_multicast_or_is_multireceive(): Boolean = 
   UML!ObjectFlow.allInstances()->forAll(of |
-    not(of.isMulticast and of.isMultireceive
-    )
+    not(of.isMulticast and of.isMultireceive)
 ; 
 
 helper context UML!ObjectNode def: input_output_parameter(): Boolean = 
   UML!ObjectNode.allInstances()->forAll(on |
-    on.selection <> OclUndefined
-     implies // We dont understand OperationCallExp inputParameters
-    ->size()
-     = 1
-     and // We dont understand ocl expression IteratorExp
-     and // We dont understand OperationCallExp outputParameters
-    ->size()
-     = 1
-     and // We dont understand ocl expression IteratorExp
+    on.selection <> OclUndefined implies // We dont understand OperationCallExp inputParameters->size() = 1 and // We dont understand ocl expression IteratorExp and // We dont understand OperationCallExp outputParameters->size() = 1 and // We dont understand ocl expression IteratorExp
 ; 
 
 helper context UML!ObjectNode def: selection_behavior(): Boolean = 
   UML!ObjectNode.allInstances()->forAll(on |
-    on.selection <> OclUndefined
-     = on.ordering
-     = ObjectNodeOrderingKind.ordered
+    on.selection <> OclUndefined = on.ordering = ObjectNodeOrderingKind.ordered
 ; 
 
 helper context UML!ObjectNode def: object_flow_edges(): Boolean = 
   UML!ObjectNode.allInstances()->forAll(on |
-    not(on.isControlType)
-     implies // We dont understand ocl expression IteratorExp
+    not(on.isControlType) implies // We dont understand ocl expression IteratorExp
 ; 
 
 helper context UML!OpaqueAction def: language_body_size(): Boolean = 
   UML!OpaqueAction.allInstances()->forAll(oa |
-    oa.language->notEmpty()
-     implies oa.body->size()
-     = oa.language->size()
+    oa.language->notEmpty() implies oa.body->size() = oa.language->size()
 ; 
 
 helper context UML!OpaqueExpression def: language_body_size(): Boolean = 
   UML!OpaqueExpression.allInstances()->forAll(oe |
-    oe.language->notEmpty()
-     implies oe.body->size()
-     = oe.language->size()
+    oe.language->notEmpty() implies oe.body->size() = oe.language->size()
 ; 
 
 helper context UML!OpaqueExpression def: one_return_result_parameter(): Boolean = 
   UML!OpaqueExpression.allInstances()->forAll(oe |
-    oe.behavior <> OclUndefined
-     implies // We dont understand ocl expression IteratorExp->size()
-     = 1
+    oe.behavior <> OclUndefined implies // We dont understand ocl expression IteratorExp->size() = 1
 ; 
 
 helper context UML!OpaqueExpression def: only_return_result_parameters(): Boolean = 
   UML!OpaqueExpression.allInstances()->forAll(oe |
-    oe.behavior <> OclUndefined
-     implies // We dont understand ocl expression IteratorExp->isEmpty()
+    oe.behavior <> OclUndefined implies // We dont understand ocl expression IteratorExp->isEmpty()
 ; 
 
 helper context UML!Operation def: at_most_one_return(): Boolean = 
@@ -1655,25 +1383,19 @@ helper context UML!Operation def: at_most_one_return(): Boolean =
 
 helper context UML!Operation def: only_body_for_query(): Boolean = 
   UML!Operation.allInstances()->forAll(o |
-    o.bodyCondition <> OclUndefined
-     implies o.isQuery
+    o.bodyCondition <> OclUndefined implies o.isQuery
 ; 
 
 helper context UML!OperationTemplateParameter def: match_default_signature(): Boolean = 
   UML!OperationTemplateParameter.allInstances()->forAll(otp |
-    otp.default->oclAsSet()
-    ->notEmpty()
-     implies otp.default.oclIsKindOf(UML!Operation)
-     and // We dont understand ocl expression LetExp
+    otp.default->oclAsSet()->notEmpty() implies otp.default.oclIsKindOf(UML!Operation) and let defaultOp : UML::Operation = 
+    	  otp.default.oclAsType(UML!Operation) in 
+    	    defaultOp.ownedParameter->size() = otp.parameteredElement.ownedParameter->size() and // We dont understand ocl expression IteratorExp
 ; 
 
 helper context UML!OutputPin def: incoming_edges_structured_only(): Boolean = 
   UML!OutputPin.allInstances()->forAll(op |
-    op.incoming->notEmpty()
-     implies // We dont understand ocl expression OppositePropertyCallExp <> OclUndefined
-     and // We dont understand ocl expression OppositePropertyCallExp.oclIsKindOf(UML!StructuredActivityNode)
-     and // We dont understand OperationCallExp allOwnedNodes
-    ->includesAll(// We dont understand ocl expression IteratorExp)
+    op.incoming->notEmpty() implies // We dont understand ocl expression OppositePropertyCallExp <> OclUndefined and // We dont understand ocl expression OppositePropertyCallExp.oclIsKindOf(UML!StructuredActivityNode) and // We dont understand OperationCallExp allOwnedNodes->includesAll(// We dont understand ocl expression IteratorExp)
 ; 
 
 helper context UML!Package def: elements_public_or_private(): Boolean = 
@@ -1683,55 +1405,42 @@ helper context UML!Package def: elements_public_or_private(): Boolean =
 
 helper context UML!PackageImport def: public_or_private(): Boolean = 
   UML!PackageImport.allInstances()->forAll(pi |
-    pi.visibility = VisibilityKind.public
-     or pi.visibility = VisibilityKind.private
+    pi.visibility = VisibilityKind.public or pi.visibility = VisibilityKind.private
 ; 
 
 helper context UML!PackageableElement def: namespace_needs_visibility(): Boolean = 
   UML!PackageableElement.allInstances()->forAll(pe |
-    pe.visibility = OclUndefined
-     implies pe.namespace = OclUndefined
+    pe.visibility = OclUndefined implies pe.namespace = OclUndefined
 ; 
 
 helper context UML!Parameter def: in_and_out(): Boolean = 
   UML!Parameter.allInstances()->forAll(p |
-    p.effect = ParameterEffectKind.delete
-     implies p.direction = ParameterDirectionKind.in
-     or p.direction = ParameterDirectionKind.inout
-     and p.effect = ParameterEffectKind.create
-     implies p.direction = ParameterDirectionKind.out
-     or p.direction = ParameterDirectionKind.inout
-     or p.direction = ParameterDirectionKind.return
+    p.effect = ParameterEffectKind.delete implies p.direction = ParameterDirectionKind.in or p.direction = ParameterDirectionKind.inout and p.effect = ParameterEffectKind.create implies p.direction = ParameterDirectionKind.out or p.direction = ParameterDirectionKind.inout or p.direction = ParameterDirectionKind.return
 ; 
 
 helper context UML!Parameter def: not_exception(): Boolean = 
   UML!Parameter.allInstances()->forAll(p |
-    p.isException implies p.direction <> ParameterDirectionKind.in
-     and p.direction <> ParameterDirectionKind.inout
+    p.isException implies p.direction <> ParameterDirectionKind.in and p.direction <> ParameterDirectionKind.inout
 ; 
 
 helper context UML!Parameter def: connector_end(): Boolean = 
   UML!Parameter.allInstances()->forAll(p |
-    p.end->notEmpty()
-     implies // We dont understand ocl expression OppositePropertyCallExp->notEmpty()
+    p.end->notEmpty() implies // We dont understand ocl expression OppositePropertyCallExp->notEmpty()
 ; 
 
 helper context UML!Parameter def: reentrant_behaviors(): Boolean = 
   UML!Parameter.allInstances()->forAll(p |
-    p.isStream and // We dont understand ocl expression OppositePropertyCallExp <> OclUndefined
-     implies not(// We dont understand ocl expression OppositePropertyCallExp.isReentrant)
+    p.isStream and // We dont understand ocl expression OppositePropertyCallExp <> OclUndefined implies not(// We dont understand ocl expression OppositePropertyCallExp.isReentrant)
 ; 
 
 helper context UML!Parameter def: stream_and_exception(): Boolean = 
   UML!Parameter.allInstances()->forAll(p |
-    not(p.isException and p.isStream
-    )
+    not(p.isException and p.isStream)
 ; 
 
 helper context UML!Parameter def: object_effect(): Boolean = 
   UML!Parameter.allInstances()->forAll(p |
-    p.type.oclIsKindOf(UML!DataType)
-     implies p.effect = OclUndefined
+    p.type.oclIsKindOf(UML!DataType) implies p.effect = OclUndefined
 ; 
 
 helper context UML!ParameterSet def: same_parameterized_entity(): Boolean = 
@@ -1741,8 +1450,7 @@ helper context UML!ParameterSet def: same_parameterized_entity(): Boolean =
 
 helper context UML!ParameterSet def: input(): Boolean = 
   UML!ParameterSet.allInstances()->forAll(ps |
-    // We dont understand ocl expression IteratorExp implies // We dont understand ocl expression IteratorExp
-     and // We dont understand ocl expression IteratorExp implies // We dont understand ocl expression IteratorExp
+    // We dont understand ocl expression IteratorExp implies // We dont understand ocl expression IteratorExp and // We dont understand ocl expression IteratorExp implies // We dont understand ocl expression IteratorExp
 ; 
 
 helper context UML!ParameterSet def: two_parameter_sets(): Boolean = 
@@ -1767,9 +1475,7 @@ helper context UML!Port def: port_aggregation(): Boolean =
 
 helper context UML!Port def: default_value(): Boolean = 
   UML!Port.allInstances()->forAll(p |
-    p.type.oclIsKindOf(UML!Interface)
-     implies p.defaultValue->oclAsSet()
-    ->isEmpty()
+    p.type.oclIsKindOf(UML!Interface) implies p.defaultValue->oclAsSet()->isEmpty()
 ; 
 
 helper context UML!Port def: encapsulated_owner(): Boolean = 
@@ -1779,23 +1485,17 @@ helper context UML!Port def: encapsulated_owner(): Boolean =
 
 helper context UML!Profile def: metaclass_reference_not_specialized(): Boolean = 
   UML!Profile.allInstances()->forAll(p |
-    // We dont understand ocl expression IteratorExp->isEmpty()
-     and // We dont understand OperationCallExp 
-    ->isEmpty()
+    // We dont understand ocl expression IteratorExp->isEmpty() and // We dont understand OperationCallExp ->isEmpty()
 ; 
 
 helper context UML!Profile def: references_same_metamodel(): Boolean = 
   UML!Profile.allInstances()->forAll(p |
-    // We dont understand OperationCallExp 
-    ->notEmpty()
+    // We dont understand OperationCallExp ->notEmpty()
 ; 
 
 helper context UML!Property def: subsetting_context_conforms(): Boolean = 
   UML!Property.allInstances()->forAll(p |
-    p.subsettedProperty->notEmpty()
-     implies // We dont understand OperationCallExp subsettingContext
-    ->notEmpty()
-     and // We dont understand ocl expression IteratorExp
+    p.subsettedProperty->notEmpty() implies // We dont understand OperationCallExp subsettingContext->notEmpty() and // We dont understand ocl expression IteratorExp
 ; 
 
 helper context UML!Property def: derived_union_is_read_only(): Boolean = 
@@ -1805,15 +1505,12 @@ helper context UML!Property def: derived_union_is_read_only(): Boolean =
 
 helper context UML!Property def: multiplicity_of_composite(): Boolean = 
   UML!Property.allInstances()->forAll(p |
-    p.isComposite and p.association <> OclUndefined
-     implies // We dont understand OperationCallExp <=
+    p.isComposite and p.association <> OclUndefined implies // We dont understand OperationCallExp <=
 ; 
 
 helper context UML!Property def: redefined_property_inherited(): Boolean = 
   UML!Property.allInstances()->forAll(p |
-    p.redefinedProperty->notEmpty()
-     implies p.redefinitionContext->notEmpty()
-     and // We dont understand ocl expression IteratorExp
+    p.redefinedProperty->notEmpty() implies p.redefinitionContext->notEmpty() and // We dont understand ocl expression IteratorExp
 ; 
 
 helper context UML!Property def: subsetting_rules(): Boolean = 
@@ -1823,9 +1520,7 @@ helper context UML!Property def: subsetting_rules(): Boolean =
 
 helper context UML!Property def: binding_to_attribute(): Boolean = 
   UML!Property.allInstances()->forAll(p |
-    // We dont understand OperationCallExp isAttribute
-     and // We dont understand ocl expression OppositePropertyCallExp->notEmpty()
-     implies // We dont understand ocl expression IteratorExp
+    // We dont understand OperationCallExp isAttribute and // We dont understand ocl expression OppositePropertyCallExp->notEmpty() implies // We dont understand ocl expression IteratorExp
 ; 
 
 helper context UML!Property def: derived_union_is_derived(): Boolean = 
@@ -1835,9 +1530,7 @@ helper context UML!Property def: derived_union_is_derived(): Boolean =
 
 helper context UML!Property def: deployment_target(): Boolean = 
   UML!Property.allInstances()->forAll(p |
-    p.deployment->notEmpty()
-     implies p.owner.oclIsKindOf(UML!Node)
-     and // We dont understand ocl expression IteratorExp
+    p.deployment->notEmpty() implies p.owner.oclIsKindOf(UML!Node) and // We dont understand ocl expression IteratorExp
 ; 
 
 helper context UML!Property def: subsetted_property_names(): Boolean = 
@@ -1847,24 +1540,17 @@ helper context UML!Property def: subsetted_property_names(): Boolean =
 
 helper context UML!Property def: type_of_opposite_end(): Boolean = 
   UML!Property.allInstances()->forAll(p |
-    p.opposite->oclAsSet()
-    ->notEmpty()
-     and p.owningAssociation->oclAsSet()
-    ->isEmpty()
-     implies // We dont understand ocl expression OppositePropertyCallExp = p.opposite.type
+    p.opposite->oclAsSet()->notEmpty() and p.owningAssociation->oclAsSet()->isEmpty() implies // We dont understand ocl expression OppositePropertyCallExp = p.opposite.type
 ; 
 
 helper context UML!Property def: qualified_is_association_end(): Boolean = 
   UML!Property.allInstances()->forAll(p |
-    p.qualifier->notEmpty()
-     implies p.association->oclAsSet()
-    ->notEmpty()
+    p.qualifier->notEmpty() implies p.association->oclAsSet()->notEmpty()
 ; 
 
 helper context UML!ProtocolStateMachine def: classifier_context(): Boolean = 
   UML!ProtocolStateMachine.allInstances()->forAll(psm |
-    psm.context <> OclUndefined
-     and psm.specification = OclUndefined
+    psm.context <> OclUndefined and psm.specification = OclUndefined
 ; 
 
 helper context UML!ProtocolStateMachine def: deep_or_shallow_history(): Boolean = 
@@ -1899,75 +1585,57 @@ helper context UML!ProtocolTransition def: belongs_to_psm(): Boolean =
 
 helper context UML!Pseudostate def: transitions_outgoing(): Boolean = 
   UML!Pseudostate.allInstances()->forAll(p |
-    p.kind = PseudostateKind.fork
-     implies // We dont understand ocl expression IteratorExp
+    p.kind = PseudostateKind.fork implies // We dont understand ocl expression IteratorExp
 ; 
 
 helper context UML!Pseudostate def: choice_vertex(): Boolean = 
   UML!Pseudostate.allInstances()->forAll(p |
-    p.kind = PseudostateKind.choice
-     implies // We dont understand OperationCallExp >=
-     and // We dont understand OperationCallExp >=
+    p.kind = PseudostateKind.choice implies // We dont understand OperationCallExp >= and // We dont understand OperationCallExp >=
 ; 
 
 helper context UML!Pseudostate def: outgoing_from_initial(): Boolean = 
   UML!Pseudostate.allInstances()->forAll(p |
-    p.kind = PseudostateKind.initial
-     implies // We dont understand ocl expression IteratorExp = OclUndefined
-     and // We dont understand ocl expression IteratorExp->isEmpty()
+    p.kind = PseudostateKind.initial implies // We dont understand ocl expression IteratorExp = OclUndefined and // We dont understand ocl expression IteratorExp->isEmpty()
 ; 
 
 helper context UML!Pseudostate def: join_vertex(): Boolean = 
   UML!Pseudostate.allInstances()->forAll(p |
-    p.kind = PseudostateKind.join
-     implies p.outgoing->size()
-     = 1
-     and // We dont understand OperationCallExp >=
+    p.kind = PseudostateKind.join implies p.outgoing->size() = 1 and // We dont understand OperationCallExp >=
 ; 
 
 helper context UML!Pseudostate def: junction_vertex(): Boolean = 
   UML!Pseudostate.allInstances()->forAll(p |
-    p.kind = PseudostateKind.junction
-     implies // We dont understand OperationCallExp >=
-     and // We dont understand OperationCallExp >=
+    p.kind = PseudostateKind.junction implies // We dont understand OperationCallExp >= and // We dont understand OperationCallExp >=
 ; 
 
 helper context UML!Pseudostate def: history_vertices(): Boolean = 
   UML!Pseudostate.allInstances()->forAll(p |
-    p.kind = PseudostateKind.deepHistory
-     or p.kind = PseudostateKind.shallowHistory
-     implies // We dont understand OperationCallExp <=
+    p.kind = PseudostateKind.deepHistory or p.kind = PseudostateKind.shallowHistory implies // We dont understand OperationCallExp <=
 ; 
 
 helper context UML!Pseudostate def: initial_vertex(): Boolean = 
   UML!Pseudostate.allInstances()->forAll(p |
-    p.kind = PseudostateKind.initial
-     implies // We dont understand OperationCallExp <=
+    p.kind = PseudostateKind.initial implies // We dont understand OperationCallExp <=
 ; 
 
 helper context UML!Pseudostate def: fork_vertex(): Boolean = 
   UML!Pseudostate.allInstances()->forAll(p |
-    p.kind = PseudostateKind.fork
-     implies p.incoming->size()
-     = 1
-     and // We dont understand OperationCallExp >=
+    p.kind = PseudostateKind.fork implies p.incoming->size() = 1 and // We dont understand OperationCallExp >=
 ; 
 
 helper context UML!Pseudostate def: transitions_incoming(): Boolean = 
   UML!Pseudostate.allInstances()->forAll(p |
-    p.kind = PseudostateKind.join
-     implies // We dont understand ocl expression IteratorExp
+    p.kind = PseudostateKind.join implies // We dont understand ocl expression IteratorExp
 ; 
 
 helper context UML!QualifierValue def: multiplicity_of_qualifier(): Boolean = 
   UML!QualifierValue.allInstances()->forAll(qv |
-    qv.value->is(1,// We dont understand OperationCallExp toUnlimitedNatural
-    )
+    qv.value->is(1,// We dont understand OperationCallExp toUnlimitedNatural)
 ; 
 
 helper context UML!QualifierValue def: type_of_qualifier(): Boolean = 
   UML!QualifierValue.allInstances()->forAll(qv |
-    // We dont understand OperationCallExp conformsTo
+    qv.value.type.conformsTo(qv.qualifier.type)
 ; 
 
 helper context UML!QualifierValue def: qualifier_attribute(): Boolean = 
@@ -1992,19 +1660,17 @@ helper context UML!ReadIsClassifiedObjectAction def: no_type(): Boolean =
 
 helper context UML!ReadIsClassifiedObjectAction def: multiplicity_of_output(): Boolean = 
   UML!ReadIsClassifiedObjectAction.allInstances()->forAll(ricoa |
-    ricoa.result->is(1,// We dont understand OperationCallExp toUnlimitedNatural
-    )
+    ricoa.result->is(1,// We dont understand OperationCallExp toUnlimitedNatural)
 ; 
 
 helper context UML!ReadIsClassifiedObjectAction def: boolean_result(): Boolean = 
   UML!ReadIsClassifiedObjectAction.allInstances()->forAll(ricoa |
-    ricoa.result.type = UML!Boolean
+    ricoa.result.type = Boolean
 ; 
 
 helper context UML!ReadIsClassifiedObjectAction def: multiplicity_of_input(): Boolean = 
   UML!ReadIsClassifiedObjectAction.allInstances()->forAll(ricoa |
-    ricoa.object->is(1,// We dont understand OperationCallExp toUnlimitedNatural
-    )
+    ricoa.object->is(1,// We dont understand OperationCallExp toUnlimitedNatural)
 ; 
 
 helper context UML!ReadLinkAction def: type_and_ordering(): Boolean = 
@@ -2019,14 +1685,14 @@ helper context UML!ReadLinkAction def: compatible_multiplicity(): Boolean =
 
 helper context UML!ReadLinkAction def: visibility(): Boolean = 
   UML!ReadLinkAction.allInstances()->forAll(rla |
-    // We dont understand ocl expression LetExp
+    let openEnd : UML::Property = 
+    	  // We dont understand OperationCallExp openEnd->first() in 
+    	    openEnd.visibility = VisibilityKind.public or // We dont understand ocl expression IteratorExp
 ; 
 
 helper context UML!ReadLinkAction def: one_open_end(): Boolean = 
   UML!ReadLinkAction.allInstances()->forAll(rla |
-    // We dont understand OperationCallExp openEnd
-    ->size()
-     = 1
+    // We dont understand OperationCallExp openEnd->size() = 1
 ; 
 
 helper context UML!ReadLinkAction def: navigable_open_end(): Boolean = 
@@ -2041,8 +1707,7 @@ helper context UML!ReadLinkObjectEndAction def: property(): Boolean =
 
 helper context UML!ReadLinkObjectEndAction def: multiplicity_of_object(): Boolean = 
   UML!ReadLinkObjectEndAction.allInstances()->forAll(rloea |
-    rloea.object->is(1,// We dont understand OperationCallExp toUnlimitedNatural
-    )
+    rloea.object->is(1,// We dont understand OperationCallExp toUnlimitedNatural)
 ; 
 
 helper context UML!ReadLinkObjectEndAction def: ends_of_association(): Boolean = 
@@ -2057,8 +1722,7 @@ helper context UML!ReadLinkObjectEndAction def: type_of_result(): Boolean =
 
 helper context UML!ReadLinkObjectEndAction def: multiplicity_of_result(): Boolean = 
   UML!ReadLinkObjectEndAction.allInstances()->forAll(rloea |
-    rloea.result->is(1,// We dont understand OperationCallExp toUnlimitedNatural
-    )
+    rloea.result->is(1,// We dont understand OperationCallExp toUnlimitedNatural)
 ; 
 
 helper context UML!ReadLinkObjectEndAction def: type_of_object(): Boolean = 
@@ -2073,8 +1737,7 @@ helper context UML!ReadLinkObjectEndAction def: association_of_association(): Bo
 
 helper context UML!ReadLinkObjectEndQualifierAction def: multiplicity_of_object(): Boolean = 
   UML!ReadLinkObjectEndQualifierAction.allInstances()->forAll(rloeqa |
-    rloeqa.object->is(1,// We dont understand OperationCallExp toUnlimitedNatural
-    )
+    rloeqa.object->is(1,// We dont understand OperationCallExp toUnlimitedNatural)
 ; 
 
 helper context UML!ReadLinkObjectEndQualifierAction def: type_of_object(): Boolean = 
@@ -2084,8 +1747,7 @@ helper context UML!ReadLinkObjectEndQualifierAction def: type_of_object(): Boole
 
 helper context UML!ReadLinkObjectEndQualifierAction def: multiplicity_of_qualifier(): Boolean = 
   UML!ReadLinkObjectEndQualifierAction.allInstances()->forAll(rloeqa |
-    rloeqa.qualifier->is(1,// We dont understand OperationCallExp toUnlimitedNatural
-    )
+    rloeqa.qualifier->is(1,// We dont understand OperationCallExp toUnlimitedNatural)
 ; 
 
 helper context UML!ReadLinkObjectEndQualifierAction def: ends_of_association(): Boolean = 
@@ -2095,8 +1757,7 @@ helper context UML!ReadLinkObjectEndQualifierAction def: ends_of_association(): 
 
 helper context UML!ReadLinkObjectEndQualifierAction def: multiplicity_of_result(): Boolean = 
   UML!ReadLinkObjectEndQualifierAction.allInstances()->forAll(rloeqa |
-    rloeqa.result->is(1,// We dont understand OperationCallExp toUnlimitedNatural
-    )
+    rloeqa.result->is(1,// We dont understand OperationCallExp toUnlimitedNatural)
 ; 
 
 helper context UML!ReadLinkObjectEndQualifierAction def: same_type(): Boolean = 
@@ -2121,13 +1782,14 @@ helper context UML!ReadSelfAction def: contained(): Boolean =
 
 helper context UML!ReadSelfAction def: multiplicity(): Boolean = 
   UML!ReadSelfAction.allInstances()->forAll(rsa |
-    rsa.result->is(1,// We dont understand OperationCallExp toUnlimitedNatural
-    )
+    rsa.result->is(1,// We dont understand OperationCallExp toUnlimitedNatural)
 ; 
 
 helper context UML!ReadSelfAction def: not_static(): Boolean = 
   UML!ReadSelfAction.allInstances()->forAll(rsa |
-    // We dont understand ocl expression LetExp
+    let behavior : UML::Behavior = 
+    	  // We dont understand OperationCallExp containingBehavior in 
+    	    behavior.specification <> OclUndefined implies not(behavior.specification.isStatic)
 ; 
 
 helper context UML!ReadSelfAction def: type(): Boolean = 
@@ -2142,14 +1804,12 @@ helper context UML!ReadStructuralFeatureAction def: multiplicity(): Boolean =
 
 helper context UML!ReadStructuralFeatureAction def: type_and_ordering(): Boolean = 
   UML!ReadStructuralFeatureAction.allInstances()->forAll(rsfa |
-    rsfa.result.type = rsfa.structuralFeature.type
-     and rsfa.result.isOrdered = rsfa.structuralFeature.isOrdered
+    rsfa.result.type = rsfa.structuralFeature.type and rsfa.result.isOrdered = rsfa.structuralFeature.isOrdered
 ; 
 
 helper context UML!ReadVariableAction def: type_and_ordering(): Boolean = 
   UML!ReadVariableAction.allInstances()->forAll(rva |
-    rva.result.type = rva.variable.type
-     and rva.result.isOrdered = rva.variable.isOrdered
+    rva.result.type = rva.variable.type and rva.result.isOrdered = rva.variable.isOrdered
 ; 
 
 helper context UML!ReadVariableAction def: compatible_multiplicity(): Boolean = 
@@ -2164,9 +1824,7 @@ helper context UML!Reception def: same_name_as_signal(): Boolean =
 
 helper context UML!Reception def: same_structure_as_signal(): Boolean = 
   UML!Reception.allInstances()->forAll(r |
-    r.signal.ownedAttribute->size()
-     = r.ownedParameter->size()
-     and // We dont understand ocl expression IteratorExp
+    r.signal.ownedAttribute->size() = r.ownedParameter->size() and // We dont understand ocl expression IteratorExp
 ; 
 
 helper context UML!ReclassifyObjectAction def: input_pin(): Boolean = 
@@ -2181,8 +1839,7 @@ helper context UML!ReclassifyObjectAction def: classifier_not_abstract(): Boolea
 
 helper context UML!ReclassifyObjectAction def: multiplicity(): Boolean = 
   UML!ReclassifyObjectAction.allInstances()->forAll(roa |
-    roa.object->is(1,// We dont understand OperationCallExp toUnlimitedNatural
-    )
+    roa.object->is(1,// We dont understand OperationCallExp toUnlimitedNatural)
 ; 
 
 helper context UML!RedefinableElement def: redefinition_consistent(): Boolean = 
@@ -2207,7 +1864,11 @@ helper context UML!RedefinableTemplateSignature def: redefines_parents(): Boolea
 
 helper context UML!ReduceAction def: reducer_inputs_output(): Boolean = 
   UML!ReduceAction.allInstances()->forAll(ra |
-    // We dont understand ocl expression LetExp
+    let inputs : OrderedSet(UML::Parameter) = 
+    	  // We dont understand OperationCallExp inputParameters in 
+    	    let outputs : OrderedSet(UML::Parameter) = 
+    	    	  // We dont understand OperationCallExp outputParameters in 
+    	    	    inputs->size() = 2 and outputs->size() = 1 and // We dont understand ocl expression IteratorExp
 ; 
 
 helper context UML!ReduceAction def: input_type_is_collection(): Boolean = 
@@ -2232,10 +1893,7 @@ helper context UML!Region def: shallow_history_vertex(): Boolean =
 
 helper context UML!Region def: owned(): Boolean = 
   UML!Region.allInstances()->forAll(r |
-    r.stateMachine <> OclUndefined
-     implies r.state = OclUndefined
-     and r.state <> OclUndefined
-     implies r.stateMachine = OclUndefined
+    r.stateMachine <> OclUndefined implies r.state = OclUndefined and r.state <> OclUndefined implies r.stateMachine = OclUndefined
 ; 
 
 helper context UML!Region def: initial_vertex(): Boolean = 
@@ -2255,7 +1913,9 @@ helper context UML!RemoveVariableValueAction def: removeAt_and_value(): Boolean 
 
 helper context UML!ReplyAction def: pins_match_parameter(): Boolean = 
   UML!ReplyAction.allInstances()->forAll(ra |
-    // We dont understand ocl expression LetExp
+    let parameter : OrderedSet(UML::Parameter) = 
+    	  // We dont understand OperationCallExp outputParameters in 
+    	    ra.replyValue->size() = parameter->size() and // We dont understand ocl expression IteratorExp
 ; 
 
 helper context UML!ReplyAction def: event_on_reply_to_call_trigger(): Boolean = 
@@ -2265,63 +1925,49 @@ helper context UML!ReplyAction def: event_on_reply_to_call_trigger(): Boolean =
 
 helper context UML!SendObjectAction def: type_target_pin(): Boolean = 
   UML!SendObjectAction.allInstances()->forAll(soa |
-    soa.onPort <> OclUndefined
-     implies // We dont understand OperationCallExp allFeatures
-    ->includes(soa.onPort)
+    soa.onPort <> OclUndefined implies // We dont understand OperationCallExp allFeatures->includes(soa.onPort)
 ; 
 
 helper context UML!SendSignalAction def: type_ordering_multiplicity(): Boolean = 
   UML!SendSignalAction.allInstances()->forAll(ssa |
-    // We dont understand ocl expression LetExp
+    let attribute : OrderedSet(UML::Property) = 
+    	  // We dont understand OperationCallExp allAttributes in 
+    	    // We dont understand ocl expression IteratorExp
 ; 
 
 helper context UML!SendSignalAction def: number_order(): Boolean = 
   UML!SendSignalAction.allInstances()->forAll(ssa |
-    ssa.argument->size()
-     = // We dont understand OperationCallExp allAttributes
-    ->size()
+    ssa.argument->size() = // We dont understand OperationCallExp allAttributes->size()
 ; 
 
 helper context UML!SendSignalAction def: type_target_pin(): Boolean = 
   UML!SendSignalAction.allInstances()->forAll(ssa |
-    not(ssa.onPort->oclAsSet()
-    ->isEmpty()
-    )
-     implies // We dont understand OperationCallExp allFeatures
-    ->includes(ssa.onPort)
+    not(ssa.onPort->oclAsSet()->isEmpty()) implies // We dont understand OperationCallExp allFeatures->includes(ssa.onPort)
 ; 
 
 helper context UML!StartClassifierBehaviorAction def: multiplicity(): Boolean = 
   UML!StartClassifierBehaviorAction.allInstances()->forAll(scba |
-    scba.object->is(1,// We dont understand OperationCallExp toUnlimitedNatural
-    )
+    scba.object->is(1,// We dont understand OperationCallExp toUnlimitedNatural)
 ; 
 
 helper context UML!StartClassifierBehaviorAction def: type_has_classifier(): Boolean = 
   UML!StartClassifierBehaviorAction.allInstances()->forAll(scba |
-    scba.object.type->oclAsSet()
-    ->notEmpty()
-     implies scba.object.type.oclIsKindOf(UML!BehavioredClassifier)
-     and scba.object.type.oclAsType(UML!BehavioredClassifier)
-    .classifierBehavior <> OclUndefined
+    scba.object.type->oclAsSet()->notEmpty() implies scba.object.type.oclIsKindOf(UML!BehavioredClassifier) and scba.object.type.oclAsType(UML!BehavioredClassifier).classifierBehavior <> OclUndefined
 ; 
 
 helper context UML!StartObjectBehaviorAction def: multiplicity_of_object(): Boolean = 
   UML!StartObjectBehaviorAction.allInstances()->forAll(soba |
-    soba.object->is(1,// We dont understand OperationCallExp toUnlimitedNatural
-    )
+    soba.object->is(1,// We dont understand OperationCallExp toUnlimitedNatural)
 ; 
 
 helper context UML!StartObjectBehaviorAction def: type_of_object(): Boolean = 
   UML!StartObjectBehaviorAction.allInstances()->forAll(soba |
-    // We dont understand OperationCallExp behavior
-     <> OclUndefined
+    // We dont understand OperationCallExp behavior <> OclUndefined
 ; 
 
 helper context UML!StartObjectBehaviorAction def: no_onport(): Boolean = 
   UML!StartObjectBehaviorAction.allInstances()->forAll(soba |
-    soba.onPort->oclAsSet()
-    ->isEmpty()
+    soba.onPort->oclAsSet()->isEmpty()
 ; 
 
 helper context UML!State def: entry_or_exit(): Boolean = 
@@ -2336,13 +1982,12 @@ helper context UML!State def: submachine_states(): Boolean =
 
 helper context UML!State def: composite_states(): Boolean = 
   UML!State.allInstances()->forAll(s |
-    s.connectionPoint->notEmpty()
-     implies s.isComposite
+    s.connectionPoint->notEmpty() implies s.isComposite
 ; 
 
 helper context UML!State def: destinations_or_sources_of_transitions(): Boolean = 
   UML!State.allInstances()->forAll(s |
-    s.isSubmachineState implies // We dont understand ocl expression IteratorExp
+    self.isSubmachineState implies // We dont understand ocl expression IteratorExp
 ; 
 
 helper context UML!State def: submachine_or_regions(): Boolean = 
@@ -2357,22 +2002,17 @@ helper context UML!StateMachine def: connection_points(): Boolean =
 
 helper context UML!StateMachine def: classifier_context(): Boolean = 
   UML!StateMachine.allInstances()->forAll(sm |
-    sm.context <> OclUndefined
-     implies not(sm.context.oclIsKindOf(UML!Interface)
-    )
+    sm.context <> OclUndefined implies not(sm.context.oclIsKindOf(UML!Interface))
 ; 
 
 helper context UML!StateMachine def: method(): Boolean = 
   UML!StateMachine.allInstances()->forAll(sm |
-    sm.specification <> OclUndefined
-     implies sm.connectionPoint->isEmpty()
+    sm.specification <> OclUndefined implies sm.connectionPoint->isEmpty()
 ; 
 
 helper context UML!StateMachine def: context_classifier(): Boolean = 
   UML!StateMachine.allInstances()->forAll(sm |
-    sm.specification <> OclUndefined
-     implies sm.context <> OclUndefined
-     and // We dont understand ocl expression IteratorExp
+    sm.specification <> OclUndefined implies sm.context <> OclUndefined and // We dont understand ocl expression IteratorExp
 ; 
 
 helper context UML!Stereotype def: binaryAssociationsOnly(): Boolean = 
@@ -2422,24 +2062,17 @@ helper context UML!StringExpression def: subexpressions(): Boolean =
 
 helper context UML!StructuralFeatureAction def: multiplicity(): Boolean = 
   UML!StructuralFeatureAction.allInstances()->forAll(sfa |
-    sfa.object->is(1,// We dont understand OperationCallExp toUnlimitedNatural
-    )
+    sfa.object->is(1,// We dont understand OperationCallExp toUnlimitedNatural)
 ; 
 
 helper context UML!StructuralFeatureAction def: object_type(): Boolean = 
   UML!StructuralFeatureAction.allInstances()->forAll(sfa |
-    // We dont understand OperationCallExp allFeatures
-    ->includes(sfa.structuralFeature)
-     or // We dont understand OperationCallExp conformsTo
+    // We dont understand OperationCallExp allFeatures->includes(sfa.structuralFeature) or sfa.object.type.conformsTo(sfa.structuralFeature.oclAsType(UML!Property).opposite.type)
 ; 
 
 helper context UML!StructuralFeatureAction def: visibility(): Boolean = 
   UML!StructuralFeatureAction.allInstances()->forAll(sfa |
-    sfa.structuralFeature.visibility = VisibilityKind.public
-     or // We dont understand OperationCallExp allFeatures
-    ->includes(sfa.structuralFeature)
-     or sfa.structuralFeature.visibility = VisibilityKind.protected
-     and // We dont understand OperationCallExp conformsTo
+    sfa.structuralFeature.visibility = VisibilityKind.public or // We dont understand OperationCallExp allFeatures->includes(sfa.structuralFeature) or sfa.structuralFeature.visibility = VisibilityKind.protected and sfa.context.conformsTo(sfa.structuralFeature.oclAsType(UML!Property).opposite.type.oclAsType(UML!Classifier))
 ; 
 
 helper context UML!StructuralFeatureAction def: not_static(): Boolean = 
@@ -2449,29 +2082,22 @@ helper context UML!StructuralFeatureAction def: not_static(): Boolean =
 
 helper context UML!StructuralFeatureAction def: one_featuring_classifier(): Boolean = 
   UML!StructuralFeatureAction.allInstances()->forAll(sfa |
-    sfa.structuralFeature.featuringClassifier->oclAsSet()
-    ->size()
-     = 1
+    sfa.structuralFeature.featuringClassifier->oclAsSet()->size() = 1
 ; 
 
 helper context UML!StructuredActivityNode def: output_pin_edges(): Boolean = 
   UML!StructuredActivityNode.allInstances()->forAll(san |
-    // We dont understand ocl expression IteratorExp->excludesAll(// We dont understand OperationCallExp allOwnedNodes
-     - san.input
-    )
+    // We dont understand ocl expression IteratorExp->excludesAll(// We dont understand OperationCallExp allOwnedNodes - san.input)
 ; 
 
 helper context UML!StructuredActivityNode def: edges(): Boolean = 
   UML!StructuredActivityNode.allInstances()->forAll(san |
-    san.edge = // We dont understand OperationCallExp 
-    ->asSet()
+    san.edge = // We dont understand OperationCallExp ->asSet()
 ; 
 
 helper context UML!StructuredActivityNode def: input_pin_edges(): Boolean = 
   UML!StructuredActivityNode.allInstances()->forAll(san |
-    // We dont understand ocl expression IteratorExp->excludesAll(// We dont understand OperationCallExp allOwnedNodes
-     - san.output
-    )
+    // We dont understand ocl expression IteratorExp->excludesAll(// We dont understand OperationCallExp allOwnedNodes - san.output)
 ; 
 
 helper context UML!TemplateBinding def: parameter_substitution_formal(): Boolean = 
@@ -2486,8 +2112,7 @@ helper context UML!TemplateBinding def: one_parameter_substitution(): Boolean =
 
 helper context UML!TemplateParameter def: must_be_compatible(): Boolean = 
   UML!TemplateParameter.allInstances()->forAll(tp |
-    tp.default <> OclUndefined
-     implies // We dont understand OperationCallExp isCompatibleWith
+    tp.default <> OclUndefined implies // We dont understand OperationCallExp isCompatibleWith
 ; 
 
 helper context UML!TemplateParameterSubstitution def: must_be_compatible(): Boolean = 
@@ -2497,9 +2122,7 @@ helper context UML!TemplateParameterSubstitution def: must_be_compatible(): Bool
 
 helper context UML!TemplateSignature def: own_elements(): Boolean = 
   UML!TemplateSignature.allInstances()->forAll(ts |
-    ts.template.ownedElement->includesAll(// We dont understand ocl expression IteratorExp->asSet()
-     - // We dont understand ocl expression IteratorExp->asSet()
-    )
+    ts.template.ownedElement->includesAll(// We dont understand ocl expression IteratorExp->asSet() - // We dont understand ocl expression IteratorExp->asSet())
 ; 
 
 helper context UML!TemplateSignature def: unique_parameters(): Boolean = 
@@ -2509,27 +2132,22 @@ helper context UML!TemplateSignature def: unique_parameters(): Boolean =
 
 helper context UML!TestIdentityAction def: multiplicity(): Boolean = 
   UML!TestIdentityAction.allInstances()->forAll(tia |
-    tia.first->is(1,// We dont understand OperationCallExp toUnlimitedNatural
-    )
-     and tia.second->is(1,// We dont understand OperationCallExp toUnlimitedNatural
-    )
+    tia.first->is(1,// We dont understand OperationCallExp toUnlimitedNatural) and tia.second->is(1,// We dont understand OperationCallExp toUnlimitedNatural)
 ; 
 
 helper context UML!TestIdentityAction def: no_type(): Boolean = 
   UML!TestIdentityAction.allInstances()->forAll(tia |
-    tia.first.type = OclUndefined
-     and tia.second.type = OclUndefined
+    tia.first.type = OclUndefined and tia.second.type = OclUndefined
 ; 
 
 helper context UML!TestIdentityAction def: result_is_boolean(): Boolean = 
   UML!TestIdentityAction.allInstances()->forAll(tia |
-    tia.result.type = UML!Boolean
+    tia.result.type = Boolean
 ; 
 
 helper context UML!TimeConstraint def: has_one_constrainedElement(): Boolean = 
   UML!TimeConstraint.allInstances()->forAll(tc |
-    tc.constrainedElement->size()
-     = 1
+    tc.constrainedElement->size() = 1
 ; 
 
 helper context UML!TimeEvent def: when_non_negative(): Boolean = 
@@ -2539,93 +2157,57 @@ helper context UML!TimeEvent def: when_non_negative(): Boolean =
 
 helper context UML!TimeExpression def: no_expr_requires_observation(): Boolean = 
   UML!TimeExpression.allInstances()->forAll(te |
-    te.expr = OclUndefined
-     implies te.observation->size()
-     = 1
-     and // We dont understand ocl expression IteratorExp
+    te.expr = OclUndefined implies te.observation->size() = 1 and // We dont understand ocl expression IteratorExp
 ; 
 
 helper context UML!Transition def: state_is_external(): Boolean = 
   UML!Transition.allInstances()->forAll(t |
-    t.kind = TransitionKind.external
-     implies not(t.source.oclIsKindOf(UML!Pseudostate)
-     and t.source.oclAsType(UML!Pseudostate)
-    .kind = PseudostateKind.entryPoint
-    )
+    t.kind = TransitionKind.external implies not(t.source.oclIsKindOf(UML!Pseudostate) and t.source.oclAsType(UML!Pseudostate).kind = PseudostateKind.entryPoint)
 ; 
 
 helper context UML!Transition def: join_segment_guards(): Boolean = 
   UML!Transition.allInstances()->forAll(t |
-    t.target.oclIsKindOf(UML!Pseudostate)
-     and t.target.oclAsType(UML!Pseudostate)
-    .kind = PseudostateKind.join
-     implies t.guard = OclUndefined
-     and t.trigger->isEmpty()
+    t.target.oclIsKindOf(UML!Pseudostate) and t.target.oclAsType(UML!Pseudostate).kind = PseudostateKind.join implies t.guard = OclUndefined and t.trigger->isEmpty()
 ; 
 
 helper context UML!Transition def: state_is_internal(): Boolean = 
   UML!Transition.allInstances()->forAll(t |
-    t.kind = TransitionKind.internal
-     implies t.source.oclIsKindOf(UML!State)
-     and t.source = t.target
+    t.kind = TransitionKind.internal implies t.source.oclIsKindOf(UML!State) and t.source = t.target
 ; 
 
 helper context UML!Transition def: outgoing_pseudostates(): Boolean = 
   UML!Transition.allInstances()->forAll(t |
-    t.source.oclIsKindOf(UML!Pseudostate)
-     and t.source.oclAsType(UML!Pseudostate)
-    .kind <> PseudostateKind.initial
-     implies t.trigger->isEmpty()
+    t.source.oclIsKindOf(UML!Pseudostate) and t.source.oclAsType(UML!Pseudostate).kind <> PseudostateKind.initial implies t.trigger->isEmpty()
 ; 
 
 helper context UML!Transition def: join_segment_state(): Boolean = 
   UML!Transition.allInstances()->forAll(t |
-    t.target.oclIsKindOf(UML!Pseudostate)
-     and t.target.oclAsType(UML!Pseudostate)
-    .kind = PseudostateKind.join
-     implies t.source.oclIsKindOf(UML!State)
+    t.target.oclIsKindOf(UML!Pseudostate) and t.target.oclAsType(UML!Pseudostate).kind = PseudostateKind.join implies t.source.oclIsKindOf(UML!State)
 ; 
 
 helper context UML!Transition def: fork_segment_state(): Boolean = 
   UML!Transition.allInstances()->forAll(t |
-    t.source.oclIsKindOf(UML!Pseudostate)
-     and t.source.oclAsType(UML!Pseudostate)
-    .kind = PseudostateKind.fork
-     implies t.target.oclIsKindOf(UML!State)
+    t.source.oclIsKindOf(UML!Pseudostate) and t.source.oclAsType(UML!Pseudostate).kind = PseudostateKind.fork implies t.target.oclIsKindOf(UML!State)
 ; 
 
 helper context UML!Transition def: state_is_local(): Boolean = 
   UML!Transition.allInstances()->forAll(t |
-    t.kind = TransitionKind.local
-     implies t.source.oclIsKindOf(UML!State)
-     and t.source.oclAsType(UML!State)
-    .isComposite
-     or t.source.oclIsKindOf(UML!Pseudostate)
-     and t.source.oclAsType(UML!Pseudostate)
-    .kind = PseudostateKind.entryPoint
+    t.kind = TransitionKind.local implies t.source.oclIsKindOf(UML!State) and t.source.oclAsType(UML!State).isComposite or t.source.oclIsKindOf(UML!Pseudostate) and t.source.oclAsType(UML!Pseudostate).kind = PseudostateKind.entryPoint
 ; 
 
 helper context UML!Transition def: initial_transition(): Boolean = 
   UML!Transition.allInstances()->forAll(t |
-    t.source.oclIsKindOf(UML!Pseudostate)
-     and t.container.stateMachine->oclAsSet()
-    ->notEmpty()
-     implies t.trigger->isEmpty()
+    t.source.oclIsKindOf(UML!Pseudostate) and t.container.stateMachine->oclAsSet()->notEmpty() implies t.trigger->isEmpty()
 ; 
 
 helper context UML!Transition def: fork_segment_guards(): Boolean = 
   UML!Transition.allInstances()->forAll(t |
-    t.source.oclIsKindOf(UML!Pseudostate)
-     and t.source.oclAsType(UML!Pseudostate)
-    .kind = PseudostateKind.fork
-     implies t.guard = OclUndefined
-     and t.trigger->isEmpty()
+    t.source.oclIsKindOf(UML!Pseudostate) and t.source.oclAsType(UML!Pseudostate).kind = PseudostateKind.fork implies t.guard = OclUndefined and t.trigger->isEmpty()
 ; 
 
 helper context UML!Trigger def: trigger_with_ports(): Boolean = 
   UML!Trigger.allInstances()->forAll(t |
-    t.port->notEmpty()
-     implies t.event.oclIsKindOf(UML!MessageEvent)
+    t.port->notEmpty() implies t.event.oclIsKindOf(UML!MessageEvent)
 ; 
 
 helper context UML!UnmarshallAction def: structural_feature(): Boolean = 
@@ -2635,25 +2217,24 @@ helper context UML!UnmarshallAction def: structural_feature(): Boolean =
 
 helper context UML!UnmarshallAction def: number_of_result(): Boolean = 
   UML!UnmarshallAction.allInstances()->forAll(ua |
-    // We dont understand OperationCallExp allAttributes
-    ->size()
-     = ua.result->size()
+    // We dont understand OperationCallExp allAttributes->size() = ua.result->size()
 ; 
 
 helper context UML!UnmarshallAction def: type_ordering_and_multiplicity(): Boolean = 
   UML!UnmarshallAction.allInstances()->forAll(ua |
-    // We dont understand ocl expression LetExp
+    let attribute : OrderedSet(UML::Property) = 
+    	  // We dont understand OperationCallExp allAttributes in 
+    	    // We dont understand ocl expression IteratorExp
 ; 
 
 helper context UML!UnmarshallAction def: multiplicity_of_object(): Boolean = 
   UML!UnmarshallAction.allInstances()->forAll(ua |
-    ua.object->is(1,// We dont understand OperationCallExp toUnlimitedNatural
-    )
+    ua.object->is(1,// We dont understand OperationCallExp toUnlimitedNatural)
 ; 
 
 helper context UML!UnmarshallAction def: object_type(): Boolean = 
   UML!UnmarshallAction.allInstances()->forAll(ua |
-    // We dont understand OperationCallExp conformsTo
+    ua.object.type.conformsTo(ua.unmarshallType)
 ; 
 
 helper context UML!UseCase def: binary_associations(): Boolean = 
@@ -2668,15 +2249,12 @@ helper context UML!UseCase def: no_association_to_use_case(): Boolean =
 
 helper context UML!UseCase def: cannot_include_self(): Boolean = 
   UML!UseCase.allInstances()->forAll(uc |
-    not(// We dont understand OperationCallExp allIncludedUseCases
-    ->includes(uc)
-    )
+    not(// We dont understand OperationCallExp allIncludedUseCases->includes(self))
 ; 
 
 helper context UML!UseCase def: must_have_name(): Boolean = 
   UML!UseCase.allInstances()->forAll(uc |
-    uc.name->oclAsSet()
-    ->notEmpty()
+    uc.name->oclAsSet()->notEmpty()
 ; 
 
 helper context UML!ValuePin def: no_incoming_edges(): Boolean = 
@@ -2686,18 +2264,17 @@ helper context UML!ValuePin def: no_incoming_edges(): Boolean =
 
 helper context UML!ValuePin def: compatible_type(): Boolean = 
   UML!ValuePin.allInstances()->forAll(vp |
-    // We dont understand OperationCallExp conformsTo
+    vp.value.type.conformsTo(vp.type)
 ; 
 
 helper context UML!ValueSpecificationAction def: multiplicity(): Boolean = 
   UML!ValueSpecificationAction.allInstances()->forAll(vsa |
-    vsa.result->is(1,// We dont understand OperationCallExp toUnlimitedNatural
-    )
+    vsa.result->is(1,// We dont understand OperationCallExp toUnlimitedNatural)
 ; 
 
 helper context UML!ValueSpecificationAction def: compatible_type(): Boolean = 
   UML!ValueSpecificationAction.allInstances()->forAll(vsa |
-    // We dont understand OperationCallExp conformsTo
+    vsa.value.type.conformsTo(vsa.result.type)
 ; 
 
 helper context UML!VariableAction def: scope_of_variable(): Boolean = 
@@ -2712,40 +2289,31 @@ helper context UML!WriteLinkAction def: allow_access(): Boolean =
 
 helper context UML!WriteStructuralFeatureAction def: multiplicity_of_result(): Boolean = 
   UML!WriteStructuralFeatureAction.allInstances()->forAll(wsfa |
-    wsfa.result <> OclUndefined
-     implies wsfa.result->is(1,// We dont understand OperationCallExp toUnlimitedNatural
-    )
+    wsfa.result <> OclUndefined implies wsfa.result->is(1,// We dont understand OperationCallExp toUnlimitedNatural)
 ; 
 
 helper context UML!WriteStructuralFeatureAction def: type_of_value(): Boolean = 
   UML!WriteStructuralFeatureAction.allInstances()->forAll(wsfa |
-    wsfa.value <> OclUndefined
-     implies // We dont understand OperationCallExp conformsTo
+    wsfa.value <> OclUndefined implies wsfa.value.type.conformsTo(wsfa.structuralFeature.type)
 ; 
 
 helper context UML!WriteStructuralFeatureAction def: multiplicity_of_value(): Boolean = 
   UML!WriteStructuralFeatureAction.allInstances()->forAll(wsfa |
-    wsfa.value <> OclUndefined
-     implies wsfa.value->is(1,// We dont understand OperationCallExp toUnlimitedNatural
-    )
+    wsfa.value <> OclUndefined implies wsfa.value->is(1,// We dont understand OperationCallExp toUnlimitedNatural)
 ; 
 
 helper context UML!WriteStructuralFeatureAction def: type_of_result(): Boolean = 
   UML!WriteStructuralFeatureAction.allInstances()->forAll(wsfa |
-    wsfa.result <> OclUndefined
-     implies wsfa.result.type = wsfa.object.type
+    wsfa.result <> OclUndefined implies wsfa.result.type = wsfa.object.type
 ; 
 
 helper context UML!WriteVariableAction def: value_type(): Boolean = 
   UML!WriteVariableAction.allInstances()->forAll(wva |
-    wva.value <> OclUndefined
-     implies // We dont understand OperationCallExp conformsTo
+    wva.value <> OclUndefined implies wva.value.type.conformsTo(wva.variable.type)
 ; 
 
 helper context UML!WriteVariableAction def: multiplicity(): Boolean = 
   UML!WriteVariableAction.allInstances()->forAll(wva |
-    wva.value <> OclUndefined
-     implies wva.value->is(1,// We dont understand OperationCallExp toUnlimitedNatural
-    )
+    wva.value <> OclUndefined implies wva.value->is(1,// We dont understand OperationCallExp toUnlimitedNatural)
 ; 
 

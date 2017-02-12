@@ -5,6 +5,7 @@ import org.eclipse.emf.ecore.EObject
 import org.eclipse.ocl.pivot.BooleanLiteralExp
 import org.eclipse.ocl.pivot.EnumLiteralExp
 import org.eclipse.ocl.pivot.IntegerLiteralExp
+import org.eclipse.ocl.pivot.LetExp
 import org.eclipse.ocl.pivot.NullLiteralExp
 import org.eclipse.ocl.pivot.OCLExpression
 import org.eclipse.ocl.pivot.Operation
@@ -12,7 +13,7 @@ import org.eclipse.ocl.pivot.OperationCallExp
 import org.eclipse.ocl.pivot.PropertyCallExp
 import org.eclipse.ocl.pivot.Type
 import org.eclipse.ocl.pivot.TypeExp
-import org.eclipse.ocl.pivot.*
+import org.eclipse.ocl.pivot.VariableExp
 
 class OCL {
 	// dispatcher
@@ -55,13 +56,14 @@ class OCL {
 	|| op=="is" || op=="excludesAll" 
 	»«src»->«op»(«args_dot»)«
 	ELSE»// We dont understand OperationCallExp «op»«
-	ENDIF»
-	'''
+	ENDIF»'''
 	
 	def static dispatch String gen(PropertyCallExp e, HashMap<String, VariableExp> consistency) '''«gen(e.ownedSource, consistency)».«e.referredProperty.name»'''
 	
 	//TODO use a systematic approach to generate new bound variable
-	def static dispatch String gen(VariableExp e, HashMap<String, VariableExp> consistency) '''«if (e.isIsImplicit) {if (isConsistentVariable(consistency, e)) {getIteratorName(e)} else getIteratorName(e)+e.hashCode} else getIteratorName(e)»'''
+	def static dispatch String gen(VariableExp e, HashMap<String, VariableExp> consistency) '''«
+		if (e.isIsImplicit) {if (isConsistentVariable(consistency, e)) {getIteratorName(e)} else getIteratorName(e)+e.hashCode} else e.referredVariable.name
+	»'''
 	
 	def static dispatch String gen(Operation e, HashMap<String, VariableExp> consistency) '''«e.name»'''
 	
@@ -75,9 +77,13 @@ class OCL {
 	
 	def static dispatch String gen(NullLiteralExp e, HashMap<String, VariableExp> consistency) '''OclUndefined'''
 	
-	def static dispatch String gen(TypeExp e, HashMap<String, VariableExp> consistency) '''«OCL2ATL.model»!«e.referredType.name»'''
+	def static dispatch String gen(TypeExp e, HashMap<String, VariableExp> consistency) '''«e.referredType.toString().replace("::", "!")»'''
 	
-	// let
+	def static dispatch String gen(LetExp e, HashMap<String, VariableExp> consistency) '''let «e.ownedVariable.name» : «e.ownedVariable.type» = 
+	  «gen(e.ownedVariable.ownedInit, consistency)» in 
+	    «gen(e.ownedIn, consistency)»'''
+	
+	
 	// iterator
 	// if
 	

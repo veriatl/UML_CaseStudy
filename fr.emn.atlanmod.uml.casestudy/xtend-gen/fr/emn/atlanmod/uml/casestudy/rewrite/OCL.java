@@ -8,6 +8,7 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.ocl.pivot.BooleanLiteralExp;
 import org.eclipse.ocl.pivot.EnumLiteralExp;
 import org.eclipse.ocl.pivot.IntegerLiteralExp;
+import org.eclipse.ocl.pivot.LetExp;
 import org.eclipse.ocl.pivot.NullLiteralExp;
 import org.eclipse.ocl.pivot.OCLExpression;
 import org.eclipse.ocl.pivot.Operation;
@@ -118,7 +119,6 @@ public class OCL {
         }
       }
     }
-    _builder.newLineIfNotEmpty();
     return _builder.toString();
   }
   
@@ -148,7 +148,7 @@ public class OCL {
       }
       _xifexpression = _xifexpression_1;
     } else {
-      _xifexpression = OCL.getIteratorName(e);
+      _xifexpression = e.getReferredVariable().getName();
     }
     _builder.append(_xifexpression);
     return _builder.toString();
@@ -200,10 +200,29 @@ public class OCL {
   
   protected static String _gen(final TypeExp e, final HashMap<String, VariableExp> consistency) {
     StringConcatenation _builder = new StringConcatenation();
-    _builder.append(OCL2ATL.model);
-    _builder.append("!");
-    String _name = e.getReferredType().getName();
+    String _replace = e.getReferredType().toString().replace("::", "!");
+    _builder.append(_replace);
+    return _builder.toString();
+  }
+  
+  protected static String _gen(final LetExp e, final HashMap<String, VariableExp> consistency) {
+    StringConcatenation _builder = new StringConcatenation();
+    _builder.append("let ");
+    String _name = e.getOwnedVariable().getName();
     _builder.append(_name);
+    _builder.append(" : ");
+    Type _type = e.getOwnedVariable().getType();
+    _builder.append(_type);
+    _builder.append(" = ");
+    _builder.newLineIfNotEmpty();
+    _builder.append("\t  ");
+    String _gen = OCL.gen(e.getOwnedVariable().getOwnedInit(), consistency);
+    _builder.append(_gen, "\t  ");
+    _builder.append(" in ");
+    _builder.newLineIfNotEmpty();
+    _builder.append("\t    ");
+    String _gen_1 = OCL.gen(e.getOwnedIn(), consistency);
+    _builder.append(_gen_1, "\t    ");
     return _builder.toString();
   }
   
@@ -232,6 +251,8 @@ public class OCL {
       return _gen((OperationCallExp)e, consistency);
     } else if (e instanceof EnumLiteralExp) {
       return _gen((EnumLiteralExp)e, consistency);
+    } else if (e instanceof LetExp) {
+      return _gen((LetExp)e, consistency);
     } else if (e instanceof Operation) {
       return _gen((Operation)e, consistency);
     } else if (e instanceof TypeExp) {
