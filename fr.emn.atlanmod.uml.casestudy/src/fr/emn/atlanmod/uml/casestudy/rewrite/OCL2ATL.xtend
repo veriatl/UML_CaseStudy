@@ -26,7 +26,7 @@ class OCL2ATL {
 		helper context «model»!«clazz.name» def: «inv.name»(): Boolean = 
 		  «model»!«clazz.name».allInstances()->forAll(«genIteratorName(clazz.name)» |
 		    «OCL.gen((inv.ownedSpecification as ExpressionInOCL).ownedBody, new HashMap)»
-		; 
+		); 
 		
 		«ENDFOR»
 	«ENDFOR»

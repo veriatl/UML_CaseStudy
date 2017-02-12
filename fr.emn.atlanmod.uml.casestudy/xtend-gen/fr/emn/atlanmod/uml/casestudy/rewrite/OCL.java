@@ -7,7 +7,10 @@ import java.util.HashMap;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.ocl.pivot.BooleanLiteralExp;
 import org.eclipse.ocl.pivot.EnumLiteralExp;
+import org.eclipse.ocl.pivot.IfExp;
 import org.eclipse.ocl.pivot.IntegerLiteralExp;
+import org.eclipse.ocl.pivot.IteratorExp;
+import org.eclipse.ocl.pivot.IteratorVariable;
 import org.eclipse.ocl.pivot.LetExp;
 import org.eclipse.ocl.pivot.NullLiteralExp;
 import org.eclipse.ocl.pivot.OCLExpression;
@@ -16,6 +19,7 @@ import org.eclipse.ocl.pivot.OperationCallExp;
 import org.eclipse.ocl.pivot.PropertyCallExp;
 import org.eclipse.ocl.pivot.Type;
 import org.eclipse.ocl.pivot.TypeExp;
+import org.eclipse.ocl.pivot.Variable;
 import org.eclipse.ocl.pivot.VariableExp;
 import org.eclipse.xtend2.lib.StringConcatenation;
 import org.eclipse.xtext.xbase.lib.Functions.Function1;
@@ -75,7 +79,7 @@ public class OCL {
         _builder.append(_gen);
         _builder.append(")");
       } else {
-        if ((((((((((((((((((((Objects.equal(op, "+") || Objects.equal(op, "-")) || Objects.equal(op, "*")) || Objects.equal(op, "/")) || Objects.equal(op, "=")) || Objects.equal(op, "<>")) || Objects.equal(op, ">")) || Objects.equal(op, "<")) || Objects.equal(op, "implies")) || Objects.equal(op, "and")) || Objects.equal(op, "or")) || Objects.equal(op, "div")) || Objects.equal(op, "mod")) || Objects.equal(op, "implies")) || Objects.equal(op, "implies")) || Objects.equal(op, "and")) || Objects.equal(op, "or")) || Objects.equal(op, "implies")) || Objects.equal(op, "implies")) || Objects.equal(op, "implies"))) {
+        if ((((((((((((((((((((((Objects.equal(op, "+") || Objects.equal(op, "-")) || Objects.equal(op, "*")) || Objects.equal(op, "/")) || Objects.equal(op, "=")) || Objects.equal(op, "<>")) || Objects.equal(op, ">")) || Objects.equal(op, "<")) || Objects.equal(op, ">=")) || Objects.equal(op, "<=")) || Objects.equal(op, "implies")) || Objects.equal(op, "and")) || Objects.equal(op, "or")) || Objects.equal(op, "div")) || Objects.equal(op, "mod")) || Objects.equal(op, "implies")) || Objects.equal(op, "implies")) || Objects.equal(op, "and")) || Objects.equal(op, "or")) || Objects.equal(op, "implies")) || Objects.equal(op, "implies")) || Objects.equal(op, "implies"))) {
           _builder.append(src);
           _builder.append(" ");
           _builder.append(op);
@@ -110,8 +114,12 @@ public class OCL {
                   _builder.append(args_dot);
                   _builder.append(")");
                 } else {
-                  _builder.append("// We dont understand OperationCallExp ");
+                  _builder.append(src);
+                  _builder.append(".");
                   _builder.append(op);
+                  _builder.append("(");
+                  _builder.append(args_dot);
+                  _builder.append(")");
                 }
               }
             }
@@ -149,6 +157,19 @@ public class OCL {
       _xifexpression = _xifexpression_1;
     } else {
       _xifexpression = e.getReferredVariable().getName();
+    }
+    _builder.append(_xifexpression);
+    return _builder.toString();
+  }
+  
+  protected static String _gen(final IteratorVariable e, final HashMap<String, VariableExp> consistency) {
+    StringConcatenation _builder = new StringConcatenation();
+    String _xifexpression = null;
+    boolean _isIsImplicit = e.isIsImplicit();
+    if (_isIsImplicit) {
+      _xifexpression = OCL2ATL.genIteratorName(OCL.gen(e.getType(), null));
+    } else {
+      _xifexpression = e.getName();
     }
     _builder.append(_xifexpression);
     return _builder.toString();
@@ -211,18 +232,78 @@ public class OCL {
     String _name = e.getOwnedVariable().getName();
     _builder.append(_name);
     _builder.append(" : ");
-    Type _type = e.getOwnedVariable().getType();
-    _builder.append(_type);
+    String _replace = e.getOwnedVariable().getType().toString().replace("::", "!");
+    _builder.append(_replace);
     _builder.append(" = ");
     _builder.newLineIfNotEmpty();
-    _builder.append("\t  ");
+    _builder.append("  ");
     String _gen = OCL.gen(e.getOwnedVariable().getOwnedInit(), consistency);
-    _builder.append(_gen, "\t  ");
+    _builder.append(_gen, "  ");
     _builder.append(" in ");
     _builder.newLineIfNotEmpty();
-    _builder.append("\t    ");
+    _builder.append("    ");
     String _gen_1 = OCL.gen(e.getOwnedIn(), consistency);
-    _builder.append(_gen_1, "\t    ");
+    _builder.append(_gen_1, "    ");
+    return _builder.toString();
+  }
+  
+  protected static String _gen(final IteratorExp e, final HashMap<String, VariableExp> consistency) {
+    StringConcatenation _builder = new StringConcatenation();
+    String _xifexpression = null;
+    int _size = e.getOwnedIterators().size();
+    boolean _notEquals = (_size != 0);
+    if (_notEquals) {
+      final Function1<Variable, String> _function = (Variable arg) -> {
+        return OCL.gen(arg, consistency);
+      };
+      _xifexpression = IterableExtensions.join(ListExtensions.<Variable, String>map(e.getOwnedIterators(), _function), ",");
+    } else {
+      _xifexpression = "";
+    }
+    final String args_dot = _xifexpression;
+    _builder.newLineIfNotEmpty();
+    String _gen = OCL.gen(e.getOwnedSource(), consistency);
+    _builder.append(_gen);
+    _builder.append("->");
+    String _name = e.getReferredIteration().getName();
+    _builder.append(_name);
+    _builder.append("(");
+    String _xifexpression_1 = null;
+    int _size_1 = e.getOwnedIterators().size();
+    boolean _notEquals_1 = (_size_1 != 0);
+    if (_notEquals_1) {
+      _xifexpression_1 = (args_dot + "|");
+    } else {
+      _xifexpression_1 = "";
+    }
+    _builder.append(_xifexpression_1);
+    _builder.append(" ");
+    _builder.newLineIfNotEmpty();
+    _builder.append("  ");
+    String _gen_1 = OCL.gen(e.getOwnedBody(), consistency);
+    _builder.append(_gen_1, "  ");
+    _builder.append(")");
+    return _builder.toString();
+  }
+  
+  protected static String _gen(final IfExp e, final HashMap<String, VariableExp> consistency) {
+    StringConcatenation _builder = new StringConcatenation();
+    _builder.append("if (");
+    String _gen = OCL.gen(e.getOwnedCondition(), consistency);
+    _builder.append(_gen);
+    _builder.append(") then ");
+    _builder.newLineIfNotEmpty();
+    _builder.append("  ");
+    String _gen_1 = OCL.gen(e.getOwnedThen(), consistency);
+    _builder.append(_gen_1, "  ");
+    _builder.newLineIfNotEmpty();
+    _builder.append("else ");
+    _builder.newLine();
+    _builder.append("  ");
+    String _gen_2 = OCL.gen(e.getOwnedElse(), consistency);
+    _builder.append(_gen_2, "  ");
+    _builder.newLineIfNotEmpty();
+    _builder.append("endif");
     return _builder.toString();
   }
   
@@ -245,12 +326,18 @@ public class OCL {
       return _gen((PropertyCallExp)e, consistency);
     } else if (e instanceof BooleanLiteralExp) {
       return _gen((BooleanLiteralExp)e, consistency);
+    } else if (e instanceof IteratorExp) {
+      return _gen((IteratorExp)e, consistency);
     } else if (e instanceof NullLiteralExp) {
       return _gen((NullLiteralExp)e, consistency);
     } else if (e instanceof OperationCallExp) {
       return _gen((OperationCallExp)e, consistency);
     } else if (e instanceof EnumLiteralExp) {
       return _gen((EnumLiteralExp)e, consistency);
+    } else if (e instanceof IteratorVariable) {
+      return _gen((IteratorVariable)e, consistency);
+    } else if (e instanceof IfExp) {
+      return _gen((IfExp)e, consistency);
     } else if (e instanceof LetExp) {
       return _gen((LetExp)e, consistency);
     } else if (e instanceof Operation) {

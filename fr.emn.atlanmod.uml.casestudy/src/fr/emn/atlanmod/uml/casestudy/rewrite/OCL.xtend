@@ -4,7 +4,10 @@ import java.util.HashMap
 import org.eclipse.emf.ecore.EObject
 import org.eclipse.ocl.pivot.BooleanLiteralExp
 import org.eclipse.ocl.pivot.EnumLiteralExp
+import org.eclipse.ocl.pivot.IfExp
 import org.eclipse.ocl.pivot.IntegerLiteralExp
+import org.eclipse.ocl.pivot.IteratorExp
+import org.eclipse.ocl.pivot.IteratorVariable
 import org.eclipse.ocl.pivot.LetExp
 import org.eclipse.ocl.pivot.NullLiteralExp
 import org.eclipse.ocl.pivot.OCLExpression
@@ -32,7 +35,8 @@ class OCL {
 	«val args_dot = if(e.ownedArguments.size!=0 && op!=null) e.ownedArguments.map(arg |  gen(arg, consistency) ).join(',') else ""»«
 	IF op=="not" || op=="abs"
 	»«op»(«gen(e.ownedSource, consistency)»)«
-	ELSEIF op=="+" || op =="-"  || op =="*" || op =="/" || op =="=" || op =="<>" || op ==">" || op =="<" 
+	ELSEIF op=="+" || op =="-"  || op =="*" || op =="/" 
+	|| op =="=" || op =="<>" || op ==">" || op =="<" || op ==">=" || op =="<=" 
 	|| op =="implies"  || op =="and"  || op =="or" || op =="div" || op =="mod" || op =="implies"
 	|| op =="implies"  || op =="and"  || op =="or" || op =="implies" || op =="implies" || op =="implies"
 	»«src» «op» «args»«
@@ -55,7 +59,7 @@ class OCL {
 	|| op=="append" || op=="appendAll"  || op=="prepend"  || op=="prependAll"  || op=="reverse" 
 	|| op=="is" || op=="excludesAll" 
 	»«src»->«op»(«args_dot»)«
-	ELSE»// We dont understand OperationCallExp «op»«
+	ELSE»«src».«op»(«args_dot»)«
 	ENDIF»'''
 	
 	def static dispatch String gen(PropertyCallExp e, HashMap<String, VariableExp> consistency) '''«gen(e.ownedSource, consistency)».«e.referredProperty.name»'''
@@ -63,6 +67,10 @@ class OCL {
 	//TODO use a systematic approach to generate new bound variable
 	def static dispatch String gen(VariableExp e, HashMap<String, VariableExp> consistency) '''«
 		if (e.isIsImplicit) {if (isConsistentVariable(consistency, e)) {getIteratorName(e)} else getIteratorName(e)+e.hashCode} else e.referredVariable.name
+	»'''
+	
+	def static dispatch String gen(IteratorVariable e, HashMap<String, VariableExp> consistency) '''«
+		if (e.isIsImplicit) OCL2ATL.genIteratorName(gen(e.type, null)) else e.name
 	»'''
 	
 	def static dispatch String gen(Operation e, HashMap<String, VariableExp> consistency) '''«e.name»'''
@@ -79,13 +87,23 @@ class OCL {
 	
 	def static dispatch String gen(TypeExp e, HashMap<String, VariableExp> consistency) '''«e.referredType.toString().replace("::", "!")»'''
 	
-	def static dispatch String gen(LetExp e, HashMap<String, VariableExp> consistency) '''let «e.ownedVariable.name» : «e.ownedVariable.type» = 
-	  «gen(e.ownedVariable.ownedInit, consistency)» in 
-	    «gen(e.ownedIn, consistency)»'''
-	
-	
-	// iterator
-	// if
+	def static dispatch String gen(LetExp e, HashMap<String, VariableExp> consistency) '''let «e.ownedVariable.name» : «e.ownedVariable.type.toString().replace("::", "!")» = 
+  «gen(e.ownedVariable.ownedInit, consistency)» in 
+    «gen(e.ownedIn, consistency)»'''
+
+
+	def static dispatch String gen(IteratorExp e, HashMap<String, VariableExp> consistency) '''
+	«val args_dot = if(e.ownedIterators.size!=0) e.ownedIterators.map(arg |  gen(arg, consistency) ).join(',') else ""»
+	«gen(e.ownedSource, consistency)»->«e.referredIteration.name»(«if (e.ownedIterators.size!=0) args_dot + "|" else ""» 
+  «gen(e.ownedBody, consistency)»)'''
+  
+    def static dispatch String gen(IfExp e, HashMap<String, VariableExp> consistency) '''
+if («gen(e.ownedCondition, consistency)») then 
+  «gen(e.ownedThen, consistency)»
+else 
+  «gen(e.ownedElse, consistency)»
+endif'''
+
 	
 	def static isConsistentVariable(HashMap<String, VariableExp> map, VariableExp exp) {
 		val itName = getIteratorName(exp)

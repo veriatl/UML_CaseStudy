@@ -75,7 +75,7 @@ public class OCL2ATL {
             String _gen = OCL.gen(_ownedBody, _hashMap);
             _builder.append(_gen, "    ");
             _builder.newLineIfNotEmpty();
-            _builder.append("; ");
+            _builder.append("); ");
             _builder.newLine();
             _builder.newLine();
           }
