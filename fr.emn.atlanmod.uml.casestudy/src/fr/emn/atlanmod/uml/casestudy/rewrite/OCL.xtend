@@ -24,25 +24,26 @@ import java.util.HashSet
 import org.eclipse.ocl.pivot.Enumeration
 
 class OCL {
-	static private HashSet<String> wdSet = new HashSet<String>
+	static private HashSet<String> wdSetInner = new HashSet<String>
+	static public HashMap<String, EObject> bvMap = new HashMap<String, EObject>
 	
 	// dispatcher
-	def static dispatch String gen(EObject e, HashMap<String, VariableExp> consistency) '''
+	def static dispatch String gen(EObject e) '''
 		// We dont understand «e.eClass.name»'''
 	
 	// dispatcher
-	def static dispatch String gen(OCLExpression e, HashMap<String, VariableExp> consistency) '''
+	def static dispatch String gen(OCLExpression e) '''
 		// We dont understand ocl expression «e.eClass.name»'''
 	
 	// TODO size, tostring, =(isocltype) some operation depends on type print differently
 	// TODO some collection is not printing properly, e.g. union
-	def static dispatch String gen(OperationCallExp e, HashMap<String, VariableExp> consistency) '''
+	def static dispatch String gen(OperationCallExp e) '''
 	«val op = if (e.referredOperation.name =="") e.name else e.referredOperation.name»
-	«val src = gen(e.ownedSource, consistency)»
-	«val args = if(e.ownedArguments.size!=0 && op!=null) e.ownedArguments.map(arg |  gen(arg, consistency) ).join(op) else ""»
-	«val args_dot = if(e.ownedArguments.size!=0 && op!=null) e.ownedArguments.map(arg |  gen(arg, consistency) ).join(',') else ""»«
+	«val src = gen(e.ownedSource)»
+	«val args = if(e.ownedArguments.size!=0 && op!=null) e.ownedArguments.map(arg |  gen(arg) ).join(op) else ""»
+	«val args_dot = if(e.ownedArguments.size!=0 && op!=null) e.ownedArguments.map(arg |  gen(arg) ).join(',') else ""»«
 	IF op=="not" || op=="abs"
-	»«op»(«gen(e.ownedSource, consistency)»)«
+	»«op»(«gen(e.ownedSource)»)«
 	ELSEIF op=="+" || op =="-"  || op =="*" || op =="/" 
 	|| op =="=" || op =="<>" || op ==">" || op =="<" || op ==">=" || op =="<=" 
 	|| op =="implies"  || op =="and"  || op =="or" || op =="div" || op =="mod" || op=="xor" 
@@ -69,90 +70,105 @@ class OCL {
 	ELSE»«src».«op»(«args_dot»)«
 	ENDIF»'''
 	
-	def static dispatch String gen(PropertyCallExp e, HashMap<String, VariableExp> consistency) '''«gen(e.ownedSource, consistency)».«e.referredProperty.name»'''
+	def static dispatch String gen(PropertyCallExp e) '''«gen(e.ownedSource)».«e.referredProperty.name»'''
 	
-	def static dispatch String gen(OppositePropertyCallExp e, HashMap<String, VariableExp> consistency) '''«gen(e.ownedSource, consistency)».«e.referredProperty.name»'''
+	def static dispatch String gen(OppositePropertyCallExp e) '''«gen(e.ownedSource)».«e.referredProperty.name»'''
 	
 	
-	//TODO use a systematic approach to generate new bound variable
-	//TODO Bug: redefinition_context_valid
-	def static dispatch String gen(VariableExp e, HashMap<String, VariableExp> consistency) '''«
-		if (e.isIsImplicit) {if (isConsistentVariable(consistency, e)) {getIteratorName(e)} else getIteratorName(e)+e.hashCode} else if (e.referredVariable.name=="self") getIteratorName(e) else e.referredVariable.name
+
+	
+	def static dispatch String gen(VariableExp e) '''
+	«val itName = OCL2ATL.genIteratorName(gen(e.type))»«
+		if (e.isImplicit) {if (!bvMap.keySet.contains(itName)) {itName} else itName+e.hashCode} else if (e.referredVariable.name=="self") itName else e.referredVariable.name
 	»'''
 	
-	def static dispatch String gen(IteratorVariable e, HashMap<String, VariableExp> consistency) '''«
-		if (e.isIsImplicit) OCL2ATL.genIteratorName(gen(e.type, null)) else e.name
+	// OCL2ATL.genIteratorName(gen(e.type))
+	//TODO var name shadowing: Bug: redefinition_context_valid, deployment_target, non_leaf_redefinition
+	def static dispatch String gen(IteratorVariable e) '''
+	«val itName = e.name»
+	«val hashName = itName+e.hashCode»«
+	IF (bvMap.keySet.contains(itName) && bvMap.get(itName) == e)»«itName»«
+	ELSEIF (bvMap.keySet.contains(itName) && bvMap.get(itName) != e)»«
+		IF bvMap.keySet.contains(hashName)»
+		«hashName»«
+		ELSE»
+		«hashName»«{bvMap.put(hashName, e);null}»«
+		ENDIF»«
+	ELSEIF !(bvMap.keySet.contains(itName))»«itName»«{bvMap.put(e.name, e);null}»«
+	ENDIF
 	»'''
 	
-	def static dispatch String gen(Operation e, HashMap<String, VariableExp> consistency) '''«e.name»'''
+	def static dispatch String gen(Operation e) '''«e.name»'''
 	
-	def static dispatch String gen(Type e, HashMap<String, VariableExp> consistency) '''«e.name»'''
+	def static dispatch String gen(Type e) '''«e.name»'''
 	
-	def static dispatch String gen(IntegerLiteralExp e, HashMap<String, VariableExp> consistency) '''«e.integerSymbol»'''
+	def static dispatch String gen(IntegerLiteralExp e) '''«e.integerSymbol»'''
 	
-	def static dispatch String gen(BooleanLiteralExp e, HashMap<String, VariableExp> consistency) '''«e.booleanSymbol»'''
+	def static dispatch String gen(BooleanLiteralExp e) '''«e.booleanSymbol»'''
 	
 	// TODO where is the model name before its type?
-	def static dispatch String gen(EnumLiteralExp e, HashMap<String, VariableExp> consistency) '''«e.type.name».«e.referredLiteral.name»'''
+	def static dispatch String gen(EnumLiteralExp e) '''«e.type.name».«e.referredLiteral.name»'''
 	
-	def static dispatch String gen(NullLiteralExp e, HashMap<String, VariableExp> consistency) '''OclUndefined'''
+	def static dispatch String gen(NullLiteralExp e) '''OclUndefined'''
 	
-	def static dispatch String gen(TypeExp e, HashMap<String, VariableExp> consistency) '''«e.referredType.toString().replace("::", "!")»'''
+	def static dispatch String gen(TypeExp e) '''«e.referredType.toString().replace("::", "!")»'''
 	
 	// TODO ATL supported?
-	def static dispatch String gen(CollectionLiteralExp e, HashMap<String, VariableExp> consistency) '''Sequence{}'''
+	def static dispatch String gen(CollectionLiteralExp e) '''Sequence{}'''
 	
 	// TODO dont know what is this means, put it to *. since sometimes is set to 1, see `multiplicity_of_output`
-	def static dispatch String gen(UnlimitedNaturalLiteralExp e, HashMap<String, VariableExp> consistency) '''*'''
+	def static dispatch String gen(UnlimitedNaturalLiteralExp e) '''*'''
 	
-	def static dispatch String gen(LetExp e, HashMap<String, VariableExp> consistency) '''let «e.ownedVariable.name» : «e.ownedVariable.type.toString().replace("::", "!")» = 
-  «gen(e.ownedVariable.ownedInit, consistency)» in 
-    «gen(e.ownedIn, consistency)»'''
+	def static dispatch String gen(LetExp e) '''let «e.ownedVariable.name» : «e.ownedVariable.type.toString().replace("::", "!")» = 
+  «gen(e.ownedVariable.ownedInit)» in 
+    «gen(e.ownedIn)»'''
 
-	def static dispatch String gen(IteratorExp e, HashMap<String, VariableExp> consistency) '''
-	«val args_dot = if(e.ownedIterators.size!=0) e.ownedIterators.map(arg |  gen(arg, consistency) ).join(',') else ""»
+	def static dispatch String gen(IteratorExp e) '''
+	«val args_dot = if(e.ownedIterators.size!=0) e.ownedIterators.map(arg |  gen(arg) ).join(',') else ""»
 	«val wdExprs = OCLWDGenerator.wd(e.ownedBody)»
-	«gen(e.ownedSource, consistency)»->«e.referredIteration.name»(«if (e.ownedIterators.size!=0) args_dot + "|" else ""»
+	«gen(e.ownedSource)»->«e.referredIteration.name»(«if (e.ownedIterators.size!=0) args_dot + "|" else ""»
 	«FOR expr: wdExprs»
 		«FOR itor : e.ownedIterators»
-		  	«IF OCL2ATL.printAtHere(expr, gen(itor, consistency)) && !wdSet.contains(OCL.gen(expr, new HashMap))»«
-		  		{wdSet.add(OCL.gen(expr, new HashMap));null}»«
+		  	«IF OCL2ATL.printAtHere(expr, gen(itor)) && !wdSetInner.contains(OCL.gen(expr))»«
+		  		{wdSetInner.add(gen(expr));null}»«
 		  		IF !OCL.isPrimtive(expr)»«
-		  			IF !OCL.isCollection(expr)»
-		  			«expr.type.toString.replace("::", "!")».allInstances()->contains(«OCL.gen(expr, new HashMap)») implies 
+		  			IF !isCollection(expr)»
+		  			«expr.type.toString.replace("::", "!")».allInstances()->contains(«OCL.gen(expr)») implies 
 		  			«ELSE»
-		  			«OCL.gen(expr, new HashMap)»->size()>0 implies 
+		  			«gen(expr)»->size()>0 implies 
 		  			«ENDIF»«
 		  		ENDIF»«
 		  	ENDIF»«
 	  	ENDFOR»«
-  	ENDFOR»«{wdSet.clear();null}» 
-  «gen(e.ownedBody, consistency)»)'''
+  	ENDFOR»«{wdSetInner.clear();null}» 
+  «gen(e.ownedBody)»)'''
   
-    def static dispatch String gen(IfExp e, HashMap<String, VariableExp> consistency) '''
-if («gen(e.ownedCondition, consistency)») then 
-  «gen(e.ownedThen, consistency)»
+    def static dispatch String gen(IfExp e) '''
+if («gen(e.ownedCondition)») then 
+  «gen(e.ownedThen)»
 else 
-  «gen(e.ownedElse, consistency)»
+  «gen(e.ownedElse)»
 endif'''
 
 	
-	def static isConsistentVariable(HashMap<String, VariableExp> map, VariableExp exp) {
-		val itName = getIteratorName(exp)
-		return  !map.containsKey(itName) || map.get(itName) == exp
+	def static isConsistentVariable(HashMap<String, EObject> map, EObject exp) {
+		if(exp instanceof VariableExp){
+			val itName = OCL2ATL.genIteratorName(gen(exp.type))
+			return  !map.containsKey(itName) || map.get(itName) == exp
+		}else if ( exp instanceof IteratorVariable){
+			val itName = OCL2ATL.genIteratorName(gen(exp.type))
+			return  !map.containsKey(itName) || map.get(itName) == exp
+		}else{
+			return true;
+		}
+		
 	}
 	
-	def static getIteratorName(VariableExp exp) {
-		val tp = exp.type
-		val clazz = gen(tp, null)
-		val itName = OCL2ATL.genIteratorName(clazz)
-		return itName
-	}
 	
 	def static boolean isPrimtive(PropertyCallExp e) {
 
-		if(OCL.gen(e.type, null) == "String" || OCL.gen(e.type, null) == "Integer" 
-			|| OCL.gen(e.type, null) == "Boolean" || OCL.gen(e.type, null) == "Real"
+		if(OCL.gen(e.type) == "String" || OCL.gen(e.type) == "Integer" 
+			|| OCL.gen(e.type) == "Boolean" || OCL.gen(e.type) == "Real"
 		){
 			return true
 		}else if(e.type instanceof Enumeration){
@@ -164,7 +180,7 @@ endif'''
 	
 	def static boolean isCollection(PropertyCallExp e) {
 
-		if(OCL.gen(e.type, null) == "Set" || OCL.gen(e.type, null) == "OrderedSet" 
+		if(OCL.gen(e.type) == "Set" || OCL.gen(e.type) == "OrderedSet" 
 		){
 			return true
 		}else{

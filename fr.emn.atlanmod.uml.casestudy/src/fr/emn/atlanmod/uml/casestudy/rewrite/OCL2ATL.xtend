@@ -14,6 +14,8 @@ class OCL2ATL {
 	
 	static private HashSet<String> wdSet = new HashSet<String>
 	
+	
+	
 	public static String model = "UML"
 	// dispatcher
 	def static dispatch String rewrite(EObject o) '''
@@ -38,21 +40,21 @@ class OCL2ATL {
 			val wdExprs = OCLWDGenerator.wd((inv.ownedSpecification as ExpressionInOCL).ownedBody)
 			»
 			helper context «model»!«clazz.name» def: «inv.name»(): Boolean = 
-			  «model»!«clazz.name».allInstances()->forAll(«genIteratorName(clazz.name)» |
+			  «model»!«clazz.name».allInstances()->forAll(«genIteratorName(clazz.name)» |  «OCL.bvMap.put(genIteratorName(clazz.name), null)»
 			  	«FOR e: wdExprs»
-				  	«IF printAtHere(e, genIteratorName(clazz.name)) && !wdSet.contains(OCL.gen(e, new HashMap))»«
-				  		{wdSet.add(OCL.gen(e, new HashMap));null}»«
+				  	«IF printAtHere(e, genIteratorName(clazz.name)) && !wdSet.contains(OCL.gen(e))»«
+				  		{wdSet.add(OCL.gen(e));null}»«
 				  		IF !OCL.isPrimtive(e)»«
 				  			IF !OCL.isCollection(e)»
-				  			«e.type.toString().replace("::", "!")».allInstances()->contains(«OCL.gen(e, new HashMap)») implies 
+				  			«e.type.toString().replace("::", "!")».allInstances()->contains(«OCL.gen(e)») implies 
 				  			«ELSE»
-				  			«OCL.gen(e, new HashMap)»->size()>0 implies 
+				  			«OCL.gen(e)»->size()>0 implies 
 				  			«ENDIF»«
 				  		ENDIF»«
 				  	ENDIF»«
 			  	ENDFOR»
-			    «OCL.gen((inv.ownedSpecification as ExpressionInOCL).ownedBody, new HashMap)»
-			); «{wdSet.clear()}»
+			    «OCL.gen((inv.ownedSpecification as ExpressionInOCL).ownedBody)»
+			); «{wdSet.clear(); OCL.bvMap.clear()}»
 			
 			«ENDIF»
 		«ENDFOR»
@@ -76,7 +78,7 @@ class OCL2ATL {
 		var boolean r = false;
 		
 		if (e.ownedSource instanceof VariableExp ){
-			if (OCL.gen(e.ownedSource, new HashMap) == v){
+			if (OCL.gen(e.ownedSource) == v){
 				r = true
 			}
 		}else if(e.ownedSource instanceof PropertyCallExp){

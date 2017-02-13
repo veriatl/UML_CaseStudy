@@ -7,6 +7,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.ocl.pivot.BooleanLiteralExp;
@@ -40,9 +41,11 @@ import org.eclipse.xtext.xbase.lib.ListExtensions;
 
 @SuppressWarnings("all")
 public class OCL {
-  private static HashSet<String> wdSet = new HashSet<String>();
+  private static HashSet<String> wdSetInner = new HashSet<String>();
   
-  protected static String _gen(final EObject e, final HashMap<String, VariableExp> consistency) {
+  public static HashMap<String, EObject> bvMap = new HashMap<String, EObject>();
+  
+  protected static String _gen(final EObject e) {
     StringConcatenation _builder = new StringConcatenation();
     _builder.append("// We dont understand ");
     EClass _eClass = e.eClass();
@@ -51,7 +54,7 @@ public class OCL {
     return _builder.toString();
   }
   
-  protected static String _gen(final OCLExpression e, final HashMap<String, VariableExp> consistency) {
+  protected static String _gen(final OCLExpression e) {
     StringConcatenation _builder = new StringConcatenation();
     _builder.append("// We dont understand ocl expression ");
     EClass _eClass = e.eClass();
@@ -60,7 +63,7 @@ public class OCL {
     return _builder.toString();
   }
   
-  protected static String _gen(final OperationCallExp e, final HashMap<String, VariableExp> consistency) {
+  protected static String _gen(final OperationCallExp e) {
     StringConcatenation _builder = new StringConcatenation();
     String _xifexpression = null;
     Operation _referredOperation = e.getReferredOperation();
@@ -75,13 +78,13 @@ public class OCL {
     final String op = _xifexpression;
     _builder.newLineIfNotEmpty();
     OCLExpression _ownedSource = e.getOwnedSource();
-    final String src = OCL.gen(_ownedSource, consistency);
+    final String src = OCL.gen(_ownedSource);
     _builder.newLineIfNotEmpty();
     String _xifexpression_1 = null;
     if (((e.getOwnedArguments().size() != 0) && (!Objects.equal(op, null)))) {
       List<OCLExpression> _ownedArguments = e.getOwnedArguments();
       final Function1<OCLExpression, String> _function = (OCLExpression arg) -> {
-        return OCL.gen(arg, consistency);
+        return OCL.gen(arg);
       };
       List<String> _map = ListExtensions.<OCLExpression, String>map(_ownedArguments, _function);
       _xifexpression_1 = IterableExtensions.join(_map, op);
@@ -94,7 +97,7 @@ public class OCL {
     if (((e.getOwnedArguments().size() != 0) && (!Objects.equal(op, null)))) {
       List<OCLExpression> _ownedArguments_1 = e.getOwnedArguments();
       final Function1<OCLExpression, String> _function_1 = (OCLExpression arg) -> {
-        return OCL.gen(arg, consistency);
+        return OCL.gen(arg);
       };
       List<String> _map_1 = ListExtensions.<OCLExpression, String>map(_ownedArguments_1, _function_1);
       _xifexpression_2 = IterableExtensions.join(_map_1, ",");
@@ -107,7 +110,7 @@ public class OCL {
         _builder.append(op, "");
         _builder.append("(");
         OCLExpression _ownedSource_1 = e.getOwnedSource();
-        String _gen = OCL.gen(_ownedSource_1, consistency);
+        String _gen = OCL.gen(_ownedSource_1);
         _builder.append(_gen, "");
         _builder.append(")");
       } else {
@@ -162,10 +165,10 @@ public class OCL {
     return _builder.toString();
   }
   
-  protected static String _gen(final PropertyCallExp e, final HashMap<String, VariableExp> consistency) {
+  protected static String _gen(final PropertyCallExp e) {
     StringConcatenation _builder = new StringConcatenation();
     OCLExpression _ownedSource = e.getOwnedSource();
-    String _gen = OCL.gen(_ownedSource, consistency);
+    String _gen = OCL.gen(_ownedSource);
     _builder.append(_gen, "");
     _builder.append(".");
     Property _referredProperty = e.getReferredProperty();
@@ -174,10 +177,10 @@ public class OCL {
     return _builder.toString();
   }
   
-  protected static String _gen(final OppositePropertyCallExp e, final HashMap<String, VariableExp> consistency) {
+  protected static String _gen(final OppositePropertyCallExp e) {
     StringConcatenation _builder = new StringConcatenation();
     OCLExpression _ownedSource = e.getOwnedSource();
-    String _gen = OCL.gen(_ownedSource, consistency);
+    String _gen = OCL.gen(_ownedSource);
     _builder.append(_gen, "");
     _builder.append(".");
     Property _referredProperty = e.getReferredProperty();
@@ -186,19 +189,23 @@ public class OCL {
     return _builder.toString();
   }
   
-  protected static String _gen(final VariableExp e, final HashMap<String, VariableExp> consistency) {
+  protected static String _gen(final VariableExp e) {
     StringConcatenation _builder = new StringConcatenation();
+    Type _type = e.getType();
+    String _gen = OCL.gen(_type);
+    final String itName = OCL2ATL.genIteratorName(_gen);
     String _xifexpression = null;
     boolean _isIsImplicit = e.isIsImplicit();
     if (_isIsImplicit) {
       String _xifexpression_1 = null;
-      boolean _isConsistentVariable = OCL.isConsistentVariable(consistency, e);
-      if (_isConsistentVariable) {
-        _xifexpression_1 = OCL.getIteratorName(e);
+      Set<String> _keySet = OCL.bvMap.keySet();
+      boolean _contains = _keySet.contains(itName);
+      boolean _not = (!_contains);
+      if (_not) {
+        _xifexpression_1 = itName;
       } else {
-        String _iteratorName = OCL.getIteratorName(e);
         int _hashCode = e.hashCode();
-        _xifexpression_1 = (_iteratorName + Integer.valueOf(_hashCode));
+        _xifexpression_1 = (itName + Integer.valueOf(_hashCode));
       }
       _xifexpression = _xifexpression_1;
     } else {
@@ -207,7 +214,7 @@ public class OCL {
       String _name = _referredVariable.getName();
       boolean _equals = Objects.equal(_name, "self");
       if (_equals) {
-        _xifexpression_2 = OCL.getIteratorName(e);
+        _xifexpression_2 = itName;
       } else {
         VariableDeclaration _referredVariable_1 = e.getReferredVariable();
         _xifexpression_2 = _referredVariable_1.getName();
@@ -218,50 +225,83 @@ public class OCL {
     return _builder.toString();
   }
   
-  protected static String _gen(final IteratorVariable e, final HashMap<String, VariableExp> consistency) {
+  protected static String _gen(final IteratorVariable e) {
     StringConcatenation _builder = new StringConcatenation();
-    String _xifexpression = null;
-    boolean _isIsImplicit = e.isIsImplicit();
-    if (_isIsImplicit) {
-      Type _type = e.getType();
-      String _gen = OCL.gen(_type, null);
-      _xifexpression = OCL2ATL.genIteratorName(_gen);
-    } else {
-      _xifexpression = e.getName();
+    final String itName = e.getName();
+    _builder.newLineIfNotEmpty();
+    int _hashCode = e.hashCode();
+    final String hashName = (itName + Integer.valueOf(_hashCode));
+    {
+      if ((OCL.bvMap.keySet().contains(itName) && Objects.equal(OCL.bvMap.get(itName), e))) {
+        _builder.append(itName, "");
+      } else {
+        if ((OCL.bvMap.keySet().contains(itName) && (!Objects.equal(OCL.bvMap.get(itName), e)))) {
+          {
+            Set<String> _keySet = OCL.bvMap.keySet();
+            boolean _contains = _keySet.contains(hashName);
+            if (_contains) {
+              _builder.newLineIfNotEmpty();
+              _builder.append(hashName, "");
+            } else {
+              _builder.newLineIfNotEmpty();
+              _builder.append(hashName, "");
+              Object _xblockexpression = null;
+              {
+                OCL.bvMap.put(hashName, e);
+                _xblockexpression = null;
+              }
+              _builder.append(_xblockexpression, "");
+            }
+          }
+        } else {
+          Set<String> _keySet_1 = OCL.bvMap.keySet();
+          boolean _contains_1 = _keySet_1.contains(itName);
+          boolean _not = (!_contains_1);
+          if (_not) {
+            _builder.append(itName, "");
+            Object _xblockexpression_1 = null;
+            {
+              String _name = e.getName();
+              OCL.bvMap.put(_name, e);
+              _xblockexpression_1 = null;
+            }
+            _builder.append(_xblockexpression_1, "");
+          }
+        }
+      }
     }
-    _builder.append(_xifexpression, "");
     return _builder.toString();
   }
   
-  protected static String _gen(final Operation e, final HashMap<String, VariableExp> consistency) {
+  protected static String _gen(final Operation e) {
     StringConcatenation _builder = new StringConcatenation();
     String _name = e.getName();
     _builder.append(_name, "");
     return _builder.toString();
   }
   
-  protected static String _gen(final Type e, final HashMap<String, VariableExp> consistency) {
+  protected static String _gen(final Type e) {
     StringConcatenation _builder = new StringConcatenation();
     String _name = e.getName();
     _builder.append(_name, "");
     return _builder.toString();
   }
   
-  protected static String _gen(final IntegerLiteralExp e, final HashMap<String, VariableExp> consistency) {
+  protected static String _gen(final IntegerLiteralExp e) {
     StringConcatenation _builder = new StringConcatenation();
     Number _integerSymbol = e.getIntegerSymbol();
     _builder.append(_integerSymbol, "");
     return _builder.toString();
   }
   
-  protected static String _gen(final BooleanLiteralExp e, final HashMap<String, VariableExp> consistency) {
+  protected static String _gen(final BooleanLiteralExp e) {
     StringConcatenation _builder = new StringConcatenation();
     boolean _isBooleanSymbol = e.isBooleanSymbol();
     _builder.append(_isBooleanSymbol, "");
     return _builder.toString();
   }
   
-  protected static String _gen(final EnumLiteralExp e, final HashMap<String, VariableExp> consistency) {
+  protected static String _gen(final EnumLiteralExp e) {
     StringConcatenation _builder = new StringConcatenation();
     Type _type = e.getType();
     String _name = _type.getName();
@@ -273,13 +313,13 @@ public class OCL {
     return _builder.toString();
   }
   
-  protected static String _gen(final NullLiteralExp e, final HashMap<String, VariableExp> consistency) {
+  protected static String _gen(final NullLiteralExp e) {
     StringConcatenation _builder = new StringConcatenation();
     _builder.append("OclUndefined");
     return _builder.toString();
   }
   
-  protected static String _gen(final TypeExp e, final HashMap<String, VariableExp> consistency) {
+  protected static String _gen(final TypeExp e) {
     StringConcatenation _builder = new StringConcatenation();
     Type _referredType = e.getReferredType();
     String _string = _referredType.toString();
@@ -288,19 +328,19 @@ public class OCL {
     return _builder.toString();
   }
   
-  protected static String _gen(final CollectionLiteralExp e, final HashMap<String, VariableExp> consistency) {
+  protected static String _gen(final CollectionLiteralExp e) {
     StringConcatenation _builder = new StringConcatenation();
     _builder.append("Sequence{}");
     return _builder.toString();
   }
   
-  protected static String _gen(final UnlimitedNaturalLiteralExp e, final HashMap<String, VariableExp> consistency) {
+  protected static String _gen(final UnlimitedNaturalLiteralExp e) {
     StringConcatenation _builder = new StringConcatenation();
     _builder.append("*");
     return _builder.toString();
   }
   
-  protected static String _gen(final LetExp e, final HashMap<String, VariableExp> consistency) {
+  protected static String _gen(final LetExp e) {
     StringConcatenation _builder = new StringConcatenation();
     _builder.append("let ");
     Variable _ownedVariable = e.getOwnedVariable();
@@ -317,18 +357,18 @@ public class OCL {
     _builder.append("  ");
     Variable _ownedVariable_2 = e.getOwnedVariable();
     OCLExpression _ownedInit = _ownedVariable_2.getOwnedInit();
-    String _gen = OCL.gen(_ownedInit, consistency);
+    String _gen = OCL.gen(_ownedInit);
     _builder.append(_gen, "  ");
     _builder.append(" in ");
     _builder.newLineIfNotEmpty();
     _builder.append("    ");
     OCLExpression _ownedIn = e.getOwnedIn();
-    String _gen_1 = OCL.gen(_ownedIn, consistency);
+    String _gen_1 = OCL.gen(_ownedIn);
     _builder.append(_gen_1, "    ");
     return _builder.toString();
   }
   
-  protected static String _gen(final IteratorExp e, final HashMap<String, VariableExp> consistency) {
+  protected static String _gen(final IteratorExp e) {
     StringConcatenation _builder = new StringConcatenation();
     String _xifexpression = null;
     List<Variable> _ownedIterators = e.getOwnedIterators();
@@ -337,7 +377,7 @@ public class OCL {
     if (_notEquals) {
       List<Variable> _ownedIterators_1 = e.getOwnedIterators();
       final Function1<Variable, String> _function = (Variable arg) -> {
-        return OCL.gen(arg, consistency);
+        return OCL.gen(arg);
       };
       List<String> _map = ListExtensions.<Variable, String>map(_ownedIterators_1, _function);
       _xifexpression = IterableExtensions.join(_map, ",");
@@ -350,7 +390,7 @@ public class OCL {
     final HashSet<PropertyCallExp> wdExprs = OCLWDGenerator.wd(_ownedBody);
     _builder.newLineIfNotEmpty();
     OCLExpression _ownedSource = e.getOwnedSource();
-    String _gen = OCL.gen(_ownedSource, consistency);
+    String _gen = OCL.gen(_ownedSource);
     _builder.append(_gen, "");
     _builder.append("->");
     Iteration _referredIteration = e.getReferredIteration();
@@ -374,12 +414,11 @@ public class OCL {
           List<Variable> _ownedIterators_3 = e.getOwnedIterators();
           for(final Variable itor : _ownedIterators_3) {
             {
-              if ((OCL2ATL.printAtHere(expr, OCL.gen(itor, consistency)) && (!OCL.wdSet.contains(OCL.gen(expr, new HashMap<String, VariableExp>()))))) {
+              if ((OCL2ATL.printAtHere(expr, OCL.gen(itor)) && (!OCL.wdSetInner.contains(OCL.gen(expr))))) {
                 Object _xblockexpression = null;
                 {
-                  HashMap<String, VariableExp> _hashMap = new HashMap<String, VariableExp>();
-                  String _gen_1 = OCL.gen(expr, _hashMap);
-                  OCL.wdSet.add(_gen_1);
+                  String _gen_1 = OCL.gen(expr);
+                  OCL.wdSetInner.add(_gen_1);
                   _xblockexpression = null;
                 }
                 _builder.append(_xblockexpression, "");
@@ -397,14 +436,12 @@ public class OCL {
                         String _replace = _string.replace("::", "!");
                         _builder.append(_replace, "");
                         _builder.append(".allInstances()->contains(");
-                        HashMap<String, VariableExp> _hashMap = new HashMap<String, VariableExp>();
-                        String _gen_1 = OCL.gen(expr, _hashMap);
+                        String _gen_1 = OCL.gen(expr);
                         _builder.append(_gen_1, "");
                         _builder.append(") implies ");
                         _builder.newLineIfNotEmpty();
                       } else {
-                        HashMap<String, VariableExp> _hashMap_1 = new HashMap<String, VariableExp>();
-                        String _gen_2 = OCL.gen(expr, _hashMap_1);
+                        String _gen_2 = OCL.gen(expr);
                         _builder.append(_gen_2, "");
                         _builder.append("->size()>0 implies ");
                         _builder.newLineIfNotEmpty();
@@ -420,7 +457,7 @@ public class OCL {
     }
     Object _xblockexpression_1 = null;
     {
-      OCL.wdSet.clear();
+      OCL.wdSetInner.clear();
       _xblockexpression_1 = null;
     }
     _builder.append(_xblockexpression_1, "");
@@ -428,50 +465,56 @@ public class OCL {
     _builder.newLineIfNotEmpty();
     _builder.append("  ");
     OCLExpression _ownedBody_1 = e.getOwnedBody();
-    String _gen_3 = OCL.gen(_ownedBody_1, consistency);
+    String _gen_3 = OCL.gen(_ownedBody_1);
     _builder.append(_gen_3, "  ");
     _builder.append(")");
     return _builder.toString();
   }
   
-  protected static String _gen(final IfExp e, final HashMap<String, VariableExp> consistency) {
+  protected static String _gen(final IfExp e) {
     StringConcatenation _builder = new StringConcatenation();
     _builder.append("if (");
     OCLExpression _ownedCondition = e.getOwnedCondition();
-    String _gen = OCL.gen(_ownedCondition, consistency);
+    String _gen = OCL.gen(_ownedCondition);
     _builder.append(_gen, "");
     _builder.append(") then ");
     _builder.newLineIfNotEmpty();
     _builder.append("  ");
     OCLExpression _ownedThen = e.getOwnedThen();
-    String _gen_1 = OCL.gen(_ownedThen, consistency);
+    String _gen_1 = OCL.gen(_ownedThen);
     _builder.append(_gen_1, "  ");
     _builder.newLineIfNotEmpty();
     _builder.append("else ");
     _builder.newLine();
     _builder.append("  ");
     OCLExpression _ownedElse = e.getOwnedElse();
-    String _gen_2 = OCL.gen(_ownedElse, consistency);
+    String _gen_2 = OCL.gen(_ownedElse);
     _builder.append(_gen_2, "  ");
     _builder.newLineIfNotEmpty();
     _builder.append("endif");
     return _builder.toString();
   }
   
-  public static boolean isConsistentVariable(final HashMap<String, VariableExp> map, final VariableExp exp) {
-    final String itName = OCL.getIteratorName(exp);
-    return ((!map.containsKey(itName)) || Objects.equal(map.get(itName), exp));
-  }
-  
-  public static String getIteratorName(final VariableExp exp) {
-    final Type tp = exp.getType();
-    final String clazz = OCL.gen(tp, null);
-    final String itName = OCL2ATL.genIteratorName(clazz);
-    return itName;
+  public static boolean isConsistentVariable(final HashMap<String, EObject> map, final EObject exp) {
+    if ((exp instanceof VariableExp)) {
+      Type _type = ((VariableExp)exp).getType();
+      String _gen = OCL.gen(_type);
+      final String itName = OCL2ATL.genIteratorName(_gen);
+      return ((!map.containsKey(itName)) || Objects.equal(map.get(itName), exp));
+    } else {
+      if ((exp instanceof IteratorVariable)) {
+        Type _type_1 = ((IteratorVariable)exp).getType();
+        String _gen_1 = OCL.gen(_type_1);
+        final String itName_1 = OCL2ATL.genIteratorName(_gen_1);
+        return ((!map.containsKey(itName_1)) || Objects.equal(map.get(itName_1), exp));
+      } else {
+        return true;
+      }
+    }
   }
   
   public static boolean isPrimtive(final PropertyCallExp e) {
-    if ((((Objects.equal(OCL.gen(e.getType(), null), "String") || Objects.equal(OCL.gen(e.getType(), null), "Integer")) || Objects.equal(OCL.gen(e.getType(), null), "Boolean")) || Objects.equal(OCL.gen(e.getType(), null), "Real"))) {
+    if ((((Objects.equal(OCL.gen(e.getType()), "String") || Objects.equal(OCL.gen(e.getType()), "Integer")) || Objects.equal(OCL.gen(e.getType()), "Boolean")) || Objects.equal(OCL.gen(e.getType()), "Real"))) {
       return true;
     } else {
       Type _type = e.getType();
@@ -484,55 +527,55 @@ public class OCL {
   }
   
   public static boolean isCollection(final PropertyCallExp e) {
-    if ((Objects.equal(OCL.gen(e.getType(), null), "Set") || Objects.equal(OCL.gen(e.getType(), null), "OrderedSet"))) {
+    if ((Objects.equal(OCL.gen(e.getType()), "Set") || Objects.equal(OCL.gen(e.getType()), "OrderedSet"))) {
       return true;
     } else {
       return false;
     }
   }
   
-  public static String gen(final EObject e, final HashMap<String, VariableExp> consistency) {
+  public static String gen(final EObject e) {
     if (e instanceof IntegerLiteralExp) {
-      return _gen((IntegerLiteralExp)e, consistency);
+      return _gen((IntegerLiteralExp)e);
     } else if (e instanceof OppositePropertyCallExp) {
-      return _gen((OppositePropertyCallExp)e, consistency);
+      return _gen((OppositePropertyCallExp)e);
     } else if (e instanceof PropertyCallExp) {
-      return _gen((PropertyCallExp)e, consistency);
+      return _gen((PropertyCallExp)e);
     } else if (e instanceof UnlimitedNaturalLiteralExp) {
-      return _gen((UnlimitedNaturalLiteralExp)e, consistency);
+      return _gen((UnlimitedNaturalLiteralExp)e);
     } else if (e instanceof BooleanLiteralExp) {
-      return _gen((BooleanLiteralExp)e, consistency);
+      return _gen((BooleanLiteralExp)e);
     } else if (e instanceof IteratorExp) {
-      return _gen((IteratorExp)e, consistency);
+      return _gen((IteratorExp)e);
     } else if (e instanceof NullLiteralExp) {
-      return _gen((NullLiteralExp)e, consistency);
+      return _gen((NullLiteralExp)e);
     } else if (e instanceof OperationCallExp) {
-      return _gen((OperationCallExp)e, consistency);
+      return _gen((OperationCallExp)e);
     } else if (e instanceof CollectionLiteralExp) {
-      return _gen((CollectionLiteralExp)e, consistency);
+      return _gen((CollectionLiteralExp)e);
     } else if (e instanceof EnumLiteralExp) {
-      return _gen((EnumLiteralExp)e, consistency);
+      return _gen((EnumLiteralExp)e);
     } else if (e instanceof IteratorVariable) {
-      return _gen((IteratorVariable)e, consistency);
+      return _gen((IteratorVariable)e);
     } else if (e instanceof IfExp) {
-      return _gen((IfExp)e, consistency);
+      return _gen((IfExp)e);
     } else if (e instanceof LetExp) {
-      return _gen((LetExp)e, consistency);
+      return _gen((LetExp)e);
     } else if (e instanceof Operation) {
-      return _gen((Operation)e, consistency);
+      return _gen((Operation)e);
     } else if (e instanceof TypeExp) {
-      return _gen((TypeExp)e, consistency);
+      return _gen((TypeExp)e);
     } else if (e instanceof VariableExp) {
-      return _gen((VariableExp)e, consistency);
+      return _gen((VariableExp)e);
     } else if (e instanceof OCLExpression) {
-      return _gen((OCLExpression)e, consistency);
+      return _gen((OCLExpression)e);
     } else if (e instanceof Type) {
-      return _gen((Type)e, consistency);
+      return _gen((Type)e);
     } else if (e != null) {
-      return _gen(e, consistency);
+      return _gen(e);
     } else {
       throw new IllegalArgumentException("Unhandled parameter types: " +
-        Arrays.<Object>asList(e, consistency).toString());
+        Arrays.<Object>asList(e).toString());
     }
   }
 }

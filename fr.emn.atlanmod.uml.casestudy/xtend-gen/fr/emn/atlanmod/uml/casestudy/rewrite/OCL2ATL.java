@@ -5,7 +5,6 @@ import fr.emn.atlanmod.uml.casestudy.rewrite.OCL;
 import fr.emn.atlanmod.uml.casestudy.rewrite.OCLProjector;
 import fr.emn.atlanmod.uml.casestudy.rewrite.OCLWDGenerator;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import org.eclipse.emf.ecore.EClass;
@@ -87,16 +86,19 @@ public class OCL2ATL {
                 String _name_3 = clazz.getName();
                 String _genIteratorName = OCL2ATL.genIteratorName(_name_3);
                 _builder.append(_genIteratorName, "  ");
-                _builder.append(" |");
+                _builder.append(" |  ");
+                String _name_4 = clazz.getName();
+                String _genIteratorName_1 = OCL2ATL.genIteratorName(_name_4);
+                EObject _put = OCL.bvMap.put(_genIteratorName_1, null);
+                _builder.append(_put, "  ");
                 _builder.newLineIfNotEmpty();
                 {
                   for(final PropertyCallExp e : wdExprs) {
                     {
-                      if ((OCL2ATL.printAtHere(e, OCL2ATL.genIteratorName(clazz.getName())) && (!OCL2ATL.wdSet.contains(OCL.gen(e, new HashMap<String, VariableExp>()))))) {
+                      if ((OCL2ATL.printAtHere(e, OCL2ATL.genIteratorName(clazz.getName())) && (!OCL2ATL.wdSet.contains(OCL.gen(e))))) {
                         Object _xblockexpression = null;
                         {
-                          HashMap<String, VariableExp> _hashMap = new HashMap<String, VariableExp>();
-                          String _gen = OCL.gen(e, _hashMap);
+                          String _gen = OCL.gen(e);
                           OCL2ATL.wdSet.add(_gen);
                           _xblockexpression = null;
                         }
@@ -115,14 +117,12 @@ public class OCL2ATL {
                                 String _replace = _string.replace("::", "!");
                                 _builder.append(_replace, "");
                                 _builder.append(".allInstances()->contains(");
-                                HashMap<String, VariableExp> _hashMap = new HashMap<String, VariableExp>();
-                                String _gen = OCL.gen(e, _hashMap);
+                                String _gen = OCL.gen(e);
                                 _builder.append(_gen, "");
                                 _builder.append(") implies ");
                                 _builder.newLineIfNotEmpty();
                               } else {
-                                HashMap<String, VariableExp> _hashMap_1 = new HashMap<String, VariableExp>();
-                                String _gen_1 = OCL.gen(e, _hashMap_1);
+                                String _gen_1 = OCL.gen(e);
                                 _builder.append(_gen_1, "");
                                 _builder.append("->size()>0 implies ");
                                 _builder.newLineIfNotEmpty();
@@ -137,12 +137,14 @@ public class OCL2ATL {
                 _builder.append("    ");
                 LanguageExpression _ownedSpecification_1 = inv.getOwnedSpecification();
                 OCLExpression _ownedBody_1 = ((ExpressionInOCL) _ownedSpecification_1).getOwnedBody();
-                HashMap<String, VariableExp> _hashMap_2 = new HashMap<String, VariableExp>();
-                String _gen_2 = OCL.gen(_ownedBody_1, _hashMap_2);
+                String _gen_2 = OCL.gen(_ownedBody_1);
                 _builder.append(_gen_2, "    ");
                 _builder.newLineIfNotEmpty();
                 _builder.append("); ");
-                OCL2ATL.wdSet.clear();
+                {
+                  OCL2ATL.wdSet.clear();
+                  OCL.bvMap.clear();
+                }
                 _builder.newLineIfNotEmpty();
                 _builder.newLine();
               }
@@ -174,8 +176,7 @@ public class OCL2ATL {
     OCLExpression _ownedSource = e.getOwnedSource();
     if ((_ownedSource instanceof VariableExp)) {
       OCLExpression _ownedSource_1 = e.getOwnedSource();
-      HashMap<String, VariableExp> _hashMap = new HashMap<String, VariableExp>();
-      String _gen = OCL.gen(_ownedSource_1, _hashMap);
+      String _gen = OCL.gen(_ownedSource_1);
       boolean _equals = Objects.equal(_gen, v);
       if (_equals) {
         r = true;
