@@ -3,15 +3,6 @@ helper context UML!AcceptCallAction def: unmarshall(): Boolean =
     aca.isUnmarshall = true
 ); 
 
-helper context UML!AcceptEventAction def: one_output_pin(): Boolean = 
-  UML!AcceptEventAction.allInstances()->forAll(aea |
-aea.output->size()>0 implies 
-aea.trigger->size()>0 implies 
-    not(aea.isUnmarshall) and aea.trigger->exists(t|
-    UML!Event.allInstances()->contains(t.event) implies 
-      t.event.oclIsKindOf(UML!SignalEvent) or t.event.oclIsKindOf(UML!TimeEvent)) implies aea.output->size() = 1 and aea.output->first()->is(1,1.toUnlimitedNatural())
-); 
-
 helper context UML!AcceptEventAction def: no_input_pins(): Boolean = 
   UML!AcceptEventAction.allInstances()->forAll(aea |
 aea.input->size()>0 implies 
@@ -40,25 +31,6 @@ helper context UML!ActionInputPin def: one_output_pin(): Boolean =
 UML!Action.allInstances()->contains(aip.fromAction) implies 
 aip.fromAction.output->size()>0 implies 
     aip.fromAction.output->size() = 1
-); 
-
-helper context UML!ActivityEdge def: source_and_target(): Boolean = 
-  UML!ActivityEdge.allInstances()->forAll(ae |
-UML!Activity.allInstances()->contains(ae.activity) implies 
-UML!ActivityNode.allInstances()->contains(ae.source) implies 
-UML!ActivityNode.allInstances()->contains(ae.target) implies 
-    ae.activity <> OclUndefined implies ae.source.containingActivity() = ae.activity and ae.target.containingActivity() = ae.activity
-); 
-
-helper context UML!ActivityGroup def: nodes_and_edges(): Boolean = 
-  UML!ActivityGroup.allInstances()->forAll(ag |
-ag.containedEdge->size()>0 implies 
-ag.containedNode->size()>0 implies 
-    ag.containedNode->forAll(an|
-    UML!Activity.allInstances()->contains(an.activity) implies 
-      an.activity = ag.containingActivity()) and ag.containedEdge->forAll(ae|
-    UML!Activity.allInstances()->contains(ae.activity) implies 
-      ae.activity = ag.containingActivity())
 ); 
 
 helper context UML!ActivityParameterNode def: no_outgoing_edges(): Boolean = 
@@ -166,13 +138,6 @@ bf.method->size()>0 implies
     bf.isAbstract implies bf.method->isEmpty()
 ); 
 
-helper context UML!BroadcastSignalAction def: number_of_arguments(): Boolean = 
-  UML!BroadcastSignalAction.allInstances()->forAll(bsa |
-bsa.argument->size()>0 implies 
-UML!Signal.allInstances()->contains(bsa.signal) implies 
-    bsa.argument->size() = bsa.signal.allAttributes()->size()
-); 
-
 helper context UML!BroadcastSignalAction def: no_onport(): Boolean = 
   UML!BroadcastSignalAction.allInstances()->forAll(bsa |
 UML!Port.allInstances()->contains(bsa.onPort) implies 
@@ -198,54 +163,10 @@ UML!Behavior.allInstances()->contains(c.classifierBehavior) implies
     not(c.isActive) implies c.ownedReception->isEmpty() and c.classifierBehavior = OclUndefined
 ); 
 
-helper context UML!Classifier def: specialize_type(): Boolean = 
-  UML!Classifier.allInstances()->forAll(c |
-    c.parents()->forAll(c|
-      c.maySpecializeType(c))
-); 
-
-helper context UML!Classifier def: maps_to_generalization_set(): Boolean = 
-  UML!Classifier.allInstances()->forAll(c |
-c.powertypeExtent->size()>0 implies 
-    c.powertypeExtent->forAll(gs|
-    gs.generalization->size()>0 implies 
-      gs.generalization->forAll(gen|
-      UML!Classifier.allInstances()->contains(gen.specific) implies 
-      UML!Classifier.allInstances()->contains(gen.general) implies 
-        not(gen.general = c) and not(gen.general.allParents()->includes(c)) and not(gen.specific = c) and not(c.allParents()->includes(gen.specific))))
-); 
-
-helper context UML!Classifier def: non_final_parents(): Boolean = 
-  UML!Classifier.allInstances()->forAll(c |
-    c.parents()->forAll(c|
-      not(c.isFinalSpecialization))
-); 
-
-helper context UML!Classifier def: no_cycles_in_generalization(): Boolean = 
-  UML!Classifier.allInstances()->forAll(c |
-    not(c.allParents()->includes(c))
-); 
-
 helper context UML!ClassifierTemplateParameter def: has_constraining_classifier(): Boolean = 
   UML!ClassifierTemplateParameter.allInstances()->forAll(ctp |
 ctp.constrainingClassifier->size()>0 implies 
     ctp.allowSubstitutable implies ctp.constrainingClassifier->notEmpty()
-); 
-
-helper context UML!ClassifierTemplateParameter def: parametered_element_no_features(): Boolean = 
-  UML!ClassifierTemplateParameter.allInstances()->forAll(ctp |
-ctp.constrainingClassifier->size()>0 implies 
-UML!Classifier.allInstances()->contains(ctp.parameteredElement) implies 
-ctp.parameteredElement.feature->size()>0 implies 
-    ctp.parameteredElement.feature->isEmpty() and ctp.constrainingClassifier->isEmpty() implies ctp.parameteredElement.allParents()->isEmpty()
-); 
-
-helper context UML!ClassifierTemplateParameter def: constraining_classifiers_constrain_parametered_element(): Boolean = 
-  UML!ClassifierTemplateParameter.allInstances()->forAll(ctp |
-UML!Classifier.allInstances()->contains(ctp.parameteredElement) implies 
-ctp.constrainingClassifier->size()>0 implies 
-    ctp.constrainingClassifier->forAll(cc|
-      ctp.parameteredElement = cc or ctp.parameteredElement.conformsTo(cc) or ctp.allowSubstitutable and ctp.parameteredElement.isSubstitutableFor(cc))
 ); 
 
 helper context UML!Clause def: test_and_body(): Boolean = 
@@ -255,23 +176,6 @@ c.body->size()>0 implies
     c.test->intersection(c.body)->isEmpty()
 ); 
 
-helper context UML!ClearAssociationAction def: multiplicity(): Boolean = 
-  UML!ClearAssociationAction.allInstances()->forAll(caa |
-UML!InputPin.allInstances()->contains(caa.object) implies 
-    caa.object->is(1,1.toUnlimitedNatural())
-); 
-
-helper context UML!ClearAssociationAction def: same_type(): Boolean = 
-  UML!ClearAssociationAction.allInstances()->forAll(caa |
-UML!InputPin.allInstances()->contains(caa.object) implies 
-UML!Association.allInstances()->contains(caa.association) implies 
-caa.association.memberEnd->size()>0 implies 
-UML!Type.allInstances()->contains(caa.object.type) implies 
-    caa.association.memberEnd->exists(p|
-    UML!Type.allInstances()->contains(p.type) implies 
-      caa.object.type.conformsTo(p.type))
-); 
-
 helper context UML!ClearStructuralFeatureAction def: type_of_result(): Boolean = 
   UML!ClearStructuralFeatureAction.allInstances()->forAll(csfa |
 UML!Type.allInstances()->contains(csfa.result.type) implies 
@@ -279,12 +183,6 @@ UML!InputPin.allInstances()->contains(csfa.object) implies
 UML!Type.allInstances()->contains(csfa.object.type) implies 
 UML!OutputPin.allInstances()->contains(csfa.result) implies 
     csfa.result <> OclUndefined implies csfa.result.type = csfa.object.type
-); 
-
-helper context UML!ClearStructuralFeatureAction def: multiplicity_of_result(): Boolean = 
-  UML!ClearStructuralFeatureAction.allInstances()->forAll(csfa |
-UML!OutputPin.allInstances()->contains(csfa.result) implies 
-    csfa.result <> OclUndefined implies csfa.result->is(1,1.toUnlimitedNatural())
 ); 
 
 helper context UML!CollaborationUse def: every_role(): Boolean = 
@@ -356,21 +254,6 @@ cpr.entry->size()>0 implies
       p.kind = PseudostateKind.entryPoint)
 ); 
 
-helper context UML!Connector def: roles(): Boolean = 
-  UML!Connector.allInstances()->forAll(c |
-c.end->size()>0 implies 
-    c.ownedConnector <> OclUndefined and c.end->forAll(e|
-    UML!ConnectableElement.allInstances()->contains(e.role) implies 
-    UML!Property.allInstances()->contains(e.partWithPort) implies 
-      c.ownedConnector.allRoles()->includes(e.role) or e.role.oclIsKindOf(UML!Port) and c.ownedConnector.allRoles()->includes(e.partWithPort))
-); 
-
-helper context UML!ConnectorEnd def: multiplicity(): Boolean = 
-  UML!ConnectorEnd.allInstances()->forAll(ce |
-UML!Property.allInstances()->contains(ce.definingEnd) implies 
-    ce.compatibleWith(ce.definingEnd)
-); 
-
 helper context UML!ConsiderIgnoreFragment def: consider_or_ignore(): Boolean = 
   UML!ConsiderIgnoreFragment.allInstances()->forAll(cif |
     cif.interactionOperator = InteractionOperatorKind.consider or cif.interactionOperator = InteractionOperatorKind.ignore
@@ -389,39 +272,10 @@ c.constrainedElement->size()>0 implies
     not(c.constrainedElement->includes(c))
 ); 
 
-helper context UML!CreateLinkAction def: association_not_abstract(): Boolean = 
-  UML!CreateLinkAction.allInstances()->forAll(cla |
-    not(cla.association().isAbstract)
-); 
-
-helper context UML!CreateLinkObjectAction def: multiplicity(): Boolean = 
-  UML!CreateLinkObjectAction.allInstances()->forAll(cloa |
-UML!OutputPin.allInstances()->contains(cloa.result) implies 
-    cloa.result->is(1,1.toUnlimitedNatural())
-); 
-
-helper context UML!CreateLinkObjectAction def: type_of_result(): Boolean = 
-  UML!CreateLinkObjectAction.allInstances()->forAll(cloa |
-UML!Type.allInstances()->contains(cloa.result.type) implies 
-UML!OutputPin.allInstances()->contains(cloa.result) implies 
-    cloa.result.type = cloa.association()
-); 
-
-helper context UML!CreateLinkObjectAction def: association_class(): Boolean = 
-  UML!CreateLinkObjectAction.allInstances()->forAll(cloa |
-    cloa.association().oclIsKindOf(UML!AssociationClass)
-); 
-
 helper context UML!CreateObjectAction def: classifier_not_abstract(): Boolean = 
   UML!CreateObjectAction.allInstances()->forAll(coa |
 UML!Classifier.allInstances()->contains(coa.classifier) implies 
     not(coa.classifier.isAbstract)
-); 
-
-helper context UML!CreateObjectAction def: multiplicity(): Boolean = 
-  UML!CreateObjectAction.allInstances()->forAll(coa |
-UML!OutputPin.allInstances()->contains(coa.result) implies 
-    coa.result->is(1,1.toUnlimitedNatural())
 ); 
 
 helper context UML!CreateObjectAction def: classifier_not_association_class(): Boolean = 
@@ -438,29 +292,11 @@ UML!Classifier.allInstances()->contains(coa.classifier) implies
     coa.result.type = coa.classifier
 ); 
 
-helper context UML!DecisionNode def: zero_input_parameters(): Boolean = 
-  UML!DecisionNode.allInstances()->forAll(dn |
-UML!ObjectFlow.allInstances()->contains(dn.decisionInputFlow) implies 
-dn.incoming->size()>0 implies 
-UML!Behavior.allInstances()->contains(dn.decisionInput) implies 
-    dn.decisionInput <> OclUndefined and dn.decisionInputFlow = OclUndefined and dn.incoming->exists(ae|
-      ae.oclIsKindOf(UML!ControlFlow)) implies dn.decisionInput.inputParameters()->isEmpty()
-); 
-
 helper context UML!DecisionNode def: decision_input_flow_incoming(): Boolean = 
   UML!DecisionNode.allInstances()->forAll(dn |
 UML!ObjectFlow.allInstances()->contains(dn.decisionInputFlow) implies 
 dn.incoming->size()>0 implies 
     dn.incoming->includes(dn.decisionInputFlow)
-); 
-
-helper context UML!DecisionNode def: two_input_parameters(): Boolean = 
-  UML!DecisionNode.allInstances()->forAll(dn |
-dn.incoming->size()>0 implies 
-UML!ObjectFlow.allInstances()->contains(dn.decisionInputFlow) implies 
-UML!Behavior.allInstances()->contains(dn.decisionInput) implies 
-    dn.decisionInput <> OclUndefined and dn.decisionInputFlow <> OclUndefined and dn.incoming->forAll(ae|
-      ae.oclIsKindOf(UML!ObjectFlow)) implies dn.decisionInput.inputParameters()->size() = 2
 ); 
 
 helper context UML!DecisionNode def: incoming_outgoing_edges(): Boolean = 
@@ -470,15 +306,6 @@ dn.incoming->size()>0 implies
     dn.incoming->size() = 1 or dn.incoming->size() = 2 and dn.outgoing->size() > 0
 ); 
 
-helper context UML!DecisionNode def: incoming_control_one_input_parameter(): Boolean = 
-  UML!DecisionNode.allInstances()->forAll(dn |
-UML!ObjectFlow.allInstances()->contains(dn.decisionInputFlow) implies 
-dn.incoming->size()>0 implies 
-UML!Behavior.allInstances()->contains(dn.decisionInput) implies 
-    dn.decisionInput <> OclUndefined and dn.decisionInputFlow <> OclUndefined and dn.incoming->exists(ae|
-      ae.oclIsKindOf(UML!ControlFlow)) implies dn.decisionInput.inputParameters()->size() = 1
-); 
-
 helper context UML!DecisionNode def: parameters(): Boolean = 
   UML!DecisionNode.allInstances()->forAll(dn |
 dn.decisionInput.ownedParameter->size()>0 implies 
@@ -486,21 +313,6 @@ UML!Behavior.allInstances()->contains(dn.decisionInput) implies
     dn.decisionInput <> OclUndefined implies dn.decisionInput.ownedParameter->forAll(par|
       par.direction <> ParameterDirectionKind.out and par.direction <> ParameterDirectionKind.inout) and dn.decisionInput.ownedParameter->one(par|
       par.direction <> ParameterDirectionKind.return)
-); 
-
-helper context UML!DecisionNode def: incoming_object_one_input_parameter(): Boolean = 
-  UML!DecisionNode.allInstances()->forAll(dn |
-UML!ObjectFlow.allInstances()->contains(dn.decisionInputFlow) implies 
-UML!Behavior.allInstances()->contains(dn.decisionInput) implies 
-dn.incoming->size()>0 implies 
-    dn.decisionInput <> OclUndefined and dn.decisionInputFlow = OclUndefined and dn.incoming->forAll(ae|
-      ae.oclIsKindOf(UML!ObjectFlow)) implies dn.decisionInput.inputParameters()->size() = 1
-); 
-
-helper context UML!DestroyObjectAction def: multiplicity(): Boolean = 
-  UML!DestroyObjectAction.allInstances()->forAll(doa |
-UML!InputPin.allInstances()->contains(doa.target) implies 
-    doa.target->is(1,1.toUnlimitedNatural())
 ); 
 
 helper context UML!DestroyObjectAction def: no_type(): Boolean = 
@@ -544,11 +356,6 @@ do.firstEvent->size()>0 implies
     else 
       do.firstEvent->size() = 0
     endif
-); 
-
-helper context UML!Element def: not_own_self(): Boolean = 
-  UML!Element.allInstances()->forAll(e |
-    not(e.allOwnedElements()->includes(e))
 ); 
 
 helper context UML!ElementImport def: imported_element_is_public(): Boolean = 
@@ -612,11 +419,6 @@ e.memberEnd->size()>0 implies
     e.memberEnd->size() = 2
 ); 
 
-helper context UML!ExtensionEnd def: multiplicity(): Boolean = 
-  UML!ExtensionEnd.allInstances()->forAll(ee |
-    ee.lowerBound() = 0 or ee.lowerBound() = 1 and ee.upperBound() = 1
-); 
-
 helper context UML!ExtensionEnd def: aggregation(): Boolean = 
   UML!ExtensionEnd.allInstances()->forAll(ee |
     ee.aggregation = AggregationKind.composite
@@ -651,40 +453,6 @@ helper context UML!FunctionBehavior def: one_output_parameter(): Boolean =
 fb.ownedParameter->size()>0 implies 
     fb.ownedParameter->select(p|
       p.direction = ParameterDirectionKind.out or p.direction = ParameterDirectionKind.inout or p.direction = ParameterDirectionKind.return)->size() >= 1
-); 
-
-helper context UML!Gate def: inside_cf_matched(): Boolean = 
-  UML!Gate.allInstances()->forAll(g |
-    g.isInsideCF() implies g.cfragmentGate.cfragmentGate->select(g|
-      g.isOutsideCF() and g.matches(g))->size() = 1
-); 
-
-helper context UML!Gate def: formal_gate_distinguishable(): Boolean = 
-  UML!Gate.allInstances()->forAll(g |
-    g.isFormal() implies g.formalGate.formalGate->select(g|
-      g.getName() = g.getName())->size() = 1
-); 
-
-helper context UML!Gate def: actual_gate_distinguishable(): Boolean = 
-  UML!Gate.allInstances()->forAll(g |
-    g.isActual() implies g.actualGate.actualGate->select(g|
-      g.getName() = g.getName())->size() = 1
-); 
-
-helper context UML!Gate def: outside_cf_gate_distinguishable(): Boolean = 
-  UML!Gate.allInstances()->forAll(g |
-    g.isOutsideCF() implies g.cfragmentGate.cfragmentGate->select(g|
-      g.getName() = g.getName())->size() = 1
-); 
-
-helper context UML!GeneralizationSet def: maps_to_generalization_set(): Boolean = 
-  UML!GeneralizationSet.allInstances()->forAll(gs |
-UML!Classifier.allInstances()->contains(gs.powertype) implies 
-gs.generalization->size()>0 implies 
-    gs.powertype <> OclUndefined implies gs.generalization->forAll(gen|
-    UML!Classifier.allInstances()->contains(gen.general) implies 
-    UML!Classifier.allInstances()->contains(gen.specific) implies 
-      not(gen.general = gs.powertype) and not(gen.general.allParents()->includes(gs.powertype)) and not(gen.specific = gs.powertype) and not(gs.powertype.allParents()->includes(gen.specific)))
 ); 
 
 helper context UML!InformationFlow def: convey_classifiers(): Boolean = 
@@ -726,27 +494,6 @@ is.classifier->size()>0 implies
       c.oclIsKindOf(UML!Artifact))
 ); 
 
-helper context UML!InstanceSpecification def: structural_feature(): Boolean = 
-  UML!InstanceSpecification.allInstances()->forAll(is |
-is.classifier->size()>0 implies 
-is.slot->size()>0 implies 
-    is.classifier->forAll(c|
-      c.allSlottableFeatures()->forAll(f|
-        is.slot->select(s|
-        UML!StructuralFeature.allInstances()->contains(s.definingFeature) implies 
-          s.definingFeature = f)->size() <= 1))
-); 
-
-helper context UML!InstanceSpecification def: defining_feature(): Boolean = 
-  UML!InstanceSpecification.allInstances()->forAll(is |
-is.slot->size()>0 implies 
-is.classifier->size()>0 implies 
-    is.slot->forAll(s|
-    UML!StructuralFeature.allInstances()->contains(s.definingFeature) implies 
-      is.classifier->exists(c|
-        c.allSlottableFeatures()->includes(s.definingFeature)))
-); 
-
 helper context UML!InstanceSpecification def: deployment_target(): Boolean = 
   UML!InstanceSpecification.allInstances()->forAll(is |
 is.deployment->size()>0 implies 
@@ -759,34 +506,11 @@ is.classifier->size()>0 implies
           p.type = node)))
 ); 
 
-helper context UML!InteractionUse def: gates_match(): Boolean = 
-  UML!InteractionUse.allInstances()->forAll(iu |
-iu.actualGate->size()>0 implies 
-iu.refersTo.formalGate->size()>0 implies 
-UML!Interaction.allInstances()->contains(iu.refersTo) implies 
-    iu.actualGate->notEmpty() implies iu.refersTo.formalGate->forAll(fg|
-      iu.actualGate->select(g|
-        g.matches(fg))->size() = 1) and iu.actualGate->forAll(ag|
-      iu.refersTo.formalGate->select(g|
-        g.matches(ag))->size() = 1)
-); 
-
 helper context UML!Interface def: visibility(): Boolean = 
   UML!Interface.allInstances()->forAll(i |
 i.feature->size()>0 implies 
     i.feature->forAll(f|
       f.visibility = VisibilityKind.public)
-); 
-
-helper context UML!InterruptibleActivityRegion def: interrupting_edges(): Boolean = 
-  UML!InterruptibleActivityRegion.allInstances()->forAll(iar |
-iar.node->size()>0 implies 
-UML!Activity.allInstances()->contains(iar.inActivity) implies 
-iar.interruptingEdge->size()>0 implies 
-    iar.interruptingEdge->forAll(edge|
-    UML!ActivityNode.allInstances()->contains(edge.target) implies 
-    UML!ActivityNode.allInstances()->contains(edge.source) implies 
-      iar.node->includes(edge.source) and iar.node->excludes(edge.target) and edge.target.containingActivity() = iar.inActivity)
 ); 
 
 helper context UML!JoinNode def: one_outgoing_edge(): Boolean = 
@@ -817,21 +541,6 @@ la.endData->size()>0 implies
       not(led.end.isStatic))
 ); 
 
-helper context UML!LinkEndData def: same_type(): Boolean = 
-  UML!LinkEndData.allInstances()->forAll(led |
-UML!Type.allInstances()->contains(led.value.type) implies 
-UML!InputPin.allInstances()->contains(led.value) implies 
-UML!Type.allInstances()->contains(led.end.type) implies 
-UML!Property.allInstances()->contains(led.end) implies 
-    led.value <> OclUndefined implies led.value.type.conformsTo(led.end.type)
-); 
-
-helper context UML!LinkEndData def: multiplicity(): Boolean = 
-  UML!LinkEndData.allInstances()->forAll(led |
-UML!InputPin.allInstances()->contains(led.value) implies 
-    led.value <> OclUndefined implies led.value->is(1,1.toUnlimitedNatural())
-); 
-
 helper context UML!LinkEndData def: property_is_association_end(): Boolean = 
   UML!LinkEndData.allInstances()->forAll(led |
 UML!Property.allInstances()->contains(led.end) implies 
@@ -853,50 +562,11 @@ mn.outgoing->size()>0 implies
     mn.outgoing->size() = 1
 ); 
 
-helper context UML!MultiplicityElement def: upper_ge_lower(): Boolean = 
-  UML!MultiplicityElement.allInstances()->forAll(me |
-    me.upperBound() >= me.lowerBound()
-); 
-
-helper context UML!MultiplicityElement def: lower_ge_0(): Boolean = 
-  UML!MultiplicityElement.allInstances()->forAll(me |
-    me.lowerBound() >= 0
-); 
-
-helper context UML!MultiplicityElement def: lower_is_integer(): Boolean = 
-  UML!MultiplicityElement.allInstances()->forAll(me |
-UML!ValueSpecification.allInstances()->contains(me.lowerValue) implies 
-    me.lowerValue <> OclUndefined implies me.lowerValue.integerValue() <> OclUndefined
-); 
-
-helper context UML!MultiplicityElement def: upper_is_unlimitedNatural(): Boolean = 
-  UML!MultiplicityElement.allInstances()->forAll(me |
-UML!ValueSpecification.allInstances()->contains(me.upperValue) implies 
-    me.upperValue <> OclUndefined implies me.upperValue.unlimitedValue() <> OclUndefined
-); 
-
 helper context UML!NamedElement def: visibility_needs_ownership(): Boolean = 
   UML!NamedElement.allInstances()->forAll(ne |
 UML!Element.allInstances()->contains(ne.owner) implies 
 UML!Namespace.allInstances()->contains(ne.namespace) implies 
     ne.namespace = OclUndefined and ne.owner <> OclUndefined implies ne.visibility = OclUndefined
-); 
-
-helper context UML!NamedElement def: has_qualified_name(): Boolean = 
-  UML!NamedElement.allInstances()->forAll(ne |
-    ne.name <> OclUndefined and ne.allNamespaces()->select(ns|
-      ns.name = OclUndefined)->isEmpty() implies ne.qualifiedName = // We dont understand ocl expression IterateExp
-); 
-
-helper context UML!NamedElement def: has_no_qualified_name(): Boolean = 
-  UML!NamedElement.allInstances()->forAll(ne |
-    ne.name = OclUndefined or ne.allNamespaces()->select(ns|
-      ns.name = OclUndefined)->notEmpty() implies ne.qualifiedName = OclUndefined
-); 
-
-helper context UML!Namespace def: members_distinguishable(): Boolean = 
-  UML!Namespace.allInstances()->forAll(n |
-    n.membersAreDistinguishable()
 ); 
 
 helper context UML!Node def: internal_structure(): Boolean = 
@@ -911,12 +581,6 @@ helper context UML!ObjectFlow def: no_executable_nodes(): Boolean =
 UML!ActivityNode.allInstances()->contains(of.target) implies 
 UML!ActivityNode.allInstances()->contains(of.source) implies 
     not(of.source.oclIsKindOf(UML!ExecutableNode) or of.target.oclIsKindOf(UML!ExecutableNode))
-); 
-
-helper context UML!ObjectFlow def: transformation_behavior(): Boolean = 
-  UML!ObjectFlow.allInstances()->forAll(of |
-UML!Behavior.allInstances()->contains(of.transformation) implies 
-    of.transformation <> OclUndefined implies of.transformation.inputParameters()->size() = 1 and of.transformation.outputParameters()->size() = 1
 ); 
 
 helper context UML!ObjectFlow def: selection_behavior(): Boolean = 
@@ -1075,25 +739,9 @@ UML!Element.allInstances()->contains(p.owner) implies
     p.owner = p.ownedPort
 ); 
 
-helper context UML!Property def: subsetting_context_conforms(): Boolean = 
-  UML!Property.allInstances()->forAll(p |
-p.subsettedProperty->size()>0 implies 
-    p.subsettedProperty->notEmpty() implies p.subsettingContext()->notEmpty() and p.subsettingContext()->forAll(sc|
-      p.subsettedProperty->forAll(sp|
-        sp.subsettingContext()->exists(c|
-          sc.conformsTo(c))))
-); 
-
 helper context UML!Property def: derived_union_is_read_only(): Boolean = 
   UML!Property.allInstances()->forAll(p |
     p.isDerivedUnion implies p.isReadOnly
-); 
-
-helper context UML!Property def: multiplicity_of_composite(): Boolean = 
-  UML!Property.allInstances()->forAll(p |
-UML!Property.allInstances()->contains(p.opposite) implies 
-UML!Association.allInstances()->contains(p.association) implies 
-    p.isComposite and p.association <> OclUndefined implies p.opposite.upperBound() <= 1
 ); 
 
 helper context UML!Property def: derived_union_is_derived(): Boolean = 
@@ -1140,12 +788,6 @@ UML!Behavior.allInstances()->contains(pt.effect) implies
     pt.effect = OclUndefined
 ); 
 
-helper context UML!ProtocolTransition def: belongs_to_psm(): Boolean = 
-  UML!ProtocolTransition.allInstances()->forAll(pt |
-UML!Region.allInstances()->contains(pt.container) implies 
-    pt.container.belongsToPSM()
-); 
-
 helper context UML!Pseudostate def: choice_vertex(): Boolean = 
   UML!Pseudostate.allInstances()->forAll(p |
 p.outgoing->size()>0 implies 
@@ -1186,21 +828,6 @@ p.outgoing->size()>0 implies
     p.kind = PseudostateKind.fork implies p.incoming->size() = 1 and p.outgoing->size() >= 2
 ); 
 
-helper context UML!QualifierValue def: multiplicity_of_qualifier(): Boolean = 
-  UML!QualifierValue.allInstances()->forAll(qv |
-UML!InputPin.allInstances()->contains(qv.value) implies 
-    qv.value->is(1,1.toUnlimitedNatural())
-); 
-
-helper context UML!QualifierValue def: type_of_qualifier(): Boolean = 
-  UML!QualifierValue.allInstances()->forAll(qv |
-UML!Type.allInstances()->contains(qv.value.type) implies 
-UML!InputPin.allInstances()->contains(qv.value) implies 
-UML!Type.allInstances()->contains(qv.qualifier.type) implies 
-UML!Property.allInstances()->contains(qv.qualifier) implies 
-    qv.value.type.conformsTo(qv.qualifier.type)
-); 
-
 helper context UML!QualifierValue def: qualifier_attribute(): Boolean = 
   UML!QualifierValue.allInstances()->forAll(qv |
 UML!Property.allInstances()->contains(qv.qualifier) implies 
@@ -1222,12 +849,6 @@ UML!InputPin.allInstances()->contains(ricoa.object) implies
     ricoa.object.type = OclUndefined
 ); 
 
-helper context UML!ReadIsClassifiedObjectAction def: multiplicity_of_output(): Boolean = 
-  UML!ReadIsClassifiedObjectAction.allInstances()->forAll(ricoa |
-UML!OutputPin.allInstances()->contains(ricoa.result) implies 
-    ricoa.result->is(1,1.toUnlimitedNatural())
-); 
-
 helper context UML!ReadIsClassifiedObjectAction def: boolean_result(): Boolean = 
   UML!ReadIsClassifiedObjectAction.allInstances()->forAll(ricoa |
 UML!Type.allInstances()->contains(ricoa.result.type) implies 
@@ -1235,48 +856,11 @@ UML!OutputPin.allInstances()->contains(ricoa.result) implies
     ricoa.result.type = Boolean
 ); 
 
-helper context UML!ReadIsClassifiedObjectAction def: multiplicity_of_input(): Boolean = 
-  UML!ReadIsClassifiedObjectAction.allInstances()->forAll(ricoa |
-UML!InputPin.allInstances()->contains(ricoa.object) implies 
-    ricoa.object->is(1,1.toUnlimitedNatural())
-); 
-
-helper context UML!ReadLinkAction def: type_and_ordering(): Boolean = 
-  UML!ReadLinkAction.allInstances()->forAll(rla |
-UML!Type.allInstances()->contains(rla.result.type) implies 
-UML!OutputPin.allInstances()->contains(rla.result) implies 
-    rla.openEnd()->forAll(p|
-    UML!Type.allInstances()->contains(p.type) implies 
-      p.type = rla.result.type and p.isOrdered = rla.result.isOrdered)
-); 
-
-helper context UML!ReadLinkAction def: compatible_multiplicity(): Boolean = 
-  UML!ReadLinkAction.allInstances()->forAll(rla |
-UML!OutputPin.allInstances()->contains(rla.result) implies 
-    rla.openEnd()->first().compatibleWith(rla.result)
-); 
-
-helper context UML!ReadLinkAction def: one_open_end(): Boolean = 
-  UML!ReadLinkAction.allInstances()->forAll(rla |
-    rla.openEnd()->size() = 1
-); 
-
-helper context UML!ReadLinkAction def: navigable_open_end(): Boolean = 
-  UML!ReadLinkAction.allInstances()->forAll(rla |
-    rla.openEnd()->first().isNavigable()
-); 
-
 helper context UML!ReadLinkObjectEndAction def: property(): Boolean = 
   UML!ReadLinkObjectEndAction.allInstances()->forAll(rloea |
 UML!Association.allInstances()->contains(rloea.end.association) implies 
 UML!Property.allInstances()->contains(rloea.end) implies 
     rloea.end.association <> OclUndefined
-); 
-
-helper context UML!ReadLinkObjectEndAction def: multiplicity_of_object(): Boolean = 
-  UML!ReadLinkObjectEndAction.allInstances()->forAll(rloea |
-UML!InputPin.allInstances()->contains(rloea.object) implies 
-    rloea.object->is(1,1.toUnlimitedNatural())
 ); 
 
 helper context UML!ReadLinkObjectEndAction def: ends_of_association(): Boolean = 
@@ -1297,12 +881,6 @@ UML!Type.allInstances()->contains(rloea.result.type) implies
     rloea.result.type = rloea.end.type
 ); 
 
-helper context UML!ReadLinkObjectEndAction def: multiplicity_of_result(): Boolean = 
-  UML!ReadLinkObjectEndAction.allInstances()->forAll(rloea |
-UML!OutputPin.allInstances()->contains(rloea.result) implies 
-    rloea.result->is(1,1.toUnlimitedNatural())
-); 
-
 helper context UML!ReadLinkObjectEndAction def: type_of_object(): Boolean = 
   UML!ReadLinkObjectEndAction.allInstances()->forAll(rloea |
 UML!Association.allInstances()->contains(rloea.end.association) implies 
@@ -1319,12 +897,6 @@ UML!Property.allInstances()->contains(rloea.end) implies
     rloea.end.association.oclIsKindOf(UML!AssociationClass)
 ); 
 
-helper context UML!ReadLinkObjectEndQualifierAction def: multiplicity_of_object(): Boolean = 
-  UML!ReadLinkObjectEndQualifierAction.allInstances()->forAll(rloeqa |
-UML!InputPin.allInstances()->contains(rloeqa.object) implies 
-    rloeqa.object->is(1,1.toUnlimitedNatural())
-); 
-
 helper context UML!ReadLinkObjectEndQualifierAction def: type_of_object(): Boolean = 
   UML!ReadLinkObjectEndQualifierAction.allInstances()->forAll(rloeqa |
 UML!Type.allInstances()->contains(rloeqa.object.type) implies 
@@ -1335,12 +907,6 @@ UML!Property.allInstances()->contains(rloeqa.qualifier.associationEnd) implies
     rloeqa.object.type = rloeqa.qualifier.associationEnd.association
 ); 
 
-helper context UML!ReadLinkObjectEndQualifierAction def: multiplicity_of_qualifier(): Boolean = 
-  UML!ReadLinkObjectEndQualifierAction.allInstances()->forAll(rloeqa |
-UML!Property.allInstances()->contains(rloeqa.qualifier) implies 
-    rloeqa.qualifier->is(1,1.toUnlimitedNatural())
-); 
-
 helper context UML!ReadLinkObjectEndQualifierAction def: ends_of_association(): Boolean = 
   UML!ReadLinkObjectEndQualifierAction.allInstances()->forAll(rloeqa |
 UML!Association.allInstances()->contains(rloeqa.qualifier.associationEnd.association) implies 
@@ -1349,12 +915,6 @@ rloeqa.qualifier.associationEnd.association.memberEnd->size()>0 implies
 UML!Property.allInstances()->contains(rloeqa.qualifier.associationEnd) implies 
     rloeqa.qualifier.associationEnd.association.memberEnd->forAll(e|
       not(e.isStatic))
-); 
-
-helper context UML!ReadLinkObjectEndQualifierAction def: multiplicity_of_result(): Boolean = 
-  UML!ReadLinkObjectEndQualifierAction.allInstances()->forAll(rloeqa |
-UML!OutputPin.allInstances()->contains(rloeqa.result) implies 
-    rloeqa.result->is(1,1.toUnlimitedNatural())
 ); 
 
 helper context UML!ReadLinkObjectEndQualifierAction def: same_type(): Boolean = 
@@ -1387,25 +947,12 @@ UML!Classifier.allInstances()->contains(rsa.context) implies
     rsa.context <> OclUndefined
 ); 
 
-helper context UML!ReadSelfAction def: multiplicity(): Boolean = 
-  UML!ReadSelfAction.allInstances()->forAll(rsa |
-UML!OutputPin.allInstances()->contains(rsa.result) implies 
-    rsa.result->is(1,1.toUnlimitedNatural())
-); 
-
 helper context UML!ReadSelfAction def: type(): Boolean = 
   UML!ReadSelfAction.allInstances()->forAll(rsa |
 UML!OutputPin.allInstances()->contains(rsa.result) implies 
 UML!Type.allInstances()->contains(rsa.result.type) implies 
 UML!Classifier.allInstances()->contains(rsa.context) implies 
     rsa.result.type = rsa.context
-); 
-
-helper context UML!ReadStructuralFeatureAction def: multiplicity(): Boolean = 
-  UML!ReadStructuralFeatureAction.allInstances()->forAll(rsfa |
-UML!StructuralFeature.allInstances()->contains(rsfa.structuralFeature) implies 
-UML!OutputPin.allInstances()->contains(rsfa.result) implies 
-    rsfa.structuralFeature.compatibleWith(rsfa.result)
 ); 
 
 helper context UML!ReadStructuralFeatureAction def: type_and_ordering(): Boolean = 
@@ -1424,13 +971,6 @@ UML!Variable.allInstances()->contains(rva.variable) implies
 UML!Type.allInstances()->contains(rva.result.type) implies 
 UML!Type.allInstances()->contains(rva.variable.type) implies 
     rva.result.type = rva.variable.type and rva.result.isOrdered = rva.variable.isOrdered
-); 
-
-helper context UML!ReadVariableAction def: compatible_multiplicity(): Boolean = 
-  UML!ReadVariableAction.allInstances()->forAll(rva |
-UML!OutputPin.allInstances()->contains(rva.result) implies 
-UML!Variable.allInstances()->contains(rva.variable) implies 
-    rva.variable.compatibleWith(rva.result)
 ); 
 
 helper context UML!Reception def: same_name_as_signal(): Boolean = 
@@ -1453,31 +993,11 @@ roa.newClassifier->size()>0 implies
       c.isAbstract))
 ); 
 
-helper context UML!ReclassifyObjectAction def: multiplicity(): Boolean = 
-  UML!ReclassifyObjectAction.allInstances()->forAll(roa |
-UML!InputPin.allInstances()->contains(roa.object) implies 
-    roa.object->is(1,1.toUnlimitedNatural())
-); 
-
-helper context UML!RedefinableElement def: redefinition_consistent(): Boolean = 
-  UML!RedefinableElement.allInstances()->forAll(re |
-re.redefinedElement->size()>0 implies 
-    re.redefinedElement->forAll(re|
-      re.isConsistentWith(re))
-); 
-
 helper context UML!RedefinableElement def: non_leaf_redefinition(): Boolean = 
   UML!RedefinableElement.allInstances()->forAll(re |
 re.redefinedElement->size()>0 implies 
     re.redefinedElement->forAll(re|
       not(re.isLeaf))
-); 
-
-helper context UML!RedefinableElement def: redefinition_context_valid(): Boolean = 
-  UML!RedefinableElement.allInstances()->forAll(re |
-re.redefinedElement->size()>0 implies 
-    re.redefinedElement->forAll(re|
-      re.isRedefinitionContextValid(re))
 ); 
 
 helper context UML!Region def: owned(): Boolean = 
@@ -1487,61 +1007,11 @@ UML!State.allInstances()->contains(r.state) implies
     r.stateMachine <> OclUndefined implies r.state = OclUndefined and r.state <> OclUndefined implies r.stateMachine = OclUndefined
 ); 
 
-helper context UML!RemoveStructuralFeatureValueAction def: removeAt_and_value(): Boolean = 
-  UML!RemoveStructuralFeatureValueAction.allInstances()->forAll(rsfva |
-UML!StructuralFeature.allInstances()->contains(rsfva.structuralFeature) implies 
-UML!InputPin.allInstances()->contains(rsfva.value) implies 
-UML!InputPin.allInstances()->contains(rsfva.removeAt) implies 
-UML!Type.allInstances()->contains(rsfva.removeAt.type) implies 
-    if (rsfva.structuralFeature.isOrdered and not(rsfva.structuralFeature.isUnique) and not(rsfva.isRemoveDuplicates)) then 
-      rsfva.value = OclUndefined and rsfva.removeAt <> OclUndefined and rsfva.removeAt.type = UnlimitedNatural and rsfva.removeAt->is(1,1.toUnlimitedNatural())
-    else 
-      rsfva.removeAt = OclUndefined and rsfva.value <> OclUndefined
-    endif
-); 
-
-helper context UML!RemoveVariableValueAction def: removeAt_and_value(): Boolean = 
-  UML!RemoveVariableValueAction.allInstances()->forAll(rvva |
-UML!InputPin.allInstances()->contains(rvva.removeAt) implies 
-UML!Variable.allInstances()->contains(rvva.variable) implies 
-UML!Type.allInstances()->contains(rvva.removeAt.type) implies 
-UML!InputPin.allInstances()->contains(rvva.value) implies 
-    if (rvva.variable.isOrdered and not(rvva.variable.isUnique) and not(rvva.isRemoveDuplicates)) then 
-      rvva.value = OclUndefined and rvva.removeAt <> OclUndefined and rvva.removeAt.type = UnlimitedNatural and rvva.removeAt->is(1,1.toUnlimitedNatural())
-    else 
-      rvva.removeAt = OclUndefined and rvva.value <> OclUndefined
-    endif
-); 
-
 helper context UML!ReplyAction def: event_on_reply_to_call_trigger(): Boolean = 
   UML!ReplyAction.allInstances()->forAll(ra |
 UML!Trigger.allInstances()->contains(ra.replyToCall) implies 
 UML!Event.allInstances()->contains(ra.replyToCall.event) implies 
     ra.replyToCall.event.oclIsKindOf(UML!CallEvent)
-); 
-
-helper context UML!SendSignalAction def: number_order(): Boolean = 
-  UML!SendSignalAction.allInstances()->forAll(ssa |
-ssa.argument->size()>0 implies 
-UML!Signal.allInstances()->contains(ssa.signal) implies 
-    ssa.argument->size() = ssa.signal.allAttributes()->size()
-); 
-
-helper context UML!StartClassifierBehaviorAction def: multiplicity(): Boolean = 
-  UML!StartClassifierBehaviorAction.allInstances()->forAll(scba |
-UML!InputPin.allInstances()->contains(scba.object) implies 
-    scba.object->is(1,1.toUnlimitedNatural())
-); 
-
-helper context UML!StartObjectBehaviorAction def: multiplicity_of_object(): Boolean = 
-  UML!StartObjectBehaviorAction.allInstances()->forAll(soba |
-UML!InputPin.allInstances()->contains(soba.object) implies 
-    soba.object->is(1,1.toUnlimitedNatural())
-); 
-
-helper context UML!StartObjectBehaviorAction def: type_of_object(): Boolean = 
-  UML!StartObjectBehaviorAction.allInstances()->forAll(soba |
-    soba.behavior() <> OclUndefined
 ); 
 
 helper context UML!State def: entry_or_exit(): Boolean = 
@@ -1602,14 +1072,6 @@ UML!BehavioralFeature.allInstances()->contains(sm.specification) implies
     sm.specification <> OclUndefined implies sm.connectionPoint->isEmpty()
 ); 
 
-helper context UML!Stereotype def: generalize(): Boolean = 
-  UML!Stereotype.allInstances()->forAll(s |
-    s.allParents()->forAll(c|
-      c.oclIsKindOf(UML!Stereotype)) and UML!Classifier->allInstances()->forAll(c|
-      c.allParents()->exists(c|
-        c.oclIsKindOf(UML!Stereotype)) implies c.oclIsKindOf(UML!Stereotype))
-); 
-
 helper context UML!StringExpression def: operands(): Boolean = 
   UML!StringExpression.allInstances()->forAll(se |
 se.operand->size()>0 implies 
@@ -1626,12 +1088,6 @@ se.subExpression->size()>0 implies
     else 
       se.operand->notEmpty()
     endif
-); 
-
-helper context UML!StructuralFeatureAction def: multiplicity(): Boolean = 
-  UML!StructuralFeatureAction.allInstances()->forAll(sfa |
-UML!InputPin.allInstances()->contains(sfa.object) implies 
-    sfa.object->is(1,1.toUnlimitedNatural())
 ); 
 
 helper context UML!StructuralFeatureAction def: not_static(): Boolean = 
@@ -1661,20 +1117,6 @@ tb.parameterSubstitution->size()>0 implies
         b.formal = p)->size() <= 1)
 ); 
 
-helper context UML!TemplateParameter def: must_be_compatible(): Boolean = 
-  UML!TemplateParameter.allInstances()->forAll(tp |
-UML!ParameterableElement.allInstances()->contains(tp.default) implies 
-UML!ParameterableElement.allInstances()->contains(tp.parameteredElement) implies 
-    tp.default <> OclUndefined implies tp.default.isCompatibleWith(tp.parameteredElement)
-); 
-
-helper context UML!TestIdentityAction def: multiplicity(): Boolean = 
-  UML!TestIdentityAction.allInstances()->forAll(tia |
-UML!InputPin.allInstances()->contains(tia.first) implies 
-UML!InputPin.allInstances()->contains(tia.second) implies 
-    tia.first->is(1,1.toUnlimitedNatural()) and tia.second->is(1,1.toUnlimitedNatural())
-); 
-
 helper context UML!TestIdentityAction def: no_type(): Boolean = 
   UML!TestIdentityAction.allInstances()->forAll(tia |
 UML!InputPin.allInstances()->contains(tia.first) implies 
@@ -1695,12 +1137,6 @@ helper context UML!TimeConstraint def: has_one_constrainedElement(): Boolean =
   UML!TimeConstraint.allInstances()->forAll(tc |
 tc.constrainedElement->size()>0 implies 
     tc.constrainedElement->size() = 1
-); 
-
-helper context UML!TimeEvent def: when_non_negative(): Boolean = 
-  UML!TimeEvent.allInstances()->forAll(te |
-UML!TimeExpression.allInstances()->contains(te.when) implies 
-    te.when.integerValue() >= 0
 ); 
 
 helper context UML!TimeExpression def: no_expr_requires_observation(): Boolean = 
@@ -1725,92 +1161,10 @@ t.port->size()>0 implies
     t.port->notEmpty() implies t.event.oclIsKindOf(UML!MessageEvent)
 ); 
 
-helper context UML!UnmarshallAction def: structural_feature(): Boolean = 
-  UML!UnmarshallAction.allInstances()->forAll(ua |
-UML!Classifier.allInstances()->contains(ua.unmarshallType) implies 
-    ua.unmarshallType.allAttributes()->size() >= 1
-); 
-
-helper context UML!UnmarshallAction def: number_of_result(): Boolean = 
-  UML!UnmarshallAction.allInstances()->forAll(ua |
-UML!Classifier.allInstances()->contains(ua.unmarshallType) implies 
-ua.result->size()>0 implies 
-    ua.unmarshallType.allAttributes()->size() = ua.result->size()
-); 
-
-helper context UML!UnmarshallAction def: multiplicity_of_object(): Boolean = 
-  UML!UnmarshallAction.allInstances()->forAll(ua |
-UML!InputPin.allInstances()->contains(ua.object) implies 
-    ua.object->is(1,1.toUnlimitedNatural())
-); 
-
-helper context UML!UnmarshallAction def: object_type(): Boolean = 
-  UML!UnmarshallAction.allInstances()->forAll(ua |
-UML!Classifier.allInstances()->contains(ua.unmarshallType) implies 
-UML!InputPin.allInstances()->contains(ua.object) implies 
-UML!Type.allInstances()->contains(ua.object.type) implies 
-    ua.object.type.conformsTo(ua.unmarshallType)
-); 
-
-helper context UML!UseCase def: cannot_include_self(): Boolean = 
-  UML!UseCase.allInstances()->forAll(uc |
-    not(uc.allIncludedUseCases()->includes(uc))
-); 
-
 helper context UML!ValuePin def: no_incoming_edges(): Boolean = 
   UML!ValuePin.allInstances()->forAll(vp |
 vp.incoming->size()>0 implies 
     vp.incoming->isEmpty()
-); 
-
-helper context UML!ValuePin def: compatible_type(): Boolean = 
-  UML!ValuePin.allInstances()->forAll(vp |
-UML!ValueSpecification.allInstances()->contains(vp.value) implies 
-UML!Type.allInstances()->contains(vp.type) implies 
-UML!Type.allInstances()->contains(vp.value.type) implies 
-    vp.value.type.conformsTo(vp.type)
-); 
-
-helper context UML!ValueSpecificationAction def: multiplicity(): Boolean = 
-  UML!ValueSpecificationAction.allInstances()->forAll(vsa |
-UML!OutputPin.allInstances()->contains(vsa.result) implies 
-    vsa.result->is(1,1.toUnlimitedNatural())
-); 
-
-helper context UML!ValueSpecificationAction def: compatible_type(): Boolean = 
-  UML!ValueSpecificationAction.allInstances()->forAll(vsa |
-UML!Type.allInstances()->contains(vsa.result.type) implies 
-UML!ValueSpecification.allInstances()->contains(vsa.value) implies 
-UML!Type.allInstances()->contains(vsa.value.type) implies 
-UML!OutputPin.allInstances()->contains(vsa.result) implies 
-    vsa.value.type.conformsTo(vsa.result.type)
-); 
-
-helper context UML!VariableAction def: scope_of_variable(): Boolean = 
-  UML!VariableAction.allInstances()->forAll(va |
-UML!Variable.allInstances()->contains(va.variable) implies 
-    va.variable.isAccessibleBy(va)
-); 
-
-helper context UML!WriteStructuralFeatureAction def: multiplicity_of_result(): Boolean = 
-  UML!WriteStructuralFeatureAction.allInstances()->forAll(wsfa |
-UML!OutputPin.allInstances()->contains(wsfa.result) implies 
-    wsfa.result <> OclUndefined implies wsfa.result->is(1,1.toUnlimitedNatural())
-); 
-
-helper context UML!WriteStructuralFeatureAction def: type_of_value(): Boolean = 
-  UML!WriteStructuralFeatureAction.allInstances()->forAll(wsfa |
-UML!Type.allInstances()->contains(wsfa.structuralFeature.type) implies 
-UML!InputPin.allInstances()->contains(wsfa.value) implies 
-UML!StructuralFeature.allInstances()->contains(wsfa.structuralFeature) implies 
-UML!Type.allInstances()->contains(wsfa.value.type) implies 
-    wsfa.value <> OclUndefined implies wsfa.value.type.conformsTo(wsfa.structuralFeature.type)
-); 
-
-helper context UML!WriteStructuralFeatureAction def: multiplicity_of_value(): Boolean = 
-  UML!WriteStructuralFeatureAction.allInstances()->forAll(wsfa |
-UML!InputPin.allInstances()->contains(wsfa.value) implies 
-    wsfa.value <> OclUndefined implies wsfa.value->is(1,1.toUnlimitedNatural())
 ); 
 
 helper context UML!WriteStructuralFeatureAction def: type_of_result(): Boolean = 
@@ -1820,20 +1174,5 @@ UML!InputPin.allInstances()->contains(wsfa.object) implies
 UML!Type.allInstances()->contains(wsfa.object.type) implies 
 UML!Type.allInstances()->contains(wsfa.result.type) implies 
     wsfa.result <> OclUndefined implies wsfa.result.type = wsfa.object.type
-); 
-
-helper context UML!WriteVariableAction def: value_type(): Boolean = 
-  UML!WriteVariableAction.allInstances()->forAll(wva |
-UML!Type.allInstances()->contains(wva.value.type) implies 
-UML!InputPin.allInstances()->contains(wva.value) implies 
-UML!Type.allInstances()->contains(wva.variable.type) implies 
-UML!Variable.allInstances()->contains(wva.variable) implies 
-    wva.value <> OclUndefined implies wva.value.type.conformsTo(wva.variable.type)
-); 
-
-helper context UML!WriteVariableAction def: multiplicity(): Boolean = 
-  UML!WriteVariableAction.allInstances()->forAll(wva |
-UML!InputPin.allInstances()->contains(wva.value) implies 
-    wva.value <> OclUndefined implies wva.value->is(1,1.toUnlimitedNatural())
 ); 
 
