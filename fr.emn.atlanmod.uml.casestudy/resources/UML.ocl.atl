@@ -1,6 +1,0 @@
-helper context UML!ActivityGroup def: not_instantiable(): Boolean = 
-  UML!ActivityGroup.allInstances()->forAll(ag |
-    ag.containedNode->size()
-     = 0
-; 
-
