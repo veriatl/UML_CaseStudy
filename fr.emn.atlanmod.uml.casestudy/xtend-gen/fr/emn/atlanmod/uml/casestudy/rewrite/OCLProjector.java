@@ -49,7 +49,7 @@ public class OCLProjector {
       _xifexpression = _referredOperation_1.getName();
     }
     final String op = _xifexpression;
-    boolean r = true;
+    boolean r = false;
     OCLExpression _ownedSource = e.getOwnedSource();
     final boolean src = OCLProjector.proj(_ownedSource);
     List<OCLExpression> _ownedArguments = e.getOwnedArguments();
@@ -65,15 +65,35 @@ public class OCLProjector {
       Boolean _reduce = IterableExtensions.<Boolean>reduce(args, _function_1);
       args_res = (_reduce).booleanValue();
     }
-    if ((Objects.equal(op, null) || Objects.equal(op, ""))) {
-      r = false;
+    boolean _equals_1 = Objects.equal(op, "not");
+    if (_equals_1) {
+      r = true;
     } else {
-      if (((((((Objects.equal(op, "flatten") || Objects.equal(op, "asBag")) || Objects.equal(op, "asOrderedSet")) || Objects.equal(op, "asSequence")) || Objects.equal(op, "asSet")) || Objects.equal(op, "oclAsSet")) || Objects.equal(op, "oclAsType"))) {
-        r = false;
+      if ((((((((((((((((Objects.equal(op, "+") || Objects.equal(op, "-")) || Objects.equal(op, "*")) || Objects.equal(op, "/")) || Objects.equal(op, "=")) || Objects.equal(op, "<>")) || Objects.equal(op, ">")) || 
+        Objects.equal(op, "<")) || Objects.equal(op, ">=")) || Objects.equal(op, "<=")) || Objects.equal(op, "implies")) || Objects.equal(op, "and")) || Objects.equal(op, "or")) || Objects.equal(op, "div")) || 
+        Objects.equal(op, "mod")) || Objects.equal(op, "xor"))) {
+        r = true;
       } else {
-        boolean _equals_1 = Objects.equal(op, "count");
-        if (_equals_1) {
-          r = false;
+        if ((((((((((Objects.equal(op, "size") || Objects.equal(op, "allInstances")) || Objects.equal(op, "isEmpty")) || Objects.equal(op, "max")) || Objects.equal(op, "min")) || Objects.equal(op, "notEmpty")) || Objects.equal(op, "oclIsUndefined")) || Objects.equal(op, "oclType")) || Objects.equal(op, "first")) || 
+          Objects.equal(op, "last"))) {
+          r = true;
+        } else {
+          if (((((Objects.equal(op, "oclIsUndefined") || Objects.equal(op, "toLower")) || Objects.equal(op, "toLowerCase")) || Objects.equal(op, "toUpper")) || Objects.equal(op, "toUpperCase"))) {
+            r = true;
+          } else {
+            if ((((((((Objects.equal(op, "oclIsKindOf") || Objects.equal(op, "oclIsTypeOf")) || Objects.equal(op, "concat")) || 
+              Objects.equal(op, "endsWith")) || Objects.equal(op, "indexOf")) || Objects.equal(op, "lastIndexOf")) || Objects.equal(op, "startsWith")) || Objects.equal(op, "substring"))) {
+              r = true;
+            } else {
+              if (((((((((((((((Objects.equal(op, "excluding") || Objects.equal(op, "excludingAll")) || Objects.equal(op, "including")) || Objects.equal(op, "includingAll")) || 
+                Objects.equal(op, "excludes")) || 
+                Objects.equal(op, "includes")) || Objects.equal(op, "includesAll")) || Objects.equal(op, "intersection")) || Objects.equal(op, "at")) || 
+                Objects.equal(op, "append")) || Objects.equal(op, "appendAll")) || Objects.equal(op, "prepend")) || Objects.equal(op, "prependAll")) || 
+                Objects.equal(op, "union")) || Objects.equal(op, "excludesAll"))) {
+                r = true;
+              }
+            }
+          }
         }
       }
     }

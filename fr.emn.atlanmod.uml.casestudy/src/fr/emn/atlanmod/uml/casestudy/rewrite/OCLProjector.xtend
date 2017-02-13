@@ -34,7 +34,7 @@ class OCLProjector {
 
 	def static dispatch boolean proj(OperationCallExp e) {
 		val op = if(e.referredOperation.name == "") e.name else e.referredOperation.name
-		var r = true
+		var r = false
 		val src = proj(e.ownedSource)
 		val args = e.ownedArguments.map(arg|proj(arg))
 		var args_res = true
@@ -43,17 +43,34 @@ class OCLProjector {
 			args_res = args.reduce(res, arg|res && arg)
 		}
 
-		if (op == null || op == "") {
-			r = false
-		} else if (op == "flatten" 
-			|| op == "asBag" 
-			|| op == "asOrderedSet" || op == "asSequence" || op == "asSet" || op == "oclAsSet" 
-			|| op=="oclAsType" // down casting
-		) {
-			r = false
-		} else if (op == "count") {
-			r = false
+		if (op == "not") {
+			r = true
+		} else if (op == "+" || op == "-" || op == "*" || op == "/" || op == "=" || op == "<>" || op == ">" ||
+			op == "<" || op == ">=" || op == "<=" || op == "implies" || op == "and" || op == "or" || op == "div" ||
+			op == "mod" || op == "xor") {
+
+			r = true
+		} else if (op == "size" || op == "allInstances"  || op == "isEmpty" 
+			|| op == "max" || op == "min" 
+			|| op == "notEmpty" || op == "oclIsUndefined" || op == "oclType" || op == "first" ||
+			op == "last") {
+			r = true
+
+		} else if (op == "oclIsUndefined" || op == "toLower" || op == "toLowerCase" || op == "toUpper" || op == "toUpperCase") {
+
+			r = true
+		} else if (op == "oclIsKindOf" || op == "oclIsTypeOf" || op == "concat" ||
+			op == "endsWith" || op == "indexOf" || op == "lastIndexOf" || op == "startsWith" || op == "substring" ) {
+			r = true
+		} else if (op == "excluding" || op == "excludingAll" || op == "including" || op == "includingAll" ||
+			op == "excludes" ||
+			op == "includes" || op == "includesAll" || op == "intersection" || op == "at" ||
+			op == "append" || op == "appendAll" || op == "prepend" || op == "prependAll" ||
+			op == "union" || op == "excludesAll") {
+			r = true
 		}
+	
+
 
 		return r && src && args_res
 	}

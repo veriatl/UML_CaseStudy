@@ -45,10 +45,9 @@ class OCL {
 	»«op»(«gen(e.ownedSource, consistency)»)«
 	ELSEIF op=="+" || op =="-"  || op =="*" || op =="/" 
 	|| op =="=" || op =="<>" || op ==">" || op =="<" || op ==">=" || op =="<=" 
-	|| op =="implies"  || op =="and"  || op =="or" || op =="div" || op =="mod" || op =="implies"
-	|| op =="implies"  || op =="and"  || op =="or" || op =="implies" || op =="implies" || op =="implies"
+	|| op =="implies"  || op =="and"  || op =="or" || op =="div" || op =="mod" || op=="xor" 
 	»«src» «op» «args»«
-	ELSEIF op=="size" || op=="flatten"  || op=="allInstances"  || op=="xor"  || op=="asBag"  || op=="asOrderedSet"  
+	ELSEIF op=="size" || op=="flatten"  || op=="allInstances"   || op=="asBag"  || op=="asOrderedSet"  
 	|| op=="asSequence"  || op=="asSet"  || op=="isEmpty"  || op=="max" || op=="min"  || op=="notEmpty"  || op=="oclIsUndefined"  || op=="oclType" 
 	|| op=="first"  || op=="last" 
 	|| op=="oclAsSet" 
@@ -63,7 +62,7 @@ class OCL {
 	»«src».«op»(«args_dot»)«
 	ELSEIF op=="excluding" || op=="excludingAll" || op=="including" || op=="includingAll"  || op=="selectByKind"  || op=="selectByKind"  || op=="selectByType"  
 	|| op=="count"  || op=="excludes"  || op=="includes"  || op=="includesAll" || op=="intersection"  
-	|| op=="at"  || op=="indexOf"  
+	|| op=="at"    
 	|| op=="append" || op=="appendAll"  || op=="prepend"  || op=="prependAll"  || op=="reverse" || op=="union" 
 	|| op=="is" || op=="excludesAll" 
 	»«src»->«op»(«args_dot»)«
