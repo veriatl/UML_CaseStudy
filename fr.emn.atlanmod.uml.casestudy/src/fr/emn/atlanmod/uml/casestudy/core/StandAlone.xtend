@@ -12,7 +12,7 @@ import org.eclipse.emf.ecore.xmi.impl.EcoreResourceFactoryImpl
 import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl
 import org.eclipse.ocl.pivot.PivotPackage
 import org.eclipse.ocl.pivot.internal.resource.OCLASResourceFactory
-import java.util.Iterator
+
 
 class StandAlone{
 	

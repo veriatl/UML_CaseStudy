@@ -28,8 +28,10 @@ public class ocl_reg {
         if (((!line.startsWith("package ")) && (!line.startsWith("endpackage")))) {
           boolean _contains = line.contains("context ");
           if (_contains) {
-            final String clazz = IterableExtensions.<String>last(((Iterable<String>)Conversions.doWrapArray(line.split("::"))));
-            InputOutput.<String>println(String.format("context %s", clazz));
+            String[] _split = line.split("::");
+            final String clazz = IterableExtensions.<String>last(((Iterable<String>)Conversions.doWrapArray(_split)));
+            String _format = String.format("context %s", clazz);
+            InputOutput.<String>println(_format);
           } else {
             InputOutput.<String>println(line);
           }

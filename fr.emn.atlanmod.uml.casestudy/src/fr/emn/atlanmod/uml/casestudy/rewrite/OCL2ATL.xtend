@@ -23,11 +23,12 @@ class OCL2ATL {
 	def static dispatch String rewrite(Package p) '''
 	«FOR clazz : p.ownedClasses»
 		«FOR inv : clazz.ownedInvariants»
-		helper context «model»!«clazz.name» def: «inv.name»(): Boolean = 
-		  «model»!«clazz.name».allInstances()->forAll(«genIteratorName(clazz.name)» |
-		    «OCL.gen((inv.ownedSpecification as ExpressionInOCL).ownedBody, new HashMap)»
-		); 
-		
+			«IF (OCLProjector.proj((inv.ownedSpecification as ExpressionInOCL).ownedBody))»
+			helper context «model»!«clazz.name» def: «inv.name»(): Boolean = 
+			  «model»!«clazz.name».allInstances()->forAll(«genIteratorName(clazz.name)» |
+			    «OCL.gen((inv.ownedSpecification as ExpressionInOCL).ownedBody, new HashMap)»
+			); 
+			«ENDIF»
 		«ENDFOR»
 	«ENDFOR»
 	'''
