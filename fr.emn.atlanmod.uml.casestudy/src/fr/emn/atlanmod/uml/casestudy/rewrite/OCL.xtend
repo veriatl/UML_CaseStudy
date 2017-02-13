@@ -20,8 +20,12 @@ import org.eclipse.ocl.pivot.Type
 import org.eclipse.ocl.pivot.TypeExp
 import org.eclipse.ocl.pivot.UnlimitedNaturalLiteralExp
 import org.eclipse.ocl.pivot.VariableExp
+import java.util.HashSet
+import org.eclipse.ocl.pivot.Enumeration
 
 class OCL {
+	static private HashSet<String> wdSet = new HashSet<String>
+	
 	// dispatcher
 	def static dispatch String gen(EObject e, HashMap<String, VariableExp> consistency) '''
 		// We dont understand «e.eClass.name»'''
@@ -72,7 +76,7 @@ class OCL {
 	
 	
 	//TODO use a systematic approach to generate new bound variable
-
+	//TODO Bug: redefinition_context_valid
 	def static dispatch String gen(VariableExp e, HashMap<String, VariableExp> consistency) '''«
 		if (e.isIsImplicit) {if (isConsistentVariable(consistency, e)) {getIteratorName(e)} else getIteratorName(e)+e.hashCode} else if (e.referredVariable.name=="self") getIteratorName(e) else e.referredVariable.name
 	»'''
@@ -89,6 +93,7 @@ class OCL {
 	
 	def static dispatch String gen(BooleanLiteralExp e, HashMap<String, VariableExp> consistency) '''«e.booleanSymbol»'''
 	
+	// TODO where is the model name before its type?
 	def static dispatch String gen(EnumLiteralExp e, HashMap<String, VariableExp> consistency) '''«e.type.name».«e.referredLiteral.name»'''
 	
 	def static dispatch String gen(NullLiteralExp e, HashMap<String, VariableExp> consistency) '''OclUndefined'''
@@ -105,10 +110,24 @@ class OCL {
   «gen(e.ownedVariable.ownedInit, consistency)» in 
     «gen(e.ownedIn, consistency)»'''
 
-
 	def static dispatch String gen(IteratorExp e, HashMap<String, VariableExp> consistency) '''
 	«val args_dot = if(e.ownedIterators.size!=0) e.ownedIterators.map(arg |  gen(arg, consistency) ).join(',') else ""»
-	«gen(e.ownedSource, consistency)»->«e.referredIteration.name»(«if (e.ownedIterators.size!=0) args_dot + "|" else ""» 
+	«val wdExprs = OCLWDGenerator.wd(e.ownedBody)»
+	«gen(e.ownedSource, consistency)»->«e.referredIteration.name»(«if (e.ownedIterators.size!=0) args_dot + "|" else ""»
+	«FOR expr: wdExprs»
+		«FOR itor : e.ownedIterators»
+		  	«IF OCL2ATL.printAtHere(expr, gen(itor, consistency)) && !wdSet.contains(OCL.gen(expr, new HashMap))»«
+		  		{wdSet.add(OCL.gen(expr, new HashMap));null}»«
+		  		IF !OCL.isPrimtive(expr)»«
+		  			IF !OCL.isCollection(expr)»
+		  			«expr.type.toString.replace("::", "!")».allInstances()->contains(«OCL.gen(expr, new HashMap)») implies 
+		  			«ELSE»
+		  			«OCL.gen(expr, new HashMap)»->size()>0 implies 
+		  			«ENDIF»«
+		  		ENDIF»«
+		  	ENDIF»«
+	  	ENDFOR»«
+  	ENDFOR»«{wdSet.clear();null}» 
   «gen(e.ownedBody, consistency)»)'''
   
     def static dispatch String gen(IfExp e, HashMap<String, VariableExp> consistency) '''
@@ -129,6 +148,29 @@ endif'''
 		val clazz = gen(tp, null)
 		val itName = OCL2ATL.genIteratorName(clazz)
 		return itName
+	}
+	
+	def static boolean isPrimtive(PropertyCallExp e) {
+
+		if(OCL.gen(e.type, null) == "String" || OCL.gen(e.type, null) == "Integer" 
+			|| OCL.gen(e.type, null) == "Boolean" || OCL.gen(e.type, null) == "Real"
+		){
+			return true
+		}else if(e.type instanceof Enumeration){
+			return true
+		}else{
+			return false
+		}
+	}
+	
+	def static boolean isCollection(PropertyCallExp e) {
+
+		if(OCL.gen(e.type, null) == "Set" || OCL.gen(e.type, null) == "OrderedSet" 
+		){
+			return true
+		}else{
+			return false
+		}
 	}
 	
 }

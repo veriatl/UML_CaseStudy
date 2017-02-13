@@ -2,14 +2,17 @@ package fr.emn.atlanmod.uml.casestudy.rewrite;
 
 import com.google.common.base.Objects;
 import fr.emn.atlanmod.uml.casestudy.rewrite.OCL2ATL;
+import fr.emn.atlanmod.uml.casestudy.rewrite.OCLWDGenerator;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.ocl.pivot.BooleanLiteralExp;
 import org.eclipse.ocl.pivot.CollectionLiteralExp;
 import org.eclipse.ocl.pivot.EnumLiteralExp;
+import org.eclipse.ocl.pivot.Enumeration;
 import org.eclipse.ocl.pivot.EnumerationLiteral;
 import org.eclipse.ocl.pivot.IfExp;
 import org.eclipse.ocl.pivot.IntegerLiteralExp;
@@ -37,6 +40,8 @@ import org.eclipse.xtext.xbase.lib.ListExtensions;
 
 @SuppressWarnings("all")
 public class OCL {
+  private static HashSet<String> wdSet = new HashSet<String>();
+  
   protected static String _gen(final EObject e, final HashMap<String, VariableExp> consistency) {
     StringConcatenation _builder = new StringConcatenation();
     _builder.append("// We dont understand ");
@@ -341,6 +346,9 @@ public class OCL {
     }
     final String args_dot = _xifexpression;
     _builder.newLineIfNotEmpty();
+    OCLExpression _ownedBody = e.getOwnedBody();
+    final HashSet<PropertyCallExp> wdExprs = OCLWDGenerator.wd(_ownedBody);
+    _builder.newLineIfNotEmpty();
     OCLExpression _ownedSource = e.getOwnedSource();
     String _gen = OCL.gen(_ownedSource, consistency);
     _builder.append(_gen, "");
@@ -359,12 +367,69 @@ public class OCL {
       _xifexpression_1 = "";
     }
     _builder.append(_xifexpression_1, "");
+    _builder.newLineIfNotEmpty();
+    {
+      for(final PropertyCallExp expr : wdExprs) {
+        {
+          List<Variable> _ownedIterators_3 = e.getOwnedIterators();
+          for(final Variable itor : _ownedIterators_3) {
+            {
+              if ((OCL2ATL.printAtHere(expr, OCL.gen(itor, consistency)) && (!OCL.wdSet.contains(OCL.gen(expr, new HashMap<String, VariableExp>()))))) {
+                Object _xblockexpression = null;
+                {
+                  HashMap<String, VariableExp> _hashMap = new HashMap<String, VariableExp>();
+                  String _gen_1 = OCL.gen(expr, _hashMap);
+                  OCL.wdSet.add(_gen_1);
+                  _xblockexpression = null;
+                }
+                _builder.append(_xblockexpression, "");
+                {
+                  boolean _isPrimtive = OCL.isPrimtive(expr);
+                  boolean _not = (!_isPrimtive);
+                  if (_not) {
+                    {
+                      boolean _isCollection = OCL.isCollection(expr);
+                      boolean _not_1 = (!_isCollection);
+                      if (_not_1) {
+                        _builder.newLineIfNotEmpty();
+                        Type _type = expr.getType();
+                        String _string = _type.toString();
+                        String _replace = _string.replace("::", "!");
+                        _builder.append(_replace, "");
+                        _builder.append(".allInstances()->contains(");
+                        HashMap<String, VariableExp> _hashMap = new HashMap<String, VariableExp>();
+                        String _gen_1 = OCL.gen(expr, _hashMap);
+                        _builder.append(_gen_1, "");
+                        _builder.append(") implies ");
+                        _builder.newLineIfNotEmpty();
+                      } else {
+                        HashMap<String, VariableExp> _hashMap_1 = new HashMap<String, VariableExp>();
+                        String _gen_2 = OCL.gen(expr, _hashMap_1);
+                        _builder.append(_gen_2, "");
+                        _builder.append("->size()>0 implies ");
+                        _builder.newLineIfNotEmpty();
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    Object _xblockexpression_1 = null;
+    {
+      OCL.wdSet.clear();
+      _xblockexpression_1 = null;
+    }
+    _builder.append(_xblockexpression_1, "");
     _builder.append(" ");
     _builder.newLineIfNotEmpty();
     _builder.append("  ");
-    OCLExpression _ownedBody = e.getOwnedBody();
-    String _gen_1 = OCL.gen(_ownedBody, consistency);
-    _builder.append(_gen_1, "  ");
+    OCLExpression _ownedBody_1 = e.getOwnedBody();
+    String _gen_3 = OCL.gen(_ownedBody_1, consistency);
+    _builder.append(_gen_3, "  ");
     _builder.append(")");
     return _builder.toString();
   }
@@ -403,6 +468,27 @@ public class OCL {
     final String clazz = OCL.gen(tp, null);
     final String itName = OCL2ATL.genIteratorName(clazz);
     return itName;
+  }
+  
+  public static boolean isPrimtive(final PropertyCallExp e) {
+    if ((((Objects.equal(OCL.gen(e.getType(), null), "String") || Objects.equal(OCL.gen(e.getType(), null), "Integer")) || Objects.equal(OCL.gen(e.getType(), null), "Boolean")) || Objects.equal(OCL.gen(e.getType(), null), "Real"))) {
+      return true;
+    } else {
+      Type _type = e.getType();
+      if ((_type instanceof Enumeration)) {
+        return true;
+      } else {
+        return false;
+      }
+    }
+  }
+  
+  public static boolean isCollection(final PropertyCallExp e) {
+    if ((Objects.equal(OCL.gen(e.getType(), null), "Set") || Objects.equal(OCL.gen(e.getType(), null), "OrderedSet"))) {
+      return true;
+    } else {
+      return false;
+    }
   }
   
   public static String gen(final EObject e, final HashMap<String, VariableExp> consistency) {

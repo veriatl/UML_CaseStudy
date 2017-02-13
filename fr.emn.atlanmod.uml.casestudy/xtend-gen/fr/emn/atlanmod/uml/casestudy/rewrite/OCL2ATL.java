@@ -1,9 +1,12 @@
 package fr.emn.atlanmod.uml.casestudy.rewrite;
 
+import com.google.common.base.Objects;
 import fr.emn.atlanmod.uml.casestudy.rewrite.OCL;
 import fr.emn.atlanmod.uml.casestudy.rewrite.OCLProjector;
+import fr.emn.atlanmod.uml.casestudy.rewrite.OCLWDGenerator;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
@@ -11,12 +14,17 @@ import org.eclipse.ocl.pivot.Constraint;
 import org.eclipse.ocl.pivot.ExpressionInOCL;
 import org.eclipse.ocl.pivot.LanguageExpression;
 import org.eclipse.ocl.pivot.Model;
+import org.eclipse.ocl.pivot.NullLiteralExp;
 import org.eclipse.ocl.pivot.OCLExpression;
+import org.eclipse.ocl.pivot.PropertyCallExp;
+import org.eclipse.ocl.pivot.Type;
 import org.eclipse.ocl.pivot.VariableExp;
 import org.eclipse.xtend2.lib.StringConcatenation;
 
 @SuppressWarnings("all")
 public class OCL2ATL {
+  private static HashSet<String> wdSet = new HashSet<String>();
+  
   public static String model = "UML";
   
   protected static String _rewrite(final EObject o) {
@@ -43,6 +51,9 @@ public class OCL2ATL {
     return _builder.toString();
   }
   
+  /**
+   * ps: we don't generate helper if the invariant body is {@code null} or it has been filter out by the projector {@code OCLProjector}
+   */
   protected static String _rewrite(final org.eclipse.ocl.pivot.Package p) {
     StringConcatenation _builder = new StringConcatenation();
     {
@@ -52,10 +63,11 @@ public class OCL2ATL {
           List<Constraint> _ownedInvariants = clazz.getOwnedInvariants();
           for(final Constraint inv : _ownedInvariants) {
             {
-              LanguageExpression _ownedSpecification = inv.getOwnedSpecification();
-              OCLExpression _ownedBody = ((ExpressionInOCL) _ownedSpecification).getOwnedBody();
-              boolean _proj = OCLProjector.proj(_ownedBody);
-              if (_proj) {
+              if ((OCLProjector.proj(((ExpressionInOCL) inv.getOwnedSpecification()).getOwnedBody()) && (!(((ExpressionInOCL) inv.getOwnedSpecification()).getOwnedBody() instanceof NullLiteralExp)))) {
+                LanguageExpression _ownedSpecification = inv.getOwnedSpecification();
+                OCLExpression _ownedBody = ((ExpressionInOCL) _ownedSpecification).getOwnedBody();
+                final HashSet<PropertyCallExp> wdExprs = OCLWDGenerator.wd(_ownedBody);
+                _builder.newLineIfNotEmpty();
                 _builder.append("helper context ");
                 _builder.append(OCL2ATL.model, "");
                 _builder.append("!");
@@ -77,14 +89,61 @@ public class OCL2ATL {
                 _builder.append(_genIteratorName, "  ");
                 _builder.append(" |");
                 _builder.newLineIfNotEmpty();
+                {
+                  for(final PropertyCallExp e : wdExprs) {
+                    {
+                      if ((OCL2ATL.printAtHere(e, OCL2ATL.genIteratorName(clazz.getName())) && (!OCL2ATL.wdSet.contains(OCL.gen(e, new HashMap<String, VariableExp>()))))) {
+                        Object _xblockexpression = null;
+                        {
+                          HashMap<String, VariableExp> _hashMap = new HashMap<String, VariableExp>();
+                          String _gen = OCL.gen(e, _hashMap);
+                          OCL2ATL.wdSet.add(_gen);
+                          _xblockexpression = null;
+                        }
+                        _builder.append(_xblockexpression, "");
+                        {
+                          boolean _isPrimtive = OCL.isPrimtive(e);
+                          boolean _not = (!_isPrimtive);
+                          if (_not) {
+                            {
+                              boolean _isCollection = OCL.isCollection(e);
+                              boolean _not_1 = (!_isCollection);
+                              if (_not_1) {
+                                _builder.newLineIfNotEmpty();
+                                Type _type = e.getType();
+                                String _string = _type.toString();
+                                String _replace = _string.replace("::", "!");
+                                _builder.append(_replace, "");
+                                _builder.append(".allInstances()->contains(");
+                                HashMap<String, VariableExp> _hashMap = new HashMap<String, VariableExp>();
+                                String _gen = OCL.gen(e, _hashMap);
+                                _builder.append(_gen, "");
+                                _builder.append(") implies ");
+                                _builder.newLineIfNotEmpty();
+                              } else {
+                                HashMap<String, VariableExp> _hashMap_1 = new HashMap<String, VariableExp>();
+                                String _gen_1 = OCL.gen(e, _hashMap_1);
+                                _builder.append(_gen_1, "");
+                                _builder.append("->size()>0 implies ");
+                                _builder.newLineIfNotEmpty();
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
                 _builder.append("    ");
                 LanguageExpression _ownedSpecification_1 = inv.getOwnedSpecification();
                 OCLExpression _ownedBody_1 = ((ExpressionInOCL) _ownedSpecification_1).getOwnedBody();
-                HashMap<String, VariableExp> _hashMap = new HashMap<String, VariableExp>();
-                String _gen = OCL.gen(_ownedBody_1, _hashMap);
-                _builder.append(_gen, "    ");
+                HashMap<String, VariableExp> _hashMap_2 = new HashMap<String, VariableExp>();
+                String _gen_2 = OCL.gen(_ownedBody_1, _hashMap_2);
+                _builder.append(_gen_2, "    ");
                 _builder.newLineIfNotEmpty();
                 _builder.append("); ");
+                OCL2ATL.wdSet.clear();
+                _builder.newLineIfNotEmpty();
                 _builder.newLine();
               }
             }
@@ -108,6 +167,28 @@ public class OCL2ATL {
       }
     }
     return rtn;
+  }
+  
+  public static boolean printAtHere(final PropertyCallExp e, final String v) {
+    boolean r = false;
+    OCLExpression _ownedSource = e.getOwnedSource();
+    if ((_ownedSource instanceof VariableExp)) {
+      OCLExpression _ownedSource_1 = e.getOwnedSource();
+      HashMap<String, VariableExp> _hashMap = new HashMap<String, VariableExp>();
+      String _gen = OCL.gen(_ownedSource_1, _hashMap);
+      boolean _equals = Objects.equal(_gen, v);
+      if (_equals) {
+        r = true;
+      }
+    } else {
+      OCLExpression _ownedSource_2 = e.getOwnedSource();
+      if ((_ownedSource_2 instanceof PropertyCallExp)) {
+        OCLExpression _ownedSource_3 = e.getOwnedSource();
+        boolean _printAtHere = OCL2ATL.printAtHere(((PropertyCallExp) _ownedSource_3), v);
+        r = _printAtHere;
+      }
+    }
+    return r;
   }
   
   public static String rewrite(final EObject m) {

@@ -45,8 +45,11 @@ class OCLProjector {
 
 		if (op == null || op == "") {
 			r = false
-		} else if (op == "flatten" || op == "asBag" || op == "asOrderedSet" || op == "asSequence" || op == "asSet" ||
-			op == "oclAsSet") {
+		} else if (op == "flatten" 
+			|| op == "asBag" 
+			|| op == "asOrderedSet" || op == "asSequence" || op == "asSet" || op == "oclAsSet" 
+			|| op=="oclAsType" // down casting
+		) {
 			r = false
 		} else if (op == "count") {
 			r = false

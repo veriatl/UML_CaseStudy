@@ -68,8 +68,7 @@ public class OCLProjector {
     if ((Objects.equal(op, null) || Objects.equal(op, ""))) {
       r = false;
     } else {
-      if ((((((Objects.equal(op, "flatten") || Objects.equal(op, "asBag")) || Objects.equal(op, "asOrderedSet")) || Objects.equal(op, "asSequence")) || Objects.equal(op, "asSet")) || 
-        Objects.equal(op, "oclAsSet"))) {
+      if (((((((Objects.equal(op, "flatten") || Objects.equal(op, "asBag")) || Objects.equal(op, "asOrderedSet")) || Objects.equal(op, "asSequence")) || Objects.equal(op, "asSet")) || Objects.equal(op, "oclAsSet")) || Objects.equal(op, "oclAsType"))) {
         r = false;
       } else {
         boolean _equals_1 = Objects.equal(op, "count");
