@@ -1,10 +1,12 @@
 package fr.emn.atlanmod.uml.casestudy.rewrite
 
 import java.util.HashMap
+import java.util.HashSet
 import org.eclipse.emf.ecore.EObject
 import org.eclipse.ocl.pivot.BooleanLiteralExp
 import org.eclipse.ocl.pivot.CollectionLiteralExp
 import org.eclipse.ocl.pivot.EnumLiteralExp
+import org.eclipse.ocl.pivot.Enumeration
 import org.eclipse.ocl.pivot.IfExp
 import org.eclipse.ocl.pivot.IntegerLiteralExp
 import org.eclipse.ocl.pivot.IteratorExp
@@ -15,13 +17,13 @@ import org.eclipse.ocl.pivot.OCLExpression
 import org.eclipse.ocl.pivot.Operation
 import org.eclipse.ocl.pivot.OperationCallExp
 import org.eclipse.ocl.pivot.OppositePropertyCallExp
+import org.eclipse.ocl.pivot.ParameterVariable
 import org.eclipse.ocl.pivot.PropertyCallExp
 import org.eclipse.ocl.pivot.Type
 import org.eclipse.ocl.pivot.TypeExp
 import org.eclipse.ocl.pivot.UnlimitedNaturalLiteralExp
 import org.eclipse.ocl.pivot.VariableExp
-import java.util.HashSet
-import org.eclipse.ocl.pivot.Enumeration
+import org.eclipse.ocl.pivot.VariableDeclaration
 
 class OCL {
 	static private HashSet<String> wdSetInner = new HashSet<String>
@@ -78,15 +80,35 @@ class OCL {
 
 	
 	def static dispatch String gen(VariableExp e) '''
-	«val itName = OCL2ATL.genIteratorName(gen(e.type))»«
-		if (e.isImplicit) {if (!bvMap.keySet.contains(itName)) {itName} else itName+e.hashCode} else if (e.referredVariable.name=="self") itName else e.referredVariable.name
-	»'''
+	«val itName = OCL2ATL.genIteratorName(gen(e.type))»
+	«val ref = e.referredVariable»«
+	IF (bvMap.values.contains(ref))»
+		«getKeyByValue(bvMap, ref)»«
+	ELSE»«
+		IF bvMap.keySet.contains(itName)
+		»«val candidate = bvMap.get(itName)»«
+			IF candidate == null»
+				«itName»
+				«{bvMap.put(itName, ref);null}»«
+			ELSEIF candidate == ref»
+				«itName»«
+			ELSE»
+				«ref.name»«
+			ENDIF»«
+		ELSE»
+			«itName»
+			«{bvMap.put(itName, e);null}»«
+		ENDIF»«
+	ENDIF»'''
 	
-	// OCL2ATL.genIteratorName(gen(e.type))
-	//TODO var name shadowing: Bug: redefinition_context_valid, deployment_target, non_leaf_redefinition
+
+	
+
+	//TODO var name shadowing: Bug:  deployment_target, non_leaf_redefinition
 	def static dispatch String gen(IteratorVariable e) '''
-	«val itName = e.name»
-	«val hashName = itName+e.hashCode»«
+	«val clazz = OCL2ATL.genIteratorName(gen(e.type))»
+	«val itName = clazz+e.name»
+	«val hashName = clazz+itName+e.hashCode»«
 	IF (bvMap.keySet.contains(itName) && bvMap.get(itName) == e)»«itName»«
 	ELSEIF (bvMap.keySet.contains(itName) && bvMap.get(itName) != e)»«
 		IF bvMap.keySet.contains(hashName)»
@@ -94,9 +116,8 @@ class OCL {
 		ELSE»
 		«hashName»«{bvMap.put(hashName, e);null}»«
 		ENDIF»«
-	ELSEIF !(bvMap.keySet.contains(itName))»«itName»«{bvMap.put(e.name, e);null}»«
-	ENDIF
-	»'''
+	ELSEIF !(bvMap.keySet.contains(itName))»«itName»«{bvMap.put(itName, e);null}»«
+	ENDIF»'''
 	
 	def static dispatch String gen(Operation e) '''«e.name»'''
 	
@@ -186,6 +207,16 @@ endif'''
 		}else{
 			return false
 		}
+	}
+	
+	def static getKeyByValue(HashMap<String, EObject> map, VariableDeclaration exp) {
+		for(String key : map.keySet){
+			if(map.get(key) == exp){
+				return key
+			}
+		}
+		
+		return "no such key"
 	}
 	
 }

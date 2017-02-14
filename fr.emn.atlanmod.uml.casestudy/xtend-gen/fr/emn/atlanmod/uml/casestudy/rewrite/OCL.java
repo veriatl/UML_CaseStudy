@@ -4,6 +4,7 @@ import com.google.common.base.Objects;
 import fr.emn.atlanmod.uml.casestudy.rewrite.OCL2ATL;
 import fr.emn.atlanmod.uml.casestudy.rewrite.OCLWDGenerator;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -194,43 +195,73 @@ public class OCL {
     Type _type = e.getType();
     String _gen = OCL.gen(_type);
     final String itName = OCL2ATL.genIteratorName(_gen);
-    String _xifexpression = null;
-    boolean _isIsImplicit = e.isIsImplicit();
-    if (_isIsImplicit) {
-      String _xifexpression_1 = null;
-      Set<String> _keySet = OCL.bvMap.keySet();
-      boolean _contains = _keySet.contains(itName);
-      boolean _not = (!_contains);
-      if (_not) {
-        _xifexpression_1 = itName;
+    _builder.newLineIfNotEmpty();
+    final VariableDeclaration ref = e.getReferredVariable();
+    {
+      Collection<EObject> _values = OCL.bvMap.values();
+      boolean _contains = _values.contains(ref);
+      if (_contains) {
+        _builder.newLineIfNotEmpty();
+        String _keyByValue = OCL.getKeyByValue(OCL.bvMap, ref);
+        _builder.append(_keyByValue, "");
       } else {
-        int _hashCode = e.hashCode();
-        _xifexpression_1 = (itName + Integer.valueOf(_hashCode));
+        {
+          Set<String> _keySet = OCL.bvMap.keySet();
+          boolean _contains_1 = _keySet.contains(itName);
+          if (_contains_1) {
+            final EObject candidate = OCL.bvMap.get(itName);
+            {
+              boolean _equals = Objects.equal(candidate, null);
+              if (_equals) {
+                _builder.newLineIfNotEmpty();
+                _builder.append(itName, "");
+                _builder.newLineIfNotEmpty();
+                Object _xblockexpression = null;
+                {
+                  OCL.bvMap.put(itName, ref);
+                  _xblockexpression = null;
+                }
+                _builder.append(_xblockexpression, "");
+              } else {
+                boolean _equals_1 = Objects.equal(candidate, ref);
+                if (_equals_1) {
+                  _builder.newLineIfNotEmpty();
+                  _builder.append(itName, "");
+                } else {
+                  _builder.newLineIfNotEmpty();
+                  String _name = ref.getName();
+                  _builder.append(_name, "");
+                }
+              }
+            }
+          } else {
+            _builder.newLineIfNotEmpty();
+            _builder.append(itName, "");
+            _builder.newLineIfNotEmpty();
+            Object _xblockexpression_1 = null;
+            {
+              OCL.bvMap.put(itName, e);
+              _xblockexpression_1 = null;
+            }
+            _builder.append(_xblockexpression_1, "");
+          }
+        }
       }
-      _xifexpression = _xifexpression_1;
-    } else {
-      String _xifexpression_2 = null;
-      VariableDeclaration _referredVariable = e.getReferredVariable();
-      String _name = _referredVariable.getName();
-      boolean _equals = Objects.equal(_name, "self");
-      if (_equals) {
-        _xifexpression_2 = itName;
-      } else {
-        VariableDeclaration _referredVariable_1 = e.getReferredVariable();
-        _xifexpression_2 = _referredVariable_1.getName();
-      }
-      _xifexpression = _xifexpression_2;
     }
-    _builder.append(_xifexpression, "");
     return _builder.toString();
   }
   
   protected static String _gen(final IteratorVariable e) {
     StringConcatenation _builder = new StringConcatenation();
-    final String itName = e.getName();
+    Type _type = e.getType();
+    String _gen = OCL.gen(_type);
+    final String clazz = OCL2ATL.genIteratorName(_gen);
+    _builder.newLineIfNotEmpty();
+    String _name = e.getName();
+    final String itName = (clazz + _name);
     _builder.newLineIfNotEmpty();
     int _hashCode = e.hashCode();
-    final String hashName = (itName + Integer.valueOf(_hashCode));
+    final String hashName = ((clazz + itName) + Integer.valueOf(_hashCode));
     {
       if ((OCL.bvMap.keySet().contains(itName) && Objects.equal(OCL.bvMap.get(itName), e))) {
         _builder.append(itName, "");
@@ -261,8 +292,7 @@ public class OCL {
             _builder.append(itName, "");
             Object _xblockexpression_1 = null;
             {
-              String _name = e.getName();
-              OCL.bvMap.put(_name, e);
+              OCL.bvMap.put(itName, e);
               _xblockexpression_1 = null;
             }
             _builder.append(_xblockexpression_1, "");
@@ -532,6 +562,18 @@ public class OCL {
     } else {
       return false;
     }
+  }
+  
+  public static String getKeyByValue(final HashMap<String, EObject> map, final VariableDeclaration exp) {
+    Set<String> _keySet = map.keySet();
+    for (final String key : _keySet) {
+      EObject _get = map.get(key);
+      boolean _equals = Objects.equal(_get, exp);
+      if (_equals) {
+        return key;
+      }
+    }
+    return "no such key";
   }
   
   public static String gen(final EObject e) {
