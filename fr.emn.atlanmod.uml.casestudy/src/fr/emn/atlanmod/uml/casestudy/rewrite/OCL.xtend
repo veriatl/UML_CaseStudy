@@ -163,7 +163,7 @@ class OCL {
 		  		{wdSetInner.add(gen(expr));null}»«
 		  		IF !OCL.isPrimtive(expr)»«
 		  			IF !isCollection(expr)»
-		  			«expr.type.toString.replace("::", "!")».allInstances()->contains(«OCL.gen(expr)») implies 
+		  			«expr.type.toString.replace("::", "!")».allInstances()->includes(«OCL.gen(expr)») implies 
 		  			«ELSE»
 		  			«gen(expr)»->size()>0 implies 
 		  			«ENDIF»«

@@ -44,7 +44,7 @@ class OCL2ATL {
 				  		{wdSet.add(OCL.gen(e));null}»«
 				  		IF !OCL.isPrimtive(e)»«
 				  			IF !OCL.isCollection(e)»
-				  			«e.type.toString().replace("::", "!")».allInstances()->contains(«OCL.gen(e)») implies 
+				  			«e.type.toString().replace("::", "!")».allInstances()->includes(«OCL.gen(e)») implies 
 				  			«ELSE»
 				  			«OCL.gen(e)»->size()>0 implies 
 				  			«ENDIF»«
