@@ -1,7 +1,6 @@
 package fr.emn.atlanmod.uml.casestudy.rewrite;
 
 import com.google.common.base.Objects;
-import fr.emn.atlanmod.uml.casestudy.rewrite.OCL2ATL;
 import fr.emn.atlanmod.uml.casestudy.rewrite.OCLWDGenerator;
 import java.util.Arrays;
 import java.util.Collection;
@@ -36,6 +35,7 @@ import org.eclipse.ocl.pivot.Variable;
 import org.eclipse.ocl.pivot.VariableDeclaration;
 import org.eclipse.ocl.pivot.VariableExp;
 import org.eclipse.xtend2.lib.StringConcatenation;
+import org.eclipse.xtext.xbase.lib.Conversions;
 import org.eclipse.xtext.xbase.lib.Functions.Function1;
 import org.eclipse.xtext.xbase.lib.IterableExtensions;
 import org.eclipse.xtext.xbase.lib.ListExtensions;
@@ -45,6 +45,8 @@ public class OCL {
   private static HashSet<String> wdSetInner = new HashSet<String>();
   
   public static HashMap<String, EObject> bvMap = new HashMap<String, EObject>();
+  
+  private static String[] keywords = { "true", "false", "Bag", "Set", "OrderedSet", "Sequence", "Tuple", "Integer", "Real", "Boolean", "String", "TupleType", "Map", "not", "and", "or", "xor", "implies", "module", "create", "from", "uses", "helper", "def", "context", "rule", "using", "derived", "to", "mapsTo", "distinct", "foreach", "in", "do", "if", "then", "else", "endif", "let", "library", "query", "for", "div", "refining", "entrypoint" };
   
   protected static String _gen(final EObject e) {
     StringConcatenation _builder = new StringConcatenation();
@@ -194,7 +196,7 @@ public class OCL {
     StringConcatenation _builder = new StringConcatenation();
     Type _type = e.getType();
     String _gen = OCL.gen(_type);
-    final String itName = OCL2ATL.genIteratorName(_gen);
+    final String itName = OCL.genIteratorName(_gen);
     _builder.newLineIfNotEmpty();
     final VariableDeclaration ref = e.getReferredVariable();
     {
@@ -255,7 +257,7 @@ public class OCL {
     StringConcatenation _builder = new StringConcatenation();
     Type _type = e.getType();
     String _gen = OCL.gen(_type);
-    final String clazz = OCL2ATL.genIteratorName(_gen);
+    final String clazz = OCL.genIteratorName(_gen);
     _builder.newLineIfNotEmpty();
     String _name = e.getName();
     final String itName = (clazz + _name);
@@ -333,13 +335,17 @@ public class OCL {
   
   protected static String _gen(final EnumLiteralExp e) {
     StringConcatenation _builder = new StringConcatenation();
-    Type _type = e.getType();
-    String _name = _type.getName();
-    _builder.append(_name, "");
-    _builder.append(".");
     EnumerationLiteral _referredLiteral = e.getReferredLiteral();
-    String _name_1 = _referredLiteral.getName();
-    _builder.append(_name_1, "");
+    final String n = _referredLiteral.getName();
+    _builder.newLineIfNotEmpty();
+    String _xifexpression = null;
+    boolean _contains = ((List<String>)Conversions.doWrapArray(OCL.keywords)).contains(n);
+    if (_contains) {
+      _xifexpression = ("#_" + n);
+    } else {
+      _xifexpression = ("#" + n);
+    }
+    _builder.append(_xifexpression, "");
     return _builder.toString();
   }
   
@@ -444,7 +450,7 @@ public class OCL {
           List<Variable> _ownedIterators_3 = e.getOwnedIterators();
           for(final Variable itor : _ownedIterators_3) {
             {
-              if ((OCL2ATL.printAtHere(expr, OCL.gen(itor)) && (!OCL.wdSetInner.contains(OCL.gen(expr))))) {
+              if ((OCL.printAtHere(expr, OCL.gen(itor)) && (!OCL.wdSetInner.contains(OCL.gen(expr))))) {
                 Object _xblockexpression = null;
                 {
                   String _gen_1 = OCL.gen(expr);
@@ -529,13 +535,13 @@ public class OCL {
     if ((exp instanceof VariableExp)) {
       Type _type = ((VariableExp)exp).getType();
       String _gen = OCL.gen(_type);
-      final String itName = OCL2ATL.genIteratorName(_gen);
+      final String itName = OCL.genIteratorName(_gen);
       return ((!map.containsKey(itName)) || Objects.equal(map.get(itName), exp));
     } else {
       if ((exp instanceof IteratorVariable)) {
         Type _type_1 = ((IteratorVariable)exp).getType();
         String _gen_1 = OCL.gen(_type_1);
-        final String itName_1 = OCL2ATL.genIteratorName(_gen_1);
+        final String itName_1 = OCL.genIteratorName(_gen_1);
         return ((!map.containsKey(itName_1)) || Objects.equal(map.get(itName_1), exp));
       } else {
         return true;
@@ -544,11 +550,13 @@ public class OCL {
   }
   
   public static boolean isPrimtive(final PropertyCallExp e) {
-    if ((((Objects.equal(OCL.gen(e.getType()), "String") || Objects.equal(OCL.gen(e.getType()), "Integer")) || Objects.equal(OCL.gen(e.getType()), "Boolean")) || Objects.equal(OCL.gen(e.getType()), "Real"))) {
+    Type _type = e.getType();
+    final String s = OCL.gen(_type);
+    if ((((Objects.equal(s, "String") || Objects.equal(s, "Integer")) || Objects.equal(s, "Boolean")) || Objects.equal(s, "Real"))) {
       return true;
     } else {
-      Type _type = e.getType();
-      if ((_type instanceof Enumeration)) {
+      Type _type_1 = e.getType();
+      if ((_type_1 instanceof Enumeration)) {
         return true;
       } else {
         return false;
@@ -557,7 +565,9 @@ public class OCL {
   }
   
   public static boolean isCollection(final PropertyCallExp e) {
-    if ((Objects.equal(OCL.gen(e.getType()), "Set") || Objects.equal(OCL.gen(e.getType()), "OrderedSet"))) {
+    Type _type = e.getType();
+    final String s = OCL.gen(_type);
+    if (((Objects.equal(s, "Set") || Objects.equal(s, "OrderedSet")) || Objects.equal(s, "Sequence"))) {
       return true;
     } else {
       return false;
@@ -574,6 +584,47 @@ public class OCL {
       }
     }
     return "no such key";
+  }
+  
+  public static String genIteratorName(final String clazz) {
+    String rtn = "";
+    for (int i = 0; (i < clazz.length()); i++) {
+      char _charAt = clazz.charAt(i);
+      boolean _isUpperCase = Character.isUpperCase(_charAt);
+      if (_isUpperCase) {
+        String _rtn = rtn;
+        char _charAt_1 = clazz.charAt(i);
+        char _lowerCase = Character.toLowerCase(_charAt_1);
+        rtn = (_rtn + Character.valueOf(_lowerCase));
+      }
+    }
+    boolean _contains = ((List<String>)Conversions.doWrapArray(OCL.keywords)).contains(rtn);
+    if (_contains) {
+      rtn = ("_" + rtn);
+    }
+    return rtn;
+  }
+  
+  public static boolean printAtHere(final PropertyCallExp e, final String v) {
+    boolean r = false;
+    OCLExpression _ownedSource = e.getOwnedSource();
+    if ((_ownedSource instanceof VariableExp)) {
+      OCLExpression _ownedSource_1 = e.getOwnedSource();
+      String _gen = OCL.gen(_ownedSource_1);
+      String _trim = _gen.trim();
+      boolean _equals = Objects.equal(_trim, v);
+      if (_equals) {
+        r = true;
+      }
+    } else {
+      OCLExpression _ownedSource_2 = e.getOwnedSource();
+      if ((_ownedSource_2 instanceof PropertyCallExp)) {
+        OCLExpression _ownedSource_3 = e.getOwnedSource();
+        boolean _printAtHere = OCL.printAtHere(((PropertyCallExp) _ownedSource_3), v);
+        r = _printAtHere;
+      }
+    }
+    return r;
   }
   
   public static String gen(final EObject e) {

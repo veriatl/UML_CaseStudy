@@ -17,18 +17,25 @@ import org.eclipse.ocl.pivot.OCLExpression
 import org.eclipse.ocl.pivot.Operation
 import org.eclipse.ocl.pivot.OperationCallExp
 import org.eclipse.ocl.pivot.OppositePropertyCallExp
-import org.eclipse.ocl.pivot.ParameterVariable
 import org.eclipse.ocl.pivot.PropertyCallExp
 import org.eclipse.ocl.pivot.Type
 import org.eclipse.ocl.pivot.TypeExp
 import org.eclipse.ocl.pivot.UnlimitedNaturalLiteralExp
-import org.eclipse.ocl.pivot.VariableExp
 import org.eclipse.ocl.pivot.VariableDeclaration
+import org.eclipse.ocl.pivot.VariableExp
 
 class OCL {
 	static private HashSet<String> wdSetInner = new HashSet<String>
 	static public HashMap<String, EObject> bvMap = new HashMap<String, EObject>
+	static private String[] keywords = #['true', 'false',
+	'Bag', 'Set', 'OrderedSet', 'Sequence', 'Tuple', 'Integer', 'Real', 'Boolean', 'String', 'TupleType', 'Map',
+	'not', 'and', 'or', 'xor', 'implies', 'module', 'create', 'from', 'uses', 'helper', 'def', 'context', 
+	'rule', 'using', 'derived', 'to', 'mapsTo', 'distinct', 'foreach', 'in', 'do', 'if', 'then', 'else', 
+	'endif', 'let', 'library', 'query', 'for', 'div', 'refining', 'entrypoint']
 	
+	
+
+
 	// dispatcher
 	def static dispatch String gen(EObject e) '''
 		// We dont understand «e.eClass.name»'''
@@ -80,7 +87,7 @@ class OCL {
 
 	
 	def static dispatch String gen(VariableExp e) '''
-	«val itName = OCL2ATL.genIteratorName(gen(e.type))»
+	«val itName = genIteratorName(gen(e.type))»
 	«val ref = e.referredVariable»«
 	IF (bvMap.values.contains(ref))»
 		«getKeyByValue(bvMap, ref)»«
@@ -106,7 +113,7 @@ class OCL {
 
 	//TODO var name shadowing: Bug:  deployment_target, non_leaf_redefinition
 	def static dispatch String gen(IteratorVariable e) '''
-	«val clazz = OCL2ATL.genIteratorName(gen(e.type))»
+	«val clazz = genIteratorName(gen(e.type))»
 	«val itName = clazz+e.name»
 	«val hashName = clazz+itName+e.hashCode»«
 	IF (bvMap.keySet.contains(itName) && bvMap.get(itName) == e)»«itName»«
@@ -127,8 +134,10 @@ class OCL {
 	
 	def static dispatch String gen(BooleanLiteralExp e) '''«e.booleanSymbol»'''
 	
-	// TODO where is the model name before its type?
-	def static dispatch String gen(EnumLiteralExp e) '''«e.type.name».«e.referredLiteral.name»'''
+	//TODO confirm how to print keyword enumerate type
+	def static dispatch String gen(EnumLiteralExp e) '''
+	«val n = e.referredLiteral.name»
+	«if (keywords.contains(n)) "#_"+n else "#"+n»'''
 	
 	def static dispatch String gen(NullLiteralExp e) '''OclUndefined'''
 	
@@ -150,7 +159,7 @@ class OCL {
 	«gen(e.ownedSource)»->«e.referredIteration.name»(«if (e.ownedIterators.size!=0) args_dot + "|" else ""»
 	«FOR expr: wdExprs»
 		«FOR itor : e.ownedIterators»
-		  	«IF OCL2ATL.printAtHere(expr, gen(itor)) && !wdSetInner.contains(OCL.gen(expr))»«
+		  	«IF printAtHere(expr, gen(itor)) && !wdSetInner.contains(OCL.gen(expr))»«
 		  		{wdSetInner.add(gen(expr));null}»«
 		  		IF !OCL.isPrimtive(expr)»«
 		  			IF !isCollection(expr)»
@@ -174,10 +183,10 @@ endif'''
 	
 	def static isConsistentVariable(HashMap<String, EObject> map, EObject exp) {
 		if(exp instanceof VariableExp){
-			val itName = OCL2ATL.genIteratorName(gen(exp.type))
+			val itName = genIteratorName(gen(exp.type))
 			return  !map.containsKey(itName) || map.get(itName) == exp
 		}else if ( exp instanceof IteratorVariable){
-			val itName = OCL2ATL.genIteratorName(gen(exp.type))
+			val itName = genIteratorName(gen(exp.type))
 			return  !map.containsKey(itName) || map.get(itName) == exp
 		}else{
 			return true;
@@ -187,9 +196,9 @@ endif'''
 	
 	
 	def static boolean isPrimtive(PropertyCallExp e) {
-
-		if(OCL.gen(e.type) == "String" || OCL.gen(e.type) == "Integer" 
-			|| OCL.gen(e.type) == "Boolean" || OCL.gen(e.type) == "Real"
+		val String s = OCL.gen(e.type)
+		if(s == "String" || s == "Integer" 
+			|| s == "Boolean" || s == "Real"
 		){
 			return true
 		}else if(e.type instanceof Enumeration){
@@ -200,8 +209,8 @@ endif'''
 	}
 	
 	def static boolean isCollection(PropertyCallExp e) {
-
-		if(OCL.gen(e.type) == "Set" || OCL.gen(e.type) == "OrderedSet" 
+		val String s = OCL.gen(e.type)
+		if(s == "Set" || s == "OrderedSet" || s == "Sequence" 
 		){
 			return true
 		}else{
@@ -217,6 +226,37 @@ endif'''
 		}
 		
 		return "no such key"
+	}
+	
+	def static String genIteratorName(String clazz) {
+		var String rtn="";
+		
+		for(var i = 0; i<clazz.length; i++){
+			if(Character.isUpperCase(clazz.charAt(i))){
+				rtn += Character.toLowerCase(clazz.charAt(i))
+			}
+		}
+		
+		if(keywords.contains(rtn)){
+			rtn = "_"+rtn;
+		}
+		
+		
+		return rtn;
+	}
+	
+	def static boolean printAtHere(PropertyCallExp e, String v) {
+		var boolean r = false;
+		
+		if (e.ownedSource instanceof VariableExp ){
+			if (OCL.gen(e.ownedSource).trim == v){
+				r = true
+			}
+		}else if(e.ownedSource instanceof PropertyCallExp){
+			r = printAtHere(e.ownedSource as PropertyCallExp, v)
+		}
+		
+		return r;
 	}
 	
 }
