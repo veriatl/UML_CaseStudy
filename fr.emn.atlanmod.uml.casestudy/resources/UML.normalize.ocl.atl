@@ -1,3 +1,5 @@
+module UMLCopierContract;
+create OUT : UMLs from IN : UML;
 helper context UML!AcceptCallAction def: unmarshall(): Boolean = 
   UML!AcceptCallAction.allInstances()->forAll(aca |  
     aca.isUnmarshall = true
@@ -5,11 +7,13 @@ helper context UML!AcceptCallAction def: unmarshall(): Boolean =
 
 helper context UML!AcceptEventAction def: no_input_pins(): Boolean = 
   UML!AcceptEventAction.allInstances()->forAll(aea |  
+aea.input->size()>0 implies 
     aea.input->size() = 0
 ); 
 
 helper context UML!AcceptEventAction def: no_output_pins(): Boolean = 
   UML!AcceptEventAction.allInstances()->forAll(aea |  
+aea.trigger->size()>0 implies 
 aea.output->size()>0 implies 
     aea.oclIsTypeOf(UML!AcceptEventAction) and aea.trigger->forAll(t1_|
     UML!Event.allInstances()->contains(t1_.event) implies 
@@ -18,6 +22,7 @@ aea.output->size()>0 implies
 
 helper context UML!ActionInputPin def: input_pin(): Boolean = 
   UML!ActionInputPin.allInstances()->forAll(aip |  
+aip.fromAction.input->size()>0 implies 
 UML!Action.allInstances()->contains(aip.fromAction) implies 
     aip.fromAction.input->forAll(ip1_|
       ip1_.oclIsKindOf(UML!ActionInputPin))
@@ -25,20 +30,14 @@ UML!Action.allInstances()->contains(aip.fromAction) implies
 
 helper context UML!ActionInputPin def: one_output_pin(): Boolean = 
   UML!ActionInputPin.allInstances()->forAll(aip |  
+UML!Action.allInstances()->contains(aip.fromAction) implies 
 aip.fromAction.output->size()>0 implies 
     aip.fromAction.output->size() = 1
 ); 
 
-helper context UML!ActivityParameterNode def: no_outgoing_edges(): Boolean = 
-  UML!ActivityParameterNode.allInstances()->forAll(apn |  
-apn.outgoing->size()>0 implies 
-UML!Parameter.allInstances()->contains(apn.parameter) implies 
-apn.incoming->size()>0 implies 
-    apn.incoming->notEmpty() and apn.outgoing->isEmpty() implies apn.parameter.direction = ParameterDirectionKind.out or apn.parameter.direction = ParameterDirectionKind.inout or apn.parameter.direction = ParameterDirectionKind.return
-); 
-
 helper context UML!ActivityParameterNode def: has_parameters(): Boolean = 
   UML!ActivityParameterNode.allInstances()->forAll(apn |  
+apn.activity.ownedParameter->size()>0 implies 
 UML!Activity.allInstances()->contains(apn.activity) implies 
 UML!Parameter.allInstances()->contains(apn.parameter) implies 
     apn.activity.ownedParameter->includes(apn.parameter)
@@ -46,74 +45,36 @@ UML!Parameter.allInstances()->contains(apn.parameter) implies
 
 helper context UML!ActivityParameterNode def: same_type(): Boolean = 
   UML!ActivityParameterNode.allInstances()->forAll(apn |  
+UML!Parameter.allInstances()->contains(apn.parameter) implies 
 UML!Type.allInstances()->contains(apn.type) implies 
 UML!Type.allInstances()->contains(apn.parameter.type) implies 
     apn.type = apn.parameter.type
 ); 
 
-helper context UML!ActivityParameterNode def: no_incoming_edges(): Boolean = 
-  UML!ActivityParameterNode.allInstances()->forAll(apn |  
-apn.incoming->size()>0 implies 
-apn.outgoing->size()>0 implies 
-UML!Parameter.allInstances()->contains(apn.parameter) implies 
-    apn.outgoing->notEmpty() and apn.incoming->isEmpty() implies apn.parameter.direction = ParameterDirectionKind.in or apn.parameter.direction = ParameterDirectionKind.inout
-); 
-
 helper context UML!ActivityParameterNode def: no_edges(): Boolean = 
   UML!ActivityParameterNode.allInstances()->forAll(apn |  
+apn.incoming->size()>0 implies 
 apn.outgoing->size()>0 implies 
     apn.incoming->isEmpty() or apn.outgoing->isEmpty()
 ); 
 
-helper context UML!AddStructuralFeatureValueAction def: required_value(): Boolean = 
-  UML!AddStructuralFeatureValueAction.allInstances()->forAll(asfva |  
-    asfva.value <> OclUndefined
-); 
-
-helper context UML!AddVariableValueAction def: required_value(): Boolean = 
-  UML!AddVariableValueAction.allInstances()->forAll(avva |  
-    avva.value <> OclUndefined
-); 
-
-helper context UML!Association def: binary_associations(): Boolean = 
-  UML!Association.allInstances()->forAll(a |  
-a.memberEnd->size()>0 implies 
-    a.memberEnd->exists(p1_|
-      p1_.aggregation <> AggregationKind.none) implies a.memberEnd->size() = 2 and a.memberEnd->exists(pp1_1665197552|
-      pp1_1665197552.aggregation = AggregationKind.none)
-); 
-
 helper context UML!Association def: association_ends(): Boolean = 
   UML!Association.allInstances()->forAll(a |  
+a.ownedEnd->size()>0 implies 
 a.memberEnd->size()>0 implies 
     a.memberEnd->size() > 2 implies a.ownedEnd->includesAll(a.memberEnd)
 ); 
 
 helper context UML!AssociationClass def: disjoint_attributes_ends(): Boolean = 
   UML!AssociationClass.allInstances()->forAll(ac |  
+ac.ownedAttribute->size()>0 implies 
 ac.ownedEnd->size()>0 implies 
     ac.ownedAttribute->intersection(ac.ownedEnd)->isEmpty()
 ); 
 
-helper context UML!Behavior def: most_one_behavior(): Boolean = 
-  UML!Behavior.allInstances()->forAll(b |  
-b.context.ownedBehavior->size()>0 implies 
-UML!BehavioralFeature.allInstances()->contains(b.specification) implies 
-    b.specification <> OclUndefined implies b.context.ownedBehavior->select(b1_|
-    UML!BehavioralFeature.allInstances()->contains(b1_.specification) implies 
-      b1_.specification = b.specification)->size() = 1
-); 
-
-helper context UML!Behavior def: parameters_match(): Boolean = 
-  UML!Behavior.allInstances()->forAll(b |  
-b.ownedParameter->size()>0 implies 
-UML!BehavioralFeature.allInstances()->contains(b.specification) implies 
-b.specification.ownedParameter->size()>0 implies 
-    b.specification <> OclUndefined implies b.ownedParameter->size() = b.specification.ownedParameter->size()
-); 
-
 helper context UML!Behavior def: feature_of_context_classifier(): Boolean = 
   UML!Behavior.allInstances()->forAll(b |  
+UML!BehavioredClassifier.allInstances()->contains(b.context) implies 
 UML!BehavioralFeature.allInstances()->contains(b.specification) implies 
 b.context.feature->size()>0 implies 
     b.context.feature->includes(b.specification)
@@ -121,29 +82,14 @@ b.context.feature->size()>0 implies
 
 helper context UML!BehavioralFeature def: abstract_no_method(): Boolean = 
   UML!BehavioralFeature.allInstances()->forAll(bf |  
+bf.method->size()>0 implies 
     bf.isAbstract implies bf.method->isEmpty()
-); 
-
-helper context UML!BroadcastSignalAction def: no_onport(): Boolean = 
-  UML!BroadcastSignalAction.allInstances()->forAll(bsa |  
-    bsa.onPort = OclUndefined
 ); 
 
 helper context UML!CallAction def: synchronous_call(): Boolean = 
   UML!CallAction.allInstances()->forAll(ca |  
 ca.result->size()>0 implies 
     ca.result->notEmpty() implies ca.isSynchronous
-); 
-
-helper context UML!CallBehaviorAction def: no_onport(): Boolean = 
-  UML!CallBehaviorAction.allInstances()->forAll(cba |  
-    cba.onPort = OclUndefined
-); 
-
-helper context UML!Class def: passive_class(): Boolean = 
-  UML!Class.allInstances()->forAll(c |  
-UML!Behavior.allInstances()->contains(c.classifierBehavior) implies 
-    not(c.isActive) implies c.ownedReception->isEmpty() and c.classifierBehavior = OclUndefined
 ); 
 
 helper context UML!ClassifierTemplateParameter def: has_constraining_classifier(): Boolean = 
@@ -154,20 +100,14 @@ ctp.constrainingClassifier->size()>0 implies
 
 helper context UML!Clause def: test_and_body(): Boolean = 
   UML!Clause.allInstances()->forAll(c |  
+c.test->size()>0 implies 
 c.body->size()>0 implies 
     c.test->intersection(c.body)->isEmpty()
 ); 
 
-helper context UML!ClearStructuralFeatureAction def: type_of_result(): Boolean = 
-  UML!ClearStructuralFeatureAction.allInstances()->forAll(csfa |  
-UML!InputPin.allInstances()->contains(csfa.object) implies 
-UML!Type.allInstances()->contains(csfa.object.type) implies 
-UML!OutputPin.allInstances()->contains(csfa.result) implies 
-    csfa.result <> OclUndefined implies csfa.result.type = csfa.object.type
-); 
-
 helper context UML!CollaborationUse def: every_role(): Boolean = 
   UML!CollaborationUse.allInstances()->forAll(cu |  
+UML!Collaboration.allInstances()->contains(cu.type) implies 
 cu.type.collaborationRole->size()>0 implies 
 cu.roleBinding->size()>0 implies 
     cu.type.collaborationRole->forAll(cerole|
@@ -176,71 +116,35 @@ cu.roleBinding->size()>0 implies
         drb.supplier->includes(cerole)))
 ); 
 
-helper context UML!CombinedFragment def: consider_and_ignore(): Boolean = 
-  UML!CombinedFragment.allInstances()->forAll(cf |  
-    cf.interactionOperator = InteractionOperatorKind.consider or cf.interactionOperator = InteractionOperatorKind.ignore implies cf.oclIsKindOf(UML!ConsiderIgnoreFragment)
-); 
-
-helper context UML!CombinedFragment def: opt_loop_break_neg(): Boolean = 
-  UML!CombinedFragment.allInstances()->forAll(cf |  
-cf.operand->size()>0 implies 
-    cf.interactionOperator = InteractionOperatorKind.opt or cf.interactionOperator = InteractionOperatorKind.loop or cf.interactionOperator = InteractionOperatorKind.break or cf.interactionOperator = InteractionOperatorKind.assert or cf.interactionOperator = InteractionOperatorKind.neg implies cf.operand->size() = 1
-); 
-
 helper context UML!CommunicationPath def: association_ends(): Boolean = 
   UML!CommunicationPath.allInstances()->forAll(cp |  
+cp.endType->size()>0 implies 
     cp.endType->forAll(t1_|
       t1_.oclIsKindOf(UML!DeploymentTarget))
 ); 
 
 helper context UML!Component def: no_nested_classifiers(): Boolean = 
   UML!Component.allInstances()->forAll(c |  
+c.nestedClassifier->size()>0 implies 
     c.nestedClassifier->isEmpty()
-); 
-
-helper context UML!Component def: no_packaged_elements(): Boolean = 
-  UML!Component.allInstances()->forAll(c |  
-    c.nestedClassifier <> OclUndefined implies c.packagedElement->isEmpty()
 ); 
 
 helper context UML!ConditionalNode def: no_input_pins(): Boolean = 
   UML!ConditionalNode.allInstances()->forAll(cn |  
+cn.input->size()>0 implies 
     cn.input->isEmpty()
-); 
-
-helper context UML!ConditionalNode def: clause_no_predecessor(): Boolean = 
-  UML!ConditionalNode.allInstances()->forAll(cn |  
-cn.clause->size()>0 implies 
-    cn.clause->closure(c1_|
-    c1_.predecessorClause->size()>0 implies 
-      c1_.predecessorClause)->intersection(cn.clause)->isEmpty()
-); 
-
-helper context UML!ConnectionPointReference def: exit_pseudostates(): Boolean = 
-  UML!ConnectionPointReference.allInstances()->forAll(cpr |  
-    cpr.exit->forAll(p1_|
-      p1_.kind = PseudostateKind.exitPoint)
-); 
-
-helper context UML!ConnectionPointReference def: entry_pseudostates(): Boolean = 
-  UML!ConnectionPointReference.allInstances()->forAll(cpr |  
-    cpr.entry->forAll(p1_|
-      p1_.kind = PseudostateKind.entryPoint)
-); 
-
-helper context UML!ConsiderIgnoreFragment def: consider_or_ignore(): Boolean = 
-  UML!ConsiderIgnoreFragment.allInstances()->forAll(cif |  
-    cif.interactionOperator = InteractionOperatorKind.consider or cif.interactionOperator = InteractionOperatorKind.ignore
 ); 
 
 helper context UML!ConsiderIgnoreFragment def: type(): Boolean = 
   UML!ConsiderIgnoreFragment.allInstances()->forAll(cif |  
+cif.message->size()>0 implies 
     cif.message->forAll(nem|
       nem.oclIsKindOf(UML!Operation) or nem.oclIsKindOf(UML!Signal))
 ); 
 
 helper context UML!Constraint def: not_apply_to_self(): Boolean = 
   UML!Constraint.allInstances()->forAll(c |  
+c.constrainedElement->size()>0 implies 
     not(c.constrainedElement->includes(c))
 ); 
 
@@ -252,11 +156,13 @@ UML!Classifier.allInstances()->contains(coa.classifier) implies
 
 helper context UML!CreateObjectAction def: classifier_not_association_class(): Boolean = 
   UML!CreateObjectAction.allInstances()->forAll(coa |  
+UML!Classifier.allInstances()->contains(coa.classifier) implies 
     not(coa.classifier.oclIsKindOf(UML!AssociationClass))
 ); 
 
 helper context UML!CreateObjectAction def: same_type(): Boolean = 
   UML!CreateObjectAction.allInstances()->forAll(coa |  
+UML!Type.allInstances()->contains(coa.result.type) implies 
 UML!OutputPin.allInstances()->contains(coa.result) implies 
 UML!Classifier.allInstances()->contains(coa.classifier) implies 
     coa.result.type = coa.classifier
@@ -264,40 +170,21 @@ UML!Classifier.allInstances()->contains(coa.classifier) implies
 
 helper context UML!DecisionNode def: decision_input_flow_incoming(): Boolean = 
   UML!DecisionNode.allInstances()->forAll(dn |  
+UML!ObjectFlow.allInstances()->contains(dn.decisionInputFlow) implies 
 dn.incoming->size()>0 implies 
     dn.incoming->includes(dn.decisionInputFlow)
 ); 
 
 helper context UML!DecisionNode def: incoming_outgoing_edges(): Boolean = 
   UML!DecisionNode.allInstances()->forAll(dn |  
+dn.outgoing->size()>0 implies 
 dn.incoming->size()>0 implies 
     dn.incoming->size() = 1 or dn.incoming->size() = 2 and dn.outgoing->size() > 0
 ); 
 
-helper context UML!DecisionNode def: parameters(): Boolean = 
-  UML!DecisionNode.allInstances()->forAll(dn |  
-dn.decisionInput.ownedParameter->size()>0 implies 
-UML!Behavior.allInstances()->contains(dn.decisionInput) implies 
-    dn.decisionInput <> OclUndefined implies dn.decisionInput.ownedParameter->forAll(ppar|
-      ppar.direction <> ParameterDirectionKind.out and ppar.direction <> ParameterDirectionKind.inout) and dn.decisionInput.ownedParameter->one(pppar426019904|
-      pppar426019904.direction <> ParameterDirectionKind.return)
-); 
-
-helper context UML!DestroyObjectAction def: no_type(): Boolean = 
-  UML!DestroyObjectAction.allInstances()->forAll(doa |  
-UML!Type.allInstances()->contains(doa.target.type) implies 
-    doa.target.type = OclUndefined
-); 
-
-helper context UML!Duration def: no_expr_requires_observation(): Boolean = 
-  UML!Duration.allInstances()->forAll(d |  
-d.observation->size()>0 implies 
-    d.expr = OclUndefined implies d.observation->size() = 1 and d.observation->forAll(o1_|
-      o1_.oclIsKindOf(UML!DurationObservation))
-); 
-
 helper context UML!DurationConstraint def: first_event_multiplicity(): Boolean = 
   UML!DurationConstraint.allInstances()->forAll(dc |  
+dc.constrainedElement->size()>0 implies 
 dc.firstEvent->size()>0 implies 
     if (dc.constrainedElement->size() = 2) then 
       dc.firstEvent->size() = 2
@@ -313,34 +200,26 @@ dc.constrainedElement->size()>0 implies
 ); 
 
 helper context UML!DurationObservation def: first_event_multiplicity(): Boolean = 
-  UML!DurationObservation.allInstances()->forAll(do |  
-do.firstEvent->size()>0 implies 
-    if (do.event->size() = 2) then 
-      do.firstEvent->size() = 2
+  UML!DurationObservation.allInstances()->forAll(_do |  
+_do.event->size()>0 implies 
+_do.firstEvent->size()>0 implies 
+    if (_do.event->size() = 2) then 
+      _do.firstEvent->size() = 2
     else 
-      do.firstEvent->size() = 0
+      _do.firstEvent->size() = 0
     endif
-); 
-
-helper context UML!ElementImport def: imported_element_is_public(): Boolean = 
-  UML!ElementImport.allInstances()->forAll(ei |  
-UML!PackageableElement.allInstances()->contains(ei.importedElement) implies 
-    ei.importedElement.visibility <> OclUndefined implies ei.importedElement.visibility = VisibilityKind.public
-); 
-
-helper context UML!ElementImport def: visibility_public_or_private(): Boolean = 
-  UML!ElementImport.allInstances()->forAll(ei |  
-    ei.visibility = VisibilityKind.public or ei.visibility = VisibilityKind.private
 ); 
 
 helper context UML!Enumeration def: immutable(): Boolean = 
   UML!Enumeration.allInstances()->forAll(e |  
+e.ownedAttribute->size()>0 implies 
     e.ownedAttribute->forAll(p1_|
       p1_.isReadOnly)
 ); 
 
 helper context UML!ExceptionHandler def: handler_body_edges(): Boolean = 
   UML!ExceptionHandler.allInstances()->forAll(eh |  
+eh.exceptionInput.incoming->size()>0 implies 
 UML!ExecutableNode.allInstances()->contains(eh.handlerBody) implies 
 UML!ObjectNode.allInstances()->contains(eh.exceptionInput) implies 
 eh.handlerBody.incoming->size()>0 implies 
@@ -350,6 +229,7 @@ eh.handlerBody.outgoing->size()>0 implies
 
 helper context UML!ExceptionHandler def: handler_body_owner(): Boolean = 
   UML!ExceptionHandler.allInstances()->forAll(eh |  
+UML!ExecutableNode.allInstances()->contains(eh.protectedNode) implies 
 UML!Element.allInstances()->contains(eh.protectedNode.owner) implies 
 UML!ExecutableNode.allInstances()->contains(eh.handlerBody) implies 
 UML!Element.allInstances()->contains(eh.handlerBody.owner) implies 
@@ -358,6 +238,7 @@ UML!Element.allInstances()->contains(eh.handlerBody.owner) implies
 
 helper context UML!ExecutionSpecification def: same_lifeline(): Boolean = 
   UML!ExecutionSpecification.allInstances()->forAll(es |  
+UML!OccurrenceSpecification.allInstances()->contains(es.start) implies 
 UML!Lifeline.allInstances()->contains(es.finish.covered) implies 
 UML!Lifeline.allInstances()->contains(es.start.covered) implies 
 UML!OccurrenceSpecification.allInstances()->contains(es.finish) implies 
@@ -366,6 +247,7 @@ UML!OccurrenceSpecification.allInstances()->contains(es.finish) implies
 
 helper context UML!Extend def: extension_points(): Boolean = 
   UML!Extend.allInstances()->forAll(e |  
+UML!UseCase.allInstances()->contains(e.extendedCase) implies 
 e.extensionLocation->size()>0 implies 
 e.extendedCase.extensionPoint->size()>0 implies 
     e.extensionLocation->forAll(epxp|
@@ -374,48 +256,44 @@ e.extendedCase.extensionPoint->size()>0 implies
 
 helper context UML!Extension def: is_binary(): Boolean = 
   UML!Extension.allInstances()->forAll(e |  
+e.memberEnd->size()>0 implies 
     e.memberEnd->size() = 2
-); 
-
-helper context UML!ExtensionEnd def: aggregation(): Boolean = 
-  UML!ExtensionEnd.allInstances()->forAll(ee |  
-    ee.aggregation = AggregationKind.composite
 ); 
 
 helper context UML!FinalNode def: no_outgoing_edges(): Boolean = 
   UML!FinalNode.allInstances()->forAll(fn |  
+fn.outgoing->size()>0 implies 
     fn.outgoing->isEmpty()
 ); 
 
 helper context UML!FinalState def: no_outgoing_transitions(): Boolean = 
   UML!FinalState.allInstances()->forAll(fs |  
+fs.outgoing->size()>0 implies 
     fs.outgoing->size() = 0
 ); 
 
 helper context UML!FinalState def: no_regions(): Boolean = 
   UML!FinalState.allInstances()->forAll(fs |  
+fs.region->size()>0 implies 
     fs.region->size() = 0
 ); 
 
 helper context UML!ForkNode def: one_incoming_edge(): Boolean = 
   UML!ForkNode.allInstances()->forAll(fn |  
+fn.incoming->size()>0 implies 
     fn.incoming->size() = 1
 ); 
 
-helper context UML!FunctionBehavior def: one_output_parameter(): Boolean = 
-  UML!FunctionBehavior.allInstances()->forAll(fb |  
-    fb.ownedParameter->select(pp|
-      pp.direction = ParameterDirectionKind.out or pp.direction = ParameterDirectionKind.inout or pp.direction = ParameterDirectionKind.return)->size() >= 1
-); 
-
 helper context UML!InformationFlow def: convey_classifiers(): Boolean = 
-  UML!InformationFlow.allInstances()->forAll(if |  
-    if.conveyed->forAll(c1_|
+  UML!InformationFlow.allInstances()->forAll(_if |  
+_if.conveyed->size()>0 implies 
+    _if.conveyed->forAll(c1_|
       c1_.oclIsKindOf(UML!Class) or c1_.oclIsKindOf(UML!Interface) or c1_.oclIsKindOf(UML!InformationItem) or c1_.oclIsKindOf(UML!Signal) or c1_.oclIsKindOf(UML!Component))
 ); 
 
 helper context UML!InformationItem def: has_no(): Boolean = 
   UML!InformationItem.allInstances()->forAll(ii |  
+ii.generalization->size()>0 implies 
 ii.feature->size()>0 implies 
     ii.generalization->isEmpty() and ii.feature->isEmpty()
 ); 
@@ -426,24 +304,28 @@ helper context UML!InformationItem def: not_instantiable(): Boolean =
 ); 
 
 helper context UML!InitialNode def: no_incoming_edges(): Boolean = 
-  UML!InitialNode.allInstances()->forAll(in |  
-    in.incoming->isEmpty()
+  UML!InitialNode.allInstances()->forAll(_in |  
+_in.incoming->size()>0 implies 
+    _in.incoming->isEmpty()
 ); 
 
 helper context UML!InitialNode def: control_edges(): Boolean = 
-  UML!InitialNode.allInstances()->forAll(in |  
-    in.outgoing->forAll(ae1_|
+  UML!InitialNode.allInstances()->forAll(_in |  
+_in.outgoing->size()>0 implies 
+    _in.outgoing->forAll(ae1_|
       ae1_.oclIsKindOf(UML!ControlFlow))
 ); 
 
 helper context UML!InstanceSpecification def: deployment_artifact(): Boolean = 
   UML!InstanceSpecification.allInstances()->forAll(is |  
+is.classifier->size()>0 implies 
     is.deployedArtifact->notEmpty() implies is.classifier->exists(c1_|
       c1_.oclIsKindOf(UML!Artifact))
 ); 
 
 helper context UML!InstanceSpecification def: deployment_target(): Boolean = 
   UML!InstanceSpecification.allInstances()->forAll(is |  
+is.deployment->size()>0 implies 
 is.classifier->size()>0 implies 
     is.deployment->notEmpty() implies is.classifier->exists(cnode|
       cnode.oclIsKindOf(UML!Node) and UML!Node->allInstances()->exists(nn|
@@ -453,14 +335,9 @@ is.classifier->size()>0 implies
           pp.type = cnode)))
 ); 
 
-helper context UML!Interface def: visibility(): Boolean = 
-  UML!Interface.allInstances()->forAll(i |  
-    i.feature->forAll(f1_|
-      f1_.visibility = VisibilityKind.public)
-); 
-
 helper context UML!JoinNode def: one_outgoing_edge(): Boolean = 
   UML!JoinNode.allInstances()->forAll(jn |  
+jn.outgoing->size()>0 implies 
     jn.outgoing->size() = 1
 ); 
 
@@ -480,52 +357,38 @@ jn.incoming->size()>0 implies
 
 helper context UML!LinkAction def: not_static(): Boolean = 
   UML!LinkAction.allInstances()->forAll(la |  
+la.endData->size()>0 implies 
     la.endData->forAll(led1_|
     UML!Property.allInstances()->contains(led1_.end) implies 
       not(led1_.end.isStatic))
 ); 
 
-helper context UML!LinkEndData def: property_is_association_end(): Boolean = 
-  UML!LinkEndData.allInstances()->forAll(led |  
-UML!Association.allInstances()->contains(led.end.association) implies 
-    led.end.association <> OclUndefined
-); 
-
 helper context UML!LoopNode def: setup_test_and_body(): Boolean = 
   UML!LoopNode.allInstances()->forAll(ln |  
+ln.bodyPart->size()>0 implies 
 ln.test->size()>0 implies 
 ln.setupPart->size()>0 implies 
-ln.bodyPart->size()>0 implies 
     ln.setupPart->intersection(ln.test)->isEmpty() and ln.setupPart->intersection(ln.bodyPart)->isEmpty() and ln.test->intersection(ln.bodyPart)->isEmpty()
 ); 
 
 helper context UML!MergeNode def: one_outgoing_edge(): Boolean = 
   UML!MergeNode.allInstances()->forAll(mn |  
+mn.outgoing->size()>0 implies 
     mn.outgoing->size() = 1
-); 
-
-helper context UML!NamedElement def: visibility_needs_ownership(): Boolean = 
-  UML!NamedElement.allInstances()->forAll(ne |  
-UML!Namespace.allInstances()->contains(ne.namespace) implies 
-    ne.namespace = OclUndefined and ne.owner <> OclUndefined implies ne.visibility = OclUndefined
 ); 
 
 helper context UML!Node def: internal_structure(): Boolean = 
   UML!Node.allInstances()->forAll(n |  
+n.part->size()>0 implies 
     n.part->forAll(p1_|
       p1_.oclIsKindOf(UML!Node))
 ); 
 
 helper context UML!ObjectFlow def: no_executable_nodes(): Boolean = 
   UML!ObjectFlow.allInstances()->forAll(of |  
+UML!ActivityNode.allInstances()->contains(of.target) implies 
 UML!ActivityNode.allInstances()->contains(of.source) implies 
     not(of.source.oclIsKindOf(UML!ExecutableNode) or of.target.oclIsKindOf(UML!ExecutableNode))
-); 
-
-helper context UML!ObjectFlow def: selection_behavior(): Boolean = 
-  UML!ObjectFlow.allInstances()->forAll(of |  
-UML!ActivityNode.allInstances()->contains(of.source) implies 
-    of.selection <> OclUndefined implies of.source.oclIsKindOf(UML!ObjectNode)
 ); 
 
 helper context UML!ObjectFlow def: is_multicast_or_is_multireceive(): Boolean = 
@@ -533,96 +396,29 @@ helper context UML!ObjectFlow def: is_multicast_or_is_multireceive(): Boolean =
     not(of.isMulticast and of.isMultireceive)
 ); 
 
-helper context UML!ObjectNode def: selection_behavior(): Boolean = 
-  UML!ObjectNode.allInstances()->forAll(on |  
-    on.selection <> OclUndefined = on.ordering = ObjectNodeOrderingKind.ordered
-); 
-
 helper context UML!OpaqueAction def: language_body_size(): Boolean = 
   UML!OpaqueAction.allInstances()->forAll(oa |  
 oa.language->size()>0 implies 
-Sequence(String).allInstances()->contains(oa.body) implies 
+oa.body->size()>0 implies 
     oa.language->notEmpty() implies oa.body->size() = oa.language->size()
 ); 
 
 helper context UML!OpaqueExpression def: language_body_size(): Boolean = 
   UML!OpaqueExpression.allInstances()->forAll(oe |  
-Sequence(String).allInstances()->contains(oe.body) implies 
 oe.language->size()>0 implies 
+oe.body->size()>0 implies 
     oe.language->notEmpty() implies oe.body->size() = oe.language->size()
-); 
-
-helper context UML!OpaqueExpression def: one_return_result_parameter(): Boolean = 
-  UML!OpaqueExpression.allInstances()->forAll(oe |  
-UML!Behavior.allInstances()->contains(oe.behavior) implies 
-    oe.behavior <> OclUndefined implies oe.behavior.ownedParameter->select(p1_|
-      p1_.direction = ParameterDirectionKind.return)->size() = 1
-); 
-
-helper context UML!OpaqueExpression def: only_return_result_parameters(): Boolean = 
-  UML!OpaqueExpression.allInstances()->forAll(oe |  
-oe.behavior.ownedParameter->size()>0 implies 
-UML!Behavior.allInstances()->contains(oe.behavior) implies 
-    oe.behavior <> OclUndefined implies oe.behavior.ownedParameter->select(p1_|
-      p1_.direction <> ParameterDirectionKind.return)->isEmpty()
-); 
-
-helper context UML!Operation def: at_most_one_return(): Boolean = 
-  UML!Operation.allInstances()->forAll(o |  
-    o.ownedParameter->select(p1_|
-      p1_.direction = ParameterDirectionKind.return)->size() <= 1
-); 
-
-helper context UML!Operation def: only_body_for_query(): Boolean = 
-  UML!Operation.allInstances()->forAll(o |  
-    o.bodyCondition <> OclUndefined implies o.isQuery
-); 
-
-helper context UML!Package def: elements_public_or_private(): Boolean = 
-  UML!Package.allInstances()->forAll(p |  
-    p.packagedElement->forAll(pee|
-      pee.visibility <> OclUndefined implies pee.visibility = VisibilityKind.public or pee.visibility = VisibilityKind.private)
-); 
-
-helper context UML!PackageImport def: public_or_private(): Boolean = 
-  UML!PackageImport.allInstances()->forAll(pi |  
-    pi.visibility = VisibilityKind.public or pi.visibility = VisibilityKind.private
-); 
-
-helper context UML!PackageableElement def: namespace_needs_visibility(): Boolean = 
-  UML!PackageableElement.allInstances()->forAll(pe |  
-    pe.visibility = OclUndefined implies pe.namespace = OclUndefined
-); 
-
-helper context UML!Parameter def: in_and_out(): Boolean = 
-  UML!Parameter.allInstances()->forAll(p |  
-    p.effect = ParameterEffectKind.delete implies p.direction = ParameterDirectionKind.in or p.direction = ParameterDirectionKind.inout and p.effect = ParameterEffectKind.create implies p.direction = ParameterDirectionKind.out or p.direction = ParameterDirectionKind.inout or p.direction = ParameterDirectionKind.return
-); 
-
-helper context UML!Parameter def: not_exception(): Boolean = 
-  UML!Parameter.allInstances()->forAll(p |  
-    p.isException implies p.direction <> ParameterDirectionKind.in and p.direction <> ParameterDirectionKind.inout
 ); 
 
 helper context UML!Parameter def: connector_end(): Boolean = 
   UML!Parameter.allInstances()->forAll(p |  
+p.end->size()>0 implies 
     p.end->notEmpty() implies p.collaborationRole->notEmpty()
-); 
-
-helper context UML!Parameter def: reentrant_behaviors(): Boolean = 
-  UML!Parameter.allInstances()->forAll(p |  
-    p.isStream and p.ownedParameter <> OclUndefined implies not(p.ownedParameter.isReentrant)
 ); 
 
 helper context UML!Parameter def: stream_and_exception(): Boolean = 
   UML!Parameter.allInstances()->forAll(p |  
     not(p.isException and p.isStream)
-); 
-
-helper context UML!Parameter def: object_effect(): Boolean = 
-  UML!Parameter.allInstances()->forAll(p |  
-UML!Type.allInstances()->contains(p.type) implies 
-    p.type.oclIsKindOf(UML!DataType) implies p.effect = OclUndefined
 ); 
 
 helper context UML!ParameterSet def: same_parameterized_entity(): Boolean = 
@@ -635,20 +431,6 @@ ps.parameter->size()>0 implies
       ps.owner = pp1.owner and ps.owner = pp2.owner and pp1.direction = pp2.direction)
 ); 
 
-helper context UML!ParameterSet def: input(): Boolean = 
-  UML!ParameterSet.allInstances()->forAll(ps |  
-ps.parameter->size()>0 implies 
-    ps.parameter->exists(p1_|
-      p1_.direction = ParameterDirectionKind.in) implies ps.ownedParameterSet.ownedParameter->select(pp|
-    pp.parameterSet->size()>0 implies 
-      pp.direction = ParameterDirectionKind.in and pp.parameterSet->isEmpty())->forAll(pp1_182949133|
-      pp1_182949133.isStream) and ps.parameter->exists(pp1_1077316166|
-      pp1_1077316166.direction = ParameterDirectionKind.out) implies ps.ownedParameterSet.ownedParameter->select(ppp1846568576|
-    ppp1846568576.parameterSet->size()>0 implies 
-      ppp1846568576.direction = ParameterDirectionKind.out and ppp1846568576.parameterSet->isEmpty())->forAll(pp1_1519100796|
-      pp1_1519100796.isStream)
-); 
-
 helper context UML!Pin def: control_pins(): Boolean = 
   UML!Pin.allInstances()->forAll(p |  
     p.isControl implies p.isControlType
@@ -659,13 +441,9 @@ helper context UML!Pin def: not_unique(): Boolean =
     not(p.isUnique)
 ); 
 
-helper context UML!Port def: port_aggregation(): Boolean = 
-  UML!Port.allInstances()->forAll(p |  
-    p.aggregation = AggregationKind.composite
-); 
-
 helper context UML!Port def: encapsulated_owner(): Boolean = 
   UML!Port.allInstances()->forAll(p |  
+UML!Element.allInstances()->contains(p.owner) implies 
     p.owner = p.ownedPort
 ); 
 
@@ -682,6 +460,7 @@ helper context UML!Property def: derived_union_is_derived(): Boolean =
 helper context UML!Property def: deployment_target(): Boolean = 
   UML!Property.allInstances()->forAll(p |  
 p.deployment->size()>0 implies 
+UML!Element.allInstances()->contains(p.owner) implies 
     p.deployment->notEmpty() implies p.owner.oclIsKindOf(UML!Node) and UML!Node->allInstances()->exists(nn|
     nn.part->size()>0 implies 
       nn.part->exists(pp|
@@ -690,101 +469,46 @@ p.deployment->size()>0 implies
 
 helper context UML!Property def: subsetted_property_names(): Boolean = 
   UML!Property.allInstances()->forAll(p |  
+p.subsettedProperty->size()>0 implies 
     p.subsettedProperty->forAll(psp|
       psp.name <> p.name)
 ); 
 
-helper context UML!ProtocolStateMachine def: classifier_context(): Boolean = 
-  UML!ProtocolStateMachine.allInstances()->forAll(psm |  
-UML!BehavioralFeature.allInstances()->contains(psm.specification) implies 
-    psm.context <> OclUndefined and psm.specification = OclUndefined
-); 
-
 helper context UML!ProtocolStateMachine def: protocol_transitions(): Boolean = 
   UML!ProtocolStateMachine.allInstances()->forAll(psm |  
+psm.region->size()>0 implies 
     psm.region->forAll(rr|
     rr.transition->size()>0 implies 
       rr.transition->forAll(tt|
         tt.oclIsTypeOf(UML!ProtocolTransition)))
 ); 
 
-helper context UML!ProtocolTransition def: associated_actions(): Boolean = 
-  UML!ProtocolTransition.allInstances()->forAll(pt |  
-    pt.effect = OclUndefined
-); 
-
-helper context UML!Pseudostate def: choice_vertex(): Boolean = 
-  UML!Pseudostate.allInstances()->forAll(p |  
-p.incoming->size()>0 implies 
-    p.kind = PseudostateKind.choice implies p.incoming->size() >= 1 and p.outgoing->size() >= 1
-); 
-
-helper context UML!Pseudostate def: join_vertex(): Boolean = 
-  UML!Pseudostate.allInstances()->forAll(p |  
-p.incoming->size()>0 implies 
-p.outgoing->size()>0 implies 
-    p.kind = PseudostateKind.join implies p.outgoing->size() = 1 and p.incoming->size() >= 2
-); 
-
-helper context UML!Pseudostate def: junction_vertex(): Boolean = 
-  UML!Pseudostate.allInstances()->forAll(p |  
-p.outgoing->size()>0 implies 
-p.incoming->size()>0 implies 
-    p.kind = PseudostateKind.junction implies p.incoming->size() >= 1 and p.outgoing->size() >= 1
-); 
-
-helper context UML!Pseudostate def: history_vertices(): Boolean = 
-  UML!Pseudostate.allInstances()->forAll(p |  
-p.outgoing->size()>0 implies 
-    p.kind = PseudostateKind.deepHistory or p.kind = PseudostateKind.shallowHistory implies p.outgoing->size() <= 1
-); 
-
-helper context UML!Pseudostate def: initial_vertex(): Boolean = 
-  UML!Pseudostate.allInstances()->forAll(p |  
-p.outgoing->size()>0 implies 
-    p.kind = PseudostateKind.initial implies p.outgoing->size() <= 1
-); 
-
-helper context UML!Pseudostate def: fork_vertex(): Boolean = 
-  UML!Pseudostate.allInstances()->forAll(p |  
-p.outgoing->size()>0 implies 
-    p.kind = PseudostateKind.fork implies p.incoming->size() = 1 and p.outgoing->size() >= 2
-); 
-
 helper context UML!QualifierValue def: qualifier_attribute(): Boolean = 
   UML!QualifierValue.allInstances()->forAll(qv |  
+UML!Property.allInstances()->contains(qv.qualifier) implies 
     qv.qualifier.end.qualifier->includes(qv.qualifier)
 ); 
 
 helper context UML!ReadExtentAction def: type_is_classifier(): Boolean = 
   UML!ReadExtentAction.allInstances()->forAll(rea |  
 UML!OutputPin.allInstances()->contains(rea.result) implies 
+UML!Classifier.allInstances()->contains(rea.classifier) implies 
 UML!Type.allInstances()->contains(rea.result.type) implies 
     rea.result.type = rea.classifier
-); 
-
-helper context UML!ReadIsClassifiedObjectAction def: no_type(): Boolean = 
-  UML!ReadIsClassifiedObjectAction.allInstances()->forAll(ricoa |  
-UML!InputPin.allInstances()->contains(ricoa.object) implies 
-    ricoa.object.type = OclUndefined
 ); 
 
 helper context UML!ReadIsClassifiedObjectAction def: boolean_result(): Boolean = 
   UML!ReadIsClassifiedObjectAction.allInstances()->forAll(ricoa |  
 UML!OutputPin.allInstances()->contains(ricoa.result) implies 
+UML!Type.allInstances()->contains(ricoa.result.type) implies 
     ricoa.result.type = Boolean
-); 
-
-helper context UML!ReadLinkObjectEndAction def: property(): Boolean = 
-  UML!ReadLinkObjectEndAction.allInstances()->forAll(rloea |  
-UML!Property.allInstances()->contains(rloea.end) implies 
-    rloea.end.association <> OclUndefined
 ); 
 
 helper context UML!ReadLinkObjectEndAction def: ends_of_association(): Boolean = 
   UML!ReadLinkObjectEndAction.allInstances()->forAll(rloea |  
 rloea.end.association.memberEnd->size()>0 implies 
 UML!Association.allInstances()->contains(rloea.end.association) implies 
+UML!Property.allInstances()->contains(rloea.end) implies 
     rloea.end.association.memberEnd->forAll(pe|
       not(pe.isStatic))
 ); 
@@ -793,6 +517,7 @@ helper context UML!ReadLinkObjectEndAction def: type_of_result(): Boolean =
   UML!ReadLinkObjectEndAction.allInstances()->forAll(rloea |  
 UML!Property.allInstances()->contains(rloea.end) implies 
 UML!Type.allInstances()->contains(rloea.end.type) implies 
+UML!OutputPin.allInstances()->contains(rloea.result) implies 
 UML!Type.allInstances()->contains(rloea.result.type) implies 
     rloea.result.type = rloea.end.type
 ); 
@@ -801,6 +526,7 @@ helper context UML!ReadLinkObjectEndAction def: type_of_object(): Boolean =
   UML!ReadLinkObjectEndAction.allInstances()->forAll(rloea |  
 UML!InputPin.allInstances()->contains(rloea.object) implies 
 UML!Property.allInstances()->contains(rloea.end) implies 
+UML!Association.allInstances()->contains(rloea.end.association) implies 
 UML!Type.allInstances()->contains(rloea.object.type) implies 
     rloea.object.type = rloea.end.association
 ); 
@@ -808,23 +534,26 @@ UML!Type.allInstances()->contains(rloea.object.type) implies
 helper context UML!ReadLinkObjectEndAction def: association_of_association(): Boolean = 
   UML!ReadLinkObjectEndAction.allInstances()->forAll(rloea |  
 UML!Property.allInstances()->contains(rloea.end) implies 
+UML!Association.allInstances()->contains(rloea.end.association) implies 
     rloea.end.association.oclIsKindOf(UML!AssociationClass)
 ); 
 
 helper context UML!ReadLinkObjectEndQualifierAction def: type_of_object(): Boolean = 
   UML!ReadLinkObjectEndQualifierAction.allInstances()->forAll(rloeqa |  
-UML!InputPin.allInstances()->contains(rloeqa.object) implies 
-UML!Property.allInstances()->contains(rloeqa.qualifier) implies 
-UML!Association.allInstances()->contains(rloeqa.qualifier.associationEnd.association) implies 
 UML!Property.allInstances()->contains(rloeqa.qualifier.associationEnd) implies 
+UML!Association.allInstances()->contains(rloeqa.qualifier.associationEnd.association) implies 
+UML!Property.allInstances()->contains(rloeqa.qualifier) implies 
+UML!InputPin.allInstances()->contains(rloeqa.object) implies 
+UML!Type.allInstances()->contains(rloeqa.object.type) implies 
     rloeqa.object.type = rloeqa.qualifier.associationEnd.association
 ); 
 
 helper context UML!ReadLinkObjectEndQualifierAction def: ends_of_association(): Boolean = 
   UML!ReadLinkObjectEndQualifierAction.allInstances()->forAll(rloeqa |  
+UML!Property.allInstances()->contains(rloeqa.qualifier.associationEnd) implies 
+UML!Association.allInstances()->contains(rloeqa.qualifier.associationEnd.association) implies 
 UML!Property.allInstances()->contains(rloeqa.qualifier) implies 
 rloeqa.qualifier.associationEnd.association.memberEnd->size()>0 implies 
-UML!Property.allInstances()->contains(rloeqa.qualifier.associationEnd) implies 
     rloeqa.qualifier.associationEnd.association.memberEnd->forAll(pe|
       not(pe.isStatic))
 ); 
@@ -832,51 +561,43 @@ UML!Property.allInstances()->contains(rloeqa.qualifier.associationEnd) implies
 helper context UML!ReadLinkObjectEndQualifierAction def: same_type(): Boolean = 
   UML!ReadLinkObjectEndQualifierAction.allInstances()->forAll(rloeqa |  
 UML!Property.allInstances()->contains(rloeqa.qualifier) implies 
-UML!Type.allInstances()->contains(rloeqa.qualifier.type) implies 
 UML!OutputPin.allInstances()->contains(rloeqa.result) implies 
+UML!Type.allInstances()->contains(rloeqa.qualifier.type) implies 
+UML!Type.allInstances()->contains(rloeqa.result.type) implies 
     rloeqa.result.type = rloeqa.qualifier.type
 ); 
 
 helper context UML!ReadLinkObjectEndQualifierAction def: association_of_association(): Boolean = 
   UML!ReadLinkObjectEndQualifierAction.allInstances()->forAll(rloeqa |  
-UML!Association.allInstances()->contains(rloeqa.qualifier.associationEnd.association) implies 
 UML!Property.allInstances()->contains(rloeqa.qualifier) implies 
-    rloeqa.qualifier.associationEnd.association.oclIsKindOf(UML!AssociationClass)
-); 
-
-helper context UML!ReadLinkObjectEndQualifierAction def: qualifier_attribute(): Boolean = 
-  UML!ReadLinkObjectEndQualifierAction.allInstances()->forAll(rloeqa |  
+UML!Association.allInstances()->contains(rloeqa.qualifier.associationEnd.association) implies 
 UML!Property.allInstances()->contains(rloeqa.qualifier.associationEnd) implies 
-    rloeqa.qualifier.associationEnd <> OclUndefined
-); 
-
-helper context UML!ReadSelfAction def: contained(): Boolean = 
-  UML!ReadSelfAction.allInstances()->forAll(rsa |  
-    rsa.context <> OclUndefined
+    rloeqa.qualifier.associationEnd.association.oclIsKindOf(UML!AssociationClass)
 ); 
 
 helper context UML!ReadSelfAction def: type(): Boolean = 
   UML!ReadSelfAction.allInstances()->forAll(rsa |  
 UML!Type.allInstances()->contains(rsa.result.type) implies 
 UML!Classifier.allInstances()->contains(rsa.context) implies 
+UML!OutputPin.allInstances()->contains(rsa.result) implies 
     rsa.result.type = rsa.context
 ); 
 
 helper context UML!ReadStructuralFeatureAction def: type_and_ordering(): Boolean = 
   UML!ReadStructuralFeatureAction.allInstances()->forAll(rsfa |  
-UML!StructuralFeature.allInstances()->contains(rsfa.structuralFeature) implies 
-UML!Type.allInstances()->contains(rsfa.result.type) implies 
 UML!OutputPin.allInstances()->contains(rsfa.result) implies 
+UML!Type.allInstances()->contains(rsfa.result.type) implies 
 UML!Type.allInstances()->contains(rsfa.structuralFeature.type) implies 
+UML!StructuralFeature.allInstances()->contains(rsfa.structuralFeature) implies 
     rsfa.result.type = rsfa.structuralFeature.type and rsfa.result.isOrdered = rsfa.structuralFeature.isOrdered
 ); 
 
 helper context UML!ReadVariableAction def: type_and_ordering(): Boolean = 
   UML!ReadVariableAction.allInstances()->forAll(rva |  
-UML!OutputPin.allInstances()->contains(rva.result) implies 
-UML!Variable.allInstances()->contains(rva.variable) implies 
 UML!Type.allInstances()->contains(rva.result.type) implies 
+UML!Variable.allInstances()->contains(rva.variable) implies 
 UML!Type.allInstances()->contains(rva.variable.type) implies 
+UML!OutputPin.allInstances()->contains(rva.result) implies 
     rva.result.type = rva.variable.type and rva.result.isOrdered = rva.variable.isOrdered
 ); 
 
@@ -886,45 +607,30 @@ UML!Signal.allInstances()->contains(r.signal) implies
     r.name = r.signal.name
 ); 
 
-helper context UML!ReclassifyObjectAction def: input_pin(): Boolean = 
-  UML!ReclassifyObjectAction.allInstances()->forAll(roa |  
-UML!InputPin.allInstances()->contains(roa.object) implies 
-    roa.object.type = OclUndefined
-); 
-
 helper context UML!ReclassifyObjectAction def: classifier_not_abstract(): Boolean = 
   UML!ReclassifyObjectAction.allInstances()->forAll(roa |  
+roa.newClassifier->size()>0 implies 
     not(roa.newClassifier->exists(c1_|
       c1_.isAbstract))
 ); 
 
 helper context UML!RedefinableElement def: non_leaf_redefinition(): Boolean = 
   UML!RedefinableElement.allInstances()->forAll(re |  
+re.redefinedElement->size()>0 implies 
     re.redefinedElement->forAll(rere|
       not(rere.isLeaf))
-); 
-
-helper context UML!Region def: owned(): Boolean = 
-  UML!Region.allInstances()->forAll(r |  
-UML!State.allInstances()->contains(r.state) implies 
-UML!StateMachine.allInstances()->contains(r.stateMachine) implies 
-    r.stateMachine <> OclUndefined implies r.state = OclUndefined and r.state <> OclUndefined implies r.stateMachine = OclUndefined
 ); 
 
 helper context UML!ReplyAction def: event_on_reply_to_call_trigger(): Boolean = 
   UML!ReplyAction.allInstances()->forAll(ra |  
 UML!Event.allInstances()->contains(ra.replyToCall.event) implies 
+UML!Trigger.allInstances()->contains(ra.replyToCall) implies 
     ra.replyToCall.event.oclIsKindOf(UML!CallEvent)
-); 
-
-helper context UML!State def: entry_or_exit(): Boolean = 
-  UML!State.allInstances()->forAll(s |  
-    s.connectionPoint->forAll(p1_|
-      p1_.kind = PseudostateKind.entryPoint or p1_.kind = PseudostateKind.exitPoint)
 ); 
 
 helper context UML!State def: submachine_states(): Boolean = 
   UML!State.allInstances()->forAll(s |  
+s.connection->size()>0 implies 
     s.isSubmachineState implies s.connection->notEmpty()
 ); 
 
@@ -936,15 +642,16 @@ s.connectionPoint->size()>0 implies
 
 helper context UML!State def: destinations_or_sources_of_transitions(): Boolean = 
   UML!State.allInstances()->forAll(s |  
+s.connection->size()>0 implies 
 UML!StateMachine.allInstances()->contains(s.submachine) implies 
     s.isSubmachineState implies s.connection->forAll(cprcp|
-    cprcp.exit->size()>0 implies 
     cprcp.entry->size()>0 implies 
+    cprcp.exit->size()>0 implies 
       cprcp.entry->forAll(pps|
       UML!StateMachine.allInstances()->contains(pps.stateMachine) implies 
-        pps.stateMachine = s.submachine) and cprcp.exit->forAll(ppps1750120280|
-      UML!StateMachine.allInstances()->contains(ppps1750120280.stateMachine) implies 
-        ppps1750120280.stateMachine = s.submachine))
+        pps.stateMachine = s.submachine) and cprcp.exit->forAll(ppps1883652579|
+      UML!StateMachine.allInstances()->contains(ppps1883652579.stateMachine) implies 
+        ppps1883652579.stateMachine = s.submachine))
 ); 
 
 helper context UML!State def: submachine_or_regions(): Boolean = 
@@ -952,26 +659,9 @@ helper context UML!State def: submachine_or_regions(): Boolean =
     s.isComposite implies not(s.isSubmachineState)
 ); 
 
-helper context UML!StateMachine def: connection_points(): Boolean = 
-  UML!StateMachine.allInstances()->forAll(sm |  
-    sm.connectionPoint->forAll(p1_|
-      p1_.kind = PseudostateKind.entryPoint or p1_.kind = PseudostateKind.exitPoint)
-); 
-
-helper context UML!StateMachine def: classifier_context(): Boolean = 
-  UML!StateMachine.allInstances()->forAll(sm |  
-UML!BehavioredClassifier.allInstances()->contains(sm.context) implies 
-    sm.context <> OclUndefined implies not(sm.context.oclIsKindOf(UML!Interface))
-); 
-
-helper context UML!StateMachine def: method(): Boolean = 
-  UML!StateMachine.allInstances()->forAll(sm |  
-UML!BehavioralFeature.allInstances()->contains(sm.specification) implies 
-    sm.specification <> OclUndefined implies sm.connectionPoint->isEmpty()
-); 
-
 helper context UML!StringExpression def: operands(): Boolean = 
   UML!StringExpression.allInstances()->forAll(se |  
+se.operand->size()>0 implies 
     se.operand->forAll(vs1_|
       vs1_.oclIsKindOf(UML!LiteralString))
 ); 
@@ -995,6 +685,7 @@ UML!StructuralFeature.allInstances()->contains(sfa.structuralFeature) implies
 
 helper context UML!TemplateBinding def: parameter_substitution_formal(): Boolean = 
   UML!TemplateBinding.allInstances()->forAll(tb |  
+UML!TemplateSignature.allInstances()->contains(tb.signature) implies 
 tb.signature.parameter->size()>0 implies 
 tb.parameterSubstitution->size()>0 implies 
     tb.parameterSubstitution->forAll(tpsb|
@@ -1004,6 +695,7 @@ tb.parameterSubstitution->size()>0 implies
 
 helper context UML!TemplateBinding def: one_parameter_substitution(): Boolean = 
   UML!TemplateBinding.allInstances()->forAll(tb |  
+tb.signature.parameter->size()>0 implies 
 UML!TemplateSignature.allInstances()->contains(tb.signature) implies 
 tb.parameterSubstitution->size()>0 implies 
     tb.signature.parameter->forAll(tpp|
@@ -1012,56 +704,29 @@ tb.parameterSubstitution->size()>0 implies
         tpsb.formal = tpp)->size() <= 1)
 ); 
 
-helper context UML!TestIdentityAction def: no_type(): Boolean = 
-  UML!TestIdentityAction.allInstances()->forAll(tia |  
-UML!Type.allInstances()->contains(tia.first.type) implies 
-UML!Type.allInstances()->contains(tia.second.type) implies 
-UML!InputPin.allInstances()->contains(tia.second) implies 
-    tia.first.type = OclUndefined and tia.second.type = OclUndefined
-); 
-
 helper context UML!TestIdentityAction def: result_is_boolean(): Boolean = 
   UML!TestIdentityAction.allInstances()->forAll(tia |  
+UML!Type.allInstances()->contains(tia.result.type) implies 
 UML!OutputPin.allInstances()->contains(tia.result) implies 
     tia.result.type = Boolean
 ); 
 
 helper context UML!TimeConstraint def: has_one_constrainedElement(): Boolean = 
   UML!TimeConstraint.allInstances()->forAll(tc |  
+tc.constrainedElement->size()>0 implies 
     tc.constrainedElement->size() = 1
-); 
-
-helper context UML!TimeExpression def: no_expr_requires_observation(): Boolean = 
-  UML!TimeExpression.allInstances()->forAll(te |  
-te.observation->size()>0 implies 
-    te.expr = OclUndefined implies te.observation->size() = 1 and te.observation->forAll(o1_|
-      o1_.oclIsKindOf(UML!TimeObservation))
-); 
-
-helper context UML!Transition def: state_is_internal(): Boolean = 
-  UML!Transition.allInstances()->forAll(t |  
-UML!Vertex.allInstances()->contains(t.source) implies 
-UML!Vertex.allInstances()->contains(t.target) implies 
-    t.kind = TransitionKind.internal implies t.source.oclIsKindOf(UML!State) and t.source = t.target
 ); 
 
 helper context UML!Trigger def: trigger_with_ports(): Boolean = 
   UML!Trigger.allInstances()->forAll(t |  
 t.port->size()>0 implies 
+UML!Event.allInstances()->contains(t.event) implies 
     t.port->notEmpty() implies t.event.oclIsKindOf(UML!MessageEvent)
 ); 
 
 helper context UML!ValuePin def: no_incoming_edges(): Boolean = 
   UML!ValuePin.allInstances()->forAll(vp |  
+vp.incoming->size()>0 implies 
     vp.incoming->isEmpty()
-); 
-
-helper context UML!WriteStructuralFeatureAction def: type_of_result(): Boolean = 
-  UML!WriteStructuralFeatureAction.allInstances()->forAll(wsfa |  
-UML!InputPin.allInstances()->contains(wsfa.object) implies 
-UML!OutputPin.allInstances()->contains(wsfa.result) implies 
-UML!Type.allInstances()->contains(wsfa.object.type) implies 
-UML!Type.allInstances()->contains(wsfa.result.type) implies 
-    wsfa.result <> OclUndefined implies wsfa.result.type = wsfa.object.type
 ); 
 
