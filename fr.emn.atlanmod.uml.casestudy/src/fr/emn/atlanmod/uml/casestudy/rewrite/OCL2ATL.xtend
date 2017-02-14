@@ -1,14 +1,11 @@
 package fr.emn.atlanmod.uml.casestudy.rewrite
 
-import java.util.HashMap
+import java.util.HashSet
 import org.eclipse.emf.ecore.EObject
 import org.eclipse.ocl.pivot.ExpressionInOCL
 import org.eclipse.ocl.pivot.Model
 import org.eclipse.ocl.pivot.NullLiteralExp
 import org.eclipse.ocl.pivot.Package
-import org.eclipse.ocl.pivot.PropertyCallExp
-import org.eclipse.ocl.pivot.VariableExp
-import java.util.HashSet
 
 class OCL2ATL {
 	
@@ -31,7 +28,7 @@ class OCL2ATL {
 	/**
 	 * ps: we don't generate helper if the invariant body is {@code null} or it has been filter out by the projector {@code OCLProjector}
 	 */
-	def static dispatch String rewrite(Package p) '''
+	def static dispatch String rewrite(Package p) '''	
 	«FOR clazz : p.ownedClasses»
 		«FOR inv : clazz.ownedInvariants»
 			«IF (OCLProjector.proj((inv.ownedSpecification as ExpressionInOCL).ownedBody)
@@ -40,9 +37,9 @@ class OCL2ATL {
 			val wdExprs = OCLWDGenerator.wd((inv.ownedSpecification as ExpressionInOCL).ownedBody)
 			»
 			helper context «model»!«clazz.name» def: «inv.name»(): Boolean = 
-			  «model»!«clazz.name».allInstances()->forAll(«genIteratorName(clazz.name)» |  «OCL.bvMap.put(genIteratorName(clazz.name), null)»
+			  «model»!«clazz.name».allInstances()->forAll(«OCL.genIteratorName(clazz.name)» |  «OCL.bvMap.put(OCL.genIteratorName(clazz.name), null)»
 			  	«FOR e: wdExprs»
-				  	«IF printAtHere(e, genIteratorName(clazz.name)) && !wdSet.contains(OCL.gen(e))»«
+				  	«IF OCL.printAtHere(e, OCL.genIteratorName(clazz.name)) && !wdSet.contains(OCL.gen(e))»«
 				  		{wdSet.add(OCL.gen(e));null}»«
 				  		IF !OCL.isPrimtive(e)»«
 				  			IF !OCL.isCollection(e)»
@@ -61,32 +58,10 @@ class OCL2ATL {
 	«ENDFOR»
 	'''
 	
-	def static String genIteratorName(String clazz) {
-		var String rtn="";
-		
-		for(var i = 0; i<clazz.length; i++){
-			if(Character.isUpperCase(clazz.charAt(i))){
-				rtn += Character.toLowerCase(clazz.charAt(i))
-			}
-		}
-		
-		return rtn;
-	}
+
 	
 	
-	def static boolean printAtHere(PropertyCallExp e, String v) {
-		var boolean r = false;
-		
-		if (e.ownedSource instanceof VariableExp ){
-			if (OCL.gen(e.ownedSource) == v){
-				r = true
-			}
-		}else if(e.ownedSource instanceof PropertyCallExp){
-			r = printAtHere(e.ownedSource as PropertyCallExp, v)
-		}
-		
-		return r;
-	}
+
 	
 
 	

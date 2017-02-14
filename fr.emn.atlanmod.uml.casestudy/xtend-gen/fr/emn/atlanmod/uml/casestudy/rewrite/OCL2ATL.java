@@ -1,6 +1,5 @@
 package fr.emn.atlanmod.uml.casestudy.rewrite;
 
-import com.google.common.base.Objects;
 import fr.emn.atlanmod.uml.casestudy.rewrite.OCL;
 import fr.emn.atlanmod.uml.casestudy.rewrite.OCLProjector;
 import fr.emn.atlanmod.uml.casestudy.rewrite.OCLWDGenerator;
@@ -17,7 +16,6 @@ import org.eclipse.ocl.pivot.NullLiteralExp;
 import org.eclipse.ocl.pivot.OCLExpression;
 import org.eclipse.ocl.pivot.PropertyCallExp;
 import org.eclipse.ocl.pivot.Type;
-import org.eclipse.ocl.pivot.VariableExp;
 import org.eclipse.xtend2.lib.StringConcatenation;
 
 @SuppressWarnings("all")
@@ -84,18 +82,18 @@ public class OCL2ATL {
                 _builder.append(_name_2, "  ");
                 _builder.append(".allInstances()->forAll(");
                 String _name_3 = clazz.getName();
-                String _genIteratorName = OCL2ATL.genIteratorName(_name_3);
+                String _genIteratorName = OCL.genIteratorName(_name_3);
                 _builder.append(_genIteratorName, "  ");
                 _builder.append(" |  ");
                 String _name_4 = clazz.getName();
-                String _genIteratorName_1 = OCL2ATL.genIteratorName(_name_4);
+                String _genIteratorName_1 = OCL.genIteratorName(_name_4);
                 EObject _put = OCL.bvMap.put(_genIteratorName_1, null);
                 _builder.append(_put, "  ");
                 _builder.newLineIfNotEmpty();
                 {
                   for(final PropertyCallExp e : wdExprs) {
                     {
-                      if ((OCL2ATL.printAtHere(e, OCL2ATL.genIteratorName(clazz.getName())) && (!OCL2ATL.wdSet.contains(OCL.gen(e))))) {
+                      if ((OCL.printAtHere(e, OCL.genIteratorName(clazz.getName())) && (!OCL2ATL.wdSet.contains(OCL.gen(e))))) {
                         Object _xblockexpression = null;
                         {
                           String _gen = OCL.gen(e);
@@ -154,42 +152,6 @@ public class OCL2ATL {
       }
     }
     return _builder.toString();
-  }
-  
-  public static String genIteratorName(final String clazz) {
-    String rtn = "";
-    for (int i = 0; (i < clazz.length()); i++) {
-      char _charAt = clazz.charAt(i);
-      boolean _isUpperCase = Character.isUpperCase(_charAt);
-      if (_isUpperCase) {
-        String _rtn = rtn;
-        char _charAt_1 = clazz.charAt(i);
-        char _lowerCase = Character.toLowerCase(_charAt_1);
-        rtn = (_rtn + Character.valueOf(_lowerCase));
-      }
-    }
-    return rtn;
-  }
-  
-  public static boolean printAtHere(final PropertyCallExp e, final String v) {
-    boolean r = false;
-    OCLExpression _ownedSource = e.getOwnedSource();
-    if ((_ownedSource instanceof VariableExp)) {
-      OCLExpression _ownedSource_1 = e.getOwnedSource();
-      String _gen = OCL.gen(_ownedSource_1);
-      boolean _equals = Objects.equal(_gen, v);
-      if (_equals) {
-        r = true;
-      }
-    } else {
-      OCLExpression _ownedSource_2 = e.getOwnedSource();
-      if ((_ownedSource_2 instanceof PropertyCallExp)) {
-        OCLExpression _ownedSource_3 = e.getOwnedSource();
-        boolean _printAtHere = OCL2ATL.printAtHere(((PropertyCallExp) _ownedSource_3), v);
-        r = _printAtHere;
-      }
-    }
-    return r;
   }
   
   public static String rewrite(final EObject m) {

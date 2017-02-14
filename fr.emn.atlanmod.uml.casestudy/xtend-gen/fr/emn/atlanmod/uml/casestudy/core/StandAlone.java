@@ -23,11 +23,15 @@ public class StandAlone {
     StandAlone.doEMFSetup(inputURI);
     String res = "";
     final URI outputURI = URI.createFileURI("./resources/UML.normalize.ocl.atl");
+    String _res = res;
+    res = (_res + "module UMLCopierContract;\n");
+    String _res_1 = res;
+    res = (_res_1 + "create OUT : UMLs from IN : UML;\n");
     EList<EObject> _contents = StandAlone.ocl_resource.getContents();
     for (final EObject eobject : _contents) {
-      String _res = res;
+      String _res_2 = res;
       String _rewrite = OCL2ATL.rewrite(eobject);
-      res = (_res + _rewrite);
+      res = (_res_2 + _rewrite);
     }
     URIs.write(outputURI, res);
   }

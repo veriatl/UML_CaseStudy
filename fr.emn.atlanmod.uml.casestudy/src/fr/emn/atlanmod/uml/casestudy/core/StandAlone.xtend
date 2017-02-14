@@ -26,6 +26,9 @@ class StandAlone{
 		var String res = "";
 		val outputURI = URI.createFileURI("./resources/UML.normalize.ocl.atl")
 		
+		res+="module UMLCopierContract;\n";
+		res+="create OUT : UMLs from IN : UML;\n";
+
 		for (EObject eobject : ocl_resource.getContents()) {
 			res += OCL2ATL.rewrite(eobject);
 		}
