@@ -142,7 +142,7 @@ class OCLProjector {
 
 		if (op == null || op == "") {
 			r = false
-		} else if (op == "collect" || op == "iterate" || op == "closure") {
+		} else if (op == "collect" || op == "iterate" || op == "closure" || op == "exists") {
 			r = false
 		}
 
