@@ -135,11 +135,11 @@ public class OCLProjector {
   }
   
   protected static boolean _proj(final EnumLiteralExp e) {
-    return true;
+    return false;
   }
   
   protected static boolean _proj(final NullLiteralExp e) {
-    return true;
+    return false;
   }
   
   protected static boolean _proj(final TypeExp e) {
@@ -178,8 +178,7 @@ public class OCLProjector {
     if ((Objects.equal(op, null) || Objects.equal(op, ""))) {
       r = false;
     } else {
-      boolean _equals_1 = Objects.equal(op, "collect");
-      if (_equals_1) {
+      if (((Objects.equal(op, "collect") || Objects.equal(op, "iterate")) || Objects.equal(op, "closure"))) {
         r = false;
       }
     }

@@ -91,7 +91,7 @@ class OCLProjector {
 		return true
 	}
 
-	// TODO double check
+
 	def static dispatch boolean proj(Operation e) {
 		return true
 	}
@@ -108,12 +108,14 @@ class OCLProjector {
 		return true
 	}
 
+	//TODO this should be easy to handle in VeriATL
 	def static dispatch boolean proj(EnumLiteralExp e) {
-		return true
+		return false
 	}
 
+	//TODO requires some rewriting of OCL expression
 	def static dispatch boolean proj(NullLiteralExp e) {
-		return true
+		return false
 	}
 
 	def static dispatch boolean proj(TypeExp e) {
@@ -140,7 +142,7 @@ class OCLProjector {
 
 		if (op == null || op == "") {
 			r = false
-		} else if (op == "collect") {
+		} else if (op == "collect" || op == "iterate" || op == "closure") {
 			r = false
 		}
 
