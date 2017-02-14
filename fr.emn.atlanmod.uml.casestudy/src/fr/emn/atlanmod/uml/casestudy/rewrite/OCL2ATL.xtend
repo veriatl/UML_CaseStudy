@@ -66,7 +66,7 @@ class OCL2ATL {
 			val wdExprs = OCLWDGenerator.wd((inv.ownedSpecification as ExpressionInOCL).ownedBody)
 			»
 			--@post
-			helper context «model»!«clazz.name» def: post_«inv.name»(): Boolean = --«inv.name»
+			helper context «model»!«clazz.name» def: post_«inv.name»(): Boolean = --«clazz.name»_«inv.name»
 			  «model»!«clazz.name».allInstances()->forAll(«OCL.genIteratorName(clazz.name)» |  «OCL.bvMap.put(OCL.genIteratorName(clazz.name), null)»
 			  	«FOR e: wdExprs»
 				  	«IF OCL.printAtHere(e, OCL.genIteratorName(clazz.name)) && !wdSet.contains(OCL.gen(e))»«
