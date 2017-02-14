@@ -65,28 +65,32 @@ public class OCL2ATL {
                 OCLExpression _ownedBody = ((ExpressionInOCL) _ownedSpecification).getOwnedBody();
                 final HashSet<PropertyCallExp> wdExprs = OCLWDGenerator.wd(_ownedBody);
                 _builder.newLineIfNotEmpty();
+                _builder.append("--@pre");
+                _builder.newLine();
                 _builder.append("helper context ");
                 _builder.append(OCL2ATL.model, "");
                 _builder.append("!");
                 String _name = clazz.getName();
                 _builder.append(_name, "");
-                _builder.append(" def: ");
+                _builder.append(" def: pre_");
                 String _name_1 = inv.getName();
                 _builder.append(_name_1, "");
-                _builder.append("(): Boolean = ");
+                _builder.append("(): Boolean = --");
+                String _name_2 = inv.getName();
+                _builder.append(_name_2, "");
                 _builder.newLineIfNotEmpty();
                 _builder.append("  ");
                 _builder.append(OCL2ATL.model, "  ");
                 _builder.append("!");
-                String _name_2 = clazz.getName();
-                _builder.append(_name_2, "  ");
-                _builder.append(".allInstances()->forAll(");
                 String _name_3 = clazz.getName();
-                String _genIteratorName = OCL.genIteratorName(_name_3);
+                _builder.append(_name_3, "  ");
+                _builder.append(".allInstances()->forAll(");
+                String _name_4 = clazz.getName();
+                String _genIteratorName = OCL.genIteratorName(_name_4);
                 _builder.append(_genIteratorName, "  ");
                 _builder.append(" |  ");
-                String _name_4 = clazz.getName();
-                String _genIteratorName_1 = OCL.genIteratorName(_name_4);
+                String _name_5 = clazz.getName();
+                String _genIteratorName_1 = OCL.genIteratorName(_name_5);
                 EObject _put = OCL.bvMap.put(_genIteratorName_1, null);
                 _builder.append(_put, "  ");
                 _builder.newLineIfNotEmpty();
@@ -137,6 +141,109 @@ public class OCL2ATL {
                 OCLExpression _ownedBody_1 = ((ExpressionInOCL) _ownedSpecification_1).getOwnedBody();
                 String _gen_2 = OCL.gen(_ownedBody_1);
                 _builder.append(_gen_2, "    ");
+                _builder.newLineIfNotEmpty();
+                _builder.append("); ");
+                {
+                  OCL2ATL.wdSet.clear();
+                  OCL.bvMap.clear();
+                }
+                _builder.newLineIfNotEmpty();
+                _builder.newLine();
+              }
+            }
+          }
+        }
+      }
+    }
+    _builder.newLine();
+    {
+      List<org.eclipse.ocl.pivot.Class> _ownedClasses_1 = p.getOwnedClasses();
+      for(final org.eclipse.ocl.pivot.Class clazz_1 : _ownedClasses_1) {
+        {
+          List<Constraint> _ownedInvariants_1 = clazz_1.getOwnedInvariants();
+          for(final Constraint inv_1 : _ownedInvariants_1) {
+            {
+              if ((OCLProjector.proj(((ExpressionInOCL) inv_1.getOwnedSpecification()).getOwnedBody()) && (!(((ExpressionInOCL) inv_1.getOwnedSpecification()).getOwnedBody() instanceof NullLiteralExp)))) {
+                LanguageExpression _ownedSpecification_2 = inv_1.getOwnedSpecification();
+                OCLExpression _ownedBody_2 = ((ExpressionInOCL) _ownedSpecification_2).getOwnedBody();
+                final HashSet<PropertyCallExp> wdExprs_1 = OCLWDGenerator.wd(_ownedBody_2);
+                _builder.newLineIfNotEmpty();
+                _builder.append("--@post");
+                _builder.newLine();
+                _builder.append("helper context ");
+                _builder.append(OCL2ATL.model, "");
+                _builder.append("!");
+                String _name_6 = clazz_1.getName();
+                _builder.append(_name_6, "");
+                _builder.append(" def: post_");
+                String _name_7 = inv_1.getName();
+                _builder.append(_name_7, "");
+                _builder.append("(): Boolean = --");
+                String _name_8 = inv_1.getName();
+                _builder.append(_name_8, "");
+                _builder.newLineIfNotEmpty();
+                _builder.append("  ");
+                _builder.append(OCL2ATL.model, "  ");
+                _builder.append("!");
+                String _name_9 = clazz_1.getName();
+                _builder.append(_name_9, "  ");
+                _builder.append(".allInstances()->forAll(");
+                String _name_10 = clazz_1.getName();
+                String _genIteratorName_2 = OCL.genIteratorName(_name_10);
+                _builder.append(_genIteratorName_2, "  ");
+                _builder.append(" |  ");
+                String _name_11 = clazz_1.getName();
+                String _genIteratorName_3 = OCL.genIteratorName(_name_11);
+                EObject _put_1 = OCL.bvMap.put(_genIteratorName_3, null);
+                _builder.append(_put_1, "  ");
+                _builder.newLineIfNotEmpty();
+                {
+                  for(final PropertyCallExp e_1 : wdExprs_1) {
+                    {
+                      if ((OCL.printAtHere(e_1, OCL.genIteratorName(clazz_1.getName())) && (!OCL2ATL.wdSet.contains(OCL.gen(e_1))))) {
+                        Object _xblockexpression_1 = null;
+                        {
+                          String _gen_3 = OCL.gen(e_1);
+                          OCL2ATL.wdSet.add(_gen_3);
+                          _xblockexpression_1 = null;
+                        }
+                        _builder.append(_xblockexpression_1, "");
+                        {
+                          boolean _isPrimtive_1 = OCL.isPrimtive(e_1);
+                          boolean _not_2 = (!_isPrimtive_1);
+                          if (_not_2) {
+                            {
+                              boolean _isCollection_1 = OCL.isCollection(e_1);
+                              boolean _not_3 = (!_isCollection_1);
+                              if (_not_3) {
+                                _builder.newLineIfNotEmpty();
+                                Type _type_1 = e_1.getType();
+                                String _string_1 = _type_1.toString();
+                                String _replace_1 = _string_1.replace("::", "!");
+                                _builder.append(_replace_1, "");
+                                _builder.append(".allInstances()->contains(");
+                                String _gen_3 = OCL.gen(e_1);
+                                _builder.append(_gen_3, "");
+                                _builder.append(") implies ");
+                                _builder.newLineIfNotEmpty();
+                              } else {
+                                String _gen_4 = OCL.gen(e_1);
+                                _builder.append(_gen_4, "");
+                                _builder.append("->size()>0 implies ");
+                                _builder.newLineIfNotEmpty();
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+                _builder.append("    ");
+                LanguageExpression _ownedSpecification_3 = inv_1.getOwnedSpecification();
+                OCLExpression _ownedBody_3 = ((ExpressionInOCL) _ownedSpecification_3).getOwnedBody();
+                String _gen_5 = OCL.gen(_ownedBody_3);
+                _builder.append(_gen_5, "    ");
                 _builder.newLineIfNotEmpty();
                 _builder.append("); ");
                 {
