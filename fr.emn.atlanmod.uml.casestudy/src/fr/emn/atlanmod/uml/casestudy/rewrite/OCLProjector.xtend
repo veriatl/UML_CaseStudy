@@ -62,11 +62,11 @@ class OCLProjector {
 		} else if (op == "oclIsKindOf" || op == "oclIsTypeOf" || op == "concat" ||
 			op == "endsWith" || op == "indexOf" || op == "lastIndexOf" || op == "startsWith" || op == "substring" ) {
 			r = true
-		} else if (op == "excluding" || op == "excludingAll" || op == "including" || op == "includingAll" ||
+		} else if (op == "excluding" || op == "including" ||
 			op == "excludes" ||
-			op == "includes" || op == "includesAll" || op == "intersection" || op == "at" ||
-			op == "append" || op == "appendAll" || op == "prepend" || op == "prependAll" ||
-			op == "union" || op == "excludesAll") {
+			op == "includes" || op == "at" ||
+			op == "append" || op == "prepend"  ||
+			op == "union") {
 			r = true
 		}
 	
@@ -150,7 +150,7 @@ class OCLProjector {
 	}
 
 	def static dispatch boolean proj(IfExp e) {
-		return proj(e.ownedCondition) && proj(e.ownedThen) && proj(e.ownedElse)
+		return false && proj(e.ownedCondition) && proj(e.ownedThen) && proj(e.ownedElse)
 	}
 
 }

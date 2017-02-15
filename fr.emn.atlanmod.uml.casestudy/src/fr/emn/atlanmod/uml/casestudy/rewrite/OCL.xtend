@@ -34,7 +34,7 @@ class OCL {
 	'endif', 'let', 'library', 'query', 'for', 'div', 'refining', 'entrypoint']
 	
 	
-
+	
 
 	// dispatcher
 	def static dispatch String gen(EObject e) '''
@@ -141,7 +141,10 @@ class OCL {
 	
 	def static dispatch String gen(NullLiteralExp e) '''OclUndefined'''
 	
-	def static dispatch String gen(TypeExp e) '''«e.referredType.toString().replace("::", "!")»'''
+	def static dispatch String gen(TypeExp e) '''«if (OCL2ATL.postMode) e.referredType.toString().replace("::", "!").replace(OCL2ATL.model+"!", OCL2ATL.modelReplacer+"!") else e.referredType.toString().replace("::", "!")»'''
+	
+
+	
 	
 	// TODO ATL supported?
 	def static dispatch String gen(CollectionLiteralExp e) '''Sequence{}'''
@@ -149,7 +152,7 @@ class OCL {
 	// TODO dont know what is this means, put it to *. since sometimes is set to 1, see `multiplicity_of_output`
 	def static dispatch String gen(UnlimitedNaturalLiteralExp e) '''*'''
 	
-	def static dispatch String gen(LetExp e) '''let «e.ownedVariable.name» : «e.ownedVariable.type.toString().replace("::", "!")» = 
+	def static dispatch String gen(LetExp e) '''let «e.ownedVariable.name» : «if (OCL2ATL.postMode) e.ownedVariable.type.toString().replace("::", "!").replace(OCL2ATL.model+"!", OCL2ATL.modelReplacer+"!") else e.ownedVariable.type.toString().replace("::", "!")» = 
   «gen(e.ownedVariable.ownedInit)» in 
     «gen(e.ownedIn)»'''
 
@@ -163,7 +166,7 @@ class OCL {
 		  		{wdSetInner.add(gen(expr));null}»«
 		  		IF !OCL.isPrimtive(expr)»«
 		  			IF !isCollection(expr)»
-		  			«expr.type.toString.replace("::", "!")».allInstances()->includes(«OCL.gen(expr)») implies 
+		  			«if (OCL2ATL.postMode) expr.type.toString().replace("::", "!").replace(OCL2ATL.model+"!", OCL2ATL.modelReplacer+"!") else expr.type.toString().replace("::", "!")».allInstances()->includes(«OCL.gen(expr)») implies 
 		  			«ELSE»
 		  			«gen(expr)»->size()>0 implies 
 		  			«ENDIF»«
