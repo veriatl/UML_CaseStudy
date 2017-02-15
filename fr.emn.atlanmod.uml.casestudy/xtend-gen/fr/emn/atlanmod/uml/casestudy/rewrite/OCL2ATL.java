@@ -263,7 +263,7 @@ public class OCL2ATL {
                                   _xifexpression_2 = _string_2.replace("::", "!");
                                 }
                                 _builder.append(_xifexpression_2, "");
-                                _builder.append(".allInstances()->contains(");
+                                _builder.append(".allInstances()->includes(");
                                 String _gen_3 = OCL.gen(e_1);
                                 _builder.append(_gen_3, "");
                                 _builder.append(") implies ");

@@ -178,7 +178,7 @@ public class OCLProjector {
     if ((Objects.equal(op, null) || Objects.equal(op, ""))) {
       r = false;
     } else {
-      if ((((Objects.equal(op, "collect") || Objects.equal(op, "iterate")) || Objects.equal(op, "closure")) || Objects.equal(op, "exists"))) {
+      if (((((Objects.equal(op, "collect") || Objects.equal(op, "iterate")) || Objects.equal(op, "closure")) || Objects.equal(op, "exists")) || Objects.equal(op, "select"))) {
         r = false;
       }
     }
