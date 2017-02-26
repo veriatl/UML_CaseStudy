@@ -32,6 +32,7 @@ import org.eclipse.ocl.pivot.VariableDeclaration;
 import org.eclipse.ocl.pivot.VariableExp;
 import org.eclipse.xtend2.lib.StringConcatenation;
 import org.eclipse.xtext.xbase.lib.Conversions;
+import org.eclipse.xtext.xbase.lib.ExclusiveRange;
 import org.eclipse.xtext.xbase.lib.Functions.Function1;
 import org.eclipse.xtext.xbase.lib.IterableExtensions;
 import org.eclipse.xtext.xbase.lib.ListExtensions;
@@ -380,6 +381,8 @@ public class OCL {
   
   protected static String _gen(final IteratorExp e) {
     StringConcatenation _builder = new StringConcatenation();
+    int i = 0;
+    _builder.newLineIfNotEmpty();
     String _xifexpression = null;
     int _size = e.getOwnedIterators().size();
     boolean _notEquals = (_size != 0);
@@ -428,6 +431,12 @@ public class OCL {
                   boolean _isPrimtive = OCL.isPrimtive(expr);
                   boolean _not = (!_isPrimtive);
                   if (_not) {
+                    Object _xblockexpression_1 = null;
+                    {
+                      i = (i + 1);
+                      _xblockexpression_1 = null;
+                    }
+                    _builder.append(_xblockexpression_1);
                     {
                       boolean _isCollection = OCL.isCollection(expr);
                       boolean _not_1 = (!_isCollection);
@@ -443,12 +452,12 @@ public class OCL {
                         _builder.append(".allInstances()->includes(");
                         String _gen_1 = OCL.gen(expr);
                         _builder.append(_gen_1);
-                        _builder.append(") implies ");
+                        _builder.append(") implies (");
                         _builder.newLineIfNotEmpty();
                       } else {
                         String _gen_2 = OCL.gen(expr);
                         _builder.append(_gen_2);
-                        _builder.append("->size()>0 implies ");
+                        _builder.append("->size()>0 implies (");
                         _builder.newLineIfNotEmpty();
                       }
                     }
@@ -460,17 +469,22 @@ public class OCL {
         }
       }
     }
-    Object _xblockexpression_1 = null;
+    Object _xblockexpression_2 = null;
     {
       OCL.wdSetInner.clear();
-      _xblockexpression_1 = null;
+      _xblockexpression_2 = null;
     }
-    _builder.append(_xblockexpression_1);
+    _builder.append(_xblockexpression_2);
     _builder.append(" ");
     _builder.newLineIfNotEmpty();
     _builder.append("  ");
     String _gen_3 = OCL.gen(e.getOwnedBody());
     _builder.append(_gen_3, "  ");
+    {
+      for(final Integer expr_1 : new ExclusiveRange(0, i, true)) {
+        _builder.append(")");
+      }
+    }
     _builder.append(")");
     return _builder.toString();
   }

@@ -157,6 +157,7 @@ class OCL {
     «gen(e.ownedIn)»'''
 
 	def static dispatch String gen(IteratorExp e) '''
+	«var i = 0»
 	«val args_dot = if(e.ownedIterators.size!=0) e.ownedIterators.map(arg |  gen(arg) ).join(',') else ""»
 	«val wdExprs = OCLWDGenerator.wd(e.ownedBody)»
 	«gen(e.ownedSource)»->«e.referredIteration.name»(«if (e.ownedIterators.size!=0) args_dot + "|" else ""»
@@ -164,17 +165,17 @@ class OCL {
 		«FOR itor : e.ownedIterators»
 		  	«IF printAtHere(expr, gen(itor)) && !wdSetInner.contains(OCL.gen(expr))»«
 		  		{wdSetInner.add(gen(expr));null}»«
-		  		IF !OCL.isPrimtive(expr)»«
+		  		IF !OCL.isPrimtive(expr)»«{i=i+1;null}»«
 		  			IF !isCollection(expr)»
-		  			«if (OCL2ATL.postMode) expr.type.toString().replace("::", "!").replace(OCL2ATL.model+"!", OCL2ATL.modelReplacer+"!") else expr.type.toString().replace("::", "!")».allInstances()->includes(«OCL.gen(expr)») implies 
+		  			«if (OCL2ATL.postMode) expr.type.toString().replace("::", "!").replace(OCL2ATL.model+"!", OCL2ATL.modelReplacer+"!") else expr.type.toString().replace("::", "!")».allInstances()->includes(«OCL.gen(expr)») implies (
 		  			«ELSE»
-		  			«gen(expr)»->size()>0 implies 
+		  			«gen(expr)»->size()>0 implies (
 		  			«ENDIF»«
 		  		ENDIF»«
 		  	ENDIF»«
 	  	ENDFOR»«
   	ENDFOR»«{wdSetInner.clear();null}» 
-  «gen(e.ownedBody)»)'''
+  «gen(e.ownedBody)»«FOR expr: {0..<i}»)«ENDFOR»)'''
   
     def static dispatch String gen(IfExp e) '''
 if («gen(e.ownedCondition)») then 
