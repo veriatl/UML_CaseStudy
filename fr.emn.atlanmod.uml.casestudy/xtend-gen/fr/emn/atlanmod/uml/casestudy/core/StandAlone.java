@@ -22,7 +22,7 @@ public class StandAlone {
     final URI inputURI = URI.createFileURI("./resources/UML.normalize.ocl.oclas");
     StandAlone.doEMFSetup(inputURI);
     String res = "";
-    final URI outputURI = URI.createFileURI("./resources/UML.normalize.ocl.2.atl");
+    final URI outputURI = URI.createFileURI("./resources/UML.normalize.ocl.latest.atl");
     String _res = res;
     res = (_res + "module UMLCopierContract;\n");
     String _res_1 = res;
