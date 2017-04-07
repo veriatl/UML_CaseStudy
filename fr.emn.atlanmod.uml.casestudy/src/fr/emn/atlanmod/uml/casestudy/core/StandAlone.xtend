@@ -13,7 +13,7 @@ import org.eclipse.ocl.pivot.internal.resource.OCLASResourceFactory
 class StandAlone{
 	
 	val static INPUT_PATH = "./resources/inputs/UML.normalize.ocl.oclas"
-	val static OUTPUT_PATH = "./resources/outputs/UML.normalize.ocl.latest.atl"
+	val static OUTPUT_PATH = "./resources/outputs/UML2UMLsContract.atl"
 	val static ECORE_PATH = "./resources/preludes/UML.ecore.oclas"
 	val static OCL_PATH = "./resources/preludes/OCL-2.5.oclstdlib.oclas"
 	val static INPUT_ECORE_URI_MAPPING = "../preludes/UML.ecore.oclas"
