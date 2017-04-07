@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="fr.emn.atlanmod.uml.casestudy/xtend-gen"/>
+	<classpathentry kind="lib" path="fr.emn.atlanmod.uml.casestudy/lib/guice-4.1.0.jar"/>
+	<classpathentry kind="lib" path="fr.emn.atlanmod.uml.casestudy/lib/log4j-1.2.17.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="output" path="fr.emn.atlanmod.uml.casestudy/bin"/>
+</classpath>

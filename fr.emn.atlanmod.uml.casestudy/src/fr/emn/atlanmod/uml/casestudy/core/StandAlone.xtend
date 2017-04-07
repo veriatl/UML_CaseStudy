@@ -20,11 +20,11 @@ class StandAlone{
 
 	
 	def static void main(String[] args) {
-		val inputURI = URI.createFileURI("./resources/UML.normalize.ocl.oclas")
+		val inputURI = URI.createFileURI("./resources/inputs/UML.normalize.ocl.oclas")
 		doEMFSetup(inputURI)
 		
 		var String res = "";
-		val outputURI = URI.createFileURI("./resources/UML.normalize.ocl.latest.atl")
+		val outputURI = URI.createFileURI("./resources/outputs/UML.normalize.ocl.latest.atl")
 		
 		res+="module UMLCopierContract;\n";
 		res+="create OUT : UMLs from IN : UML;\n";
@@ -54,8 +54,8 @@ class StandAlone{
 		ocl_resource = rs.getResource(oclPath, true)
 
 		// initialize uri mapping
-		val ecore_resource = rs.getResource(URI.createFileURI("./resources/UML.ecore.oclas"), true)
-		val lib_resource = rs.getResource(URI.createFileURI("./resources/OCL-2.5.oclas"), true)
+		val ecore_resource = rs.getResource(URI.createFileURI("./resources/preludes/UML.ecore.oclas"), true)
+		val lib_resource = rs.getResource(URI.createFileURI("./resources/preludes/OCL-2.5.oclstdlib.oclas"), true)
 		
 		ecore_resource.setURI(URI.createURI("UML.ecore.oclas"));
 		lib_resource.setURI(URI.createURI("http://www.eclipse.org/ocl/2015/Library.oclas"));
