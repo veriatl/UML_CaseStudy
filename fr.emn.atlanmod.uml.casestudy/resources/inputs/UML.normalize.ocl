@@ -1,4 +1,4 @@
-import '../references/UML.ecore'
+import '../preludes/UML.ecore'
 
 package UML
 

@@ -10,7 +10,6 @@ import org.eclipse.ocl.pivot.EnumLiteralExp
 import org.eclipse.ocl.pivot.IfExp
 import org.eclipse.ocl.pivot.IntegerLiteralExp
 import org.eclipse.ocl.pivot.IteratorExp
-import org.eclipse.ocl.pivot.IteratorVariable
 import org.eclipse.ocl.pivot.LetExp
 import org.eclipse.ocl.pivot.NullLiteralExp
 import org.eclipse.ocl.pivot.Operation
@@ -87,9 +86,7 @@ class OCLProjector {
 		return true
 	}
 
-	def static dispatch boolean proj(IteratorVariable e) {
-		return true
-	}
+
 
 
 	def static dispatch boolean proj(Operation e) {

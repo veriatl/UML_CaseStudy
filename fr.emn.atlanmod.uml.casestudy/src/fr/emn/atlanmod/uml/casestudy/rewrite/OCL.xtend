@@ -10,7 +10,6 @@ import org.eclipse.ocl.pivot.Enumeration
 import org.eclipse.ocl.pivot.IfExp
 import org.eclipse.ocl.pivot.IntegerLiteralExp
 import org.eclipse.ocl.pivot.IteratorExp
-import org.eclipse.ocl.pivot.IteratorVariable
 import org.eclipse.ocl.pivot.LetExp
 import org.eclipse.ocl.pivot.NullLiteralExp
 import org.eclipse.ocl.pivot.OCLExpression
@@ -23,6 +22,7 @@ import org.eclipse.ocl.pivot.TypeExp
 import org.eclipse.ocl.pivot.UnlimitedNaturalLiteralExp
 import org.eclipse.ocl.pivot.VariableDeclaration
 import org.eclipse.ocl.pivot.VariableExp
+import org.eclipse.ocl.pivot.Variable
 
 class OCL {
 	static private HashSet<String> wdSetInner = new HashSet<String>
@@ -85,7 +85,6 @@ class OCL {
 	
 	
 
-	
 	def static dispatch String gen(VariableExp e) '''
 	«val itName = genIteratorName(gen(e.type))»
 	«val ref = e.referredVariable»«
@@ -109,10 +108,7 @@ class OCL {
 	ENDIF»'''
 	
 
-	
-
-	//TODO var name shadowing: Bug:  deployment_target, non_leaf_redefinition
-	def static dispatch String gen(IteratorVariable e) '''
+	def static dispatch String gen(Variable e) '''
 	«val clazz = genIteratorName(gen(e.type))»
 	«val itName = clazz+e.name»
 	«val hashName = clazz+itName+e.hashCode»«
@@ -125,6 +121,8 @@ class OCL {
 		ENDIF»«
 	ELSEIF !(bvMap.keySet.contains(itName))»«itName»«{bvMap.put(itName, e);null}»«
 	ENDIF»'''
+
+
 	
 	def static dispatch String gen(Operation e) '''«e.name»'''
 	
@@ -187,9 +185,6 @@ endif'''
 	
 	def static isConsistentVariable(HashMap<String, EObject> map, EObject exp) {
 		if(exp instanceof VariableExp){
-			val itName = genIteratorName(gen(exp.type))
-			return  !map.containsKey(itName) || map.get(itName) == exp
-		}else if ( exp instanceof IteratorVariable){
 			val itName = genIteratorName(gen(exp.type))
 			return  !map.containsKey(itName) || map.get(itName) == exp
 		}else{

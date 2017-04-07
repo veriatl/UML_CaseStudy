@@ -57,7 +57,7 @@ class StandAlone{
 		val ecore_resource = rs.getResource(URI.createFileURI("./resources/preludes/UML.ecore.oclas"), true)
 		val lib_resource = rs.getResource(URI.createFileURI("./resources/preludes/OCL-2.5.oclstdlib.oclas"), true)
 		
-		ecore_resource.setURI(URI.createURI("UML.ecore.oclas"));
+		ecore_resource.setURI(URI.createURI("../preludes/UML.ecore.oclas"));
 		lib_resource.setURI(URI.createURI("http://www.eclipse.org/ocl/2015/Library.oclas"));
 		
 	

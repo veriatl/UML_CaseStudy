@@ -11,7 +11,6 @@ import org.eclipse.ocl.pivot.EnumLiteralExp
 import org.eclipse.ocl.pivot.IfExp
 import org.eclipse.ocl.pivot.IntegerLiteralExp
 import org.eclipse.ocl.pivot.IteratorExp
-import org.eclipse.ocl.pivot.IteratorVariable
 import org.eclipse.ocl.pivot.LetExp
 import org.eclipse.ocl.pivot.NullLiteralExp
 import org.eclipse.ocl.pivot.Operation
@@ -71,9 +70,7 @@ class OCLWDGenerator {
 		return new HashSet
 	}
 
-	def static dispatch HashSet<PropertyCallExp> wd(IteratorVariable e) {
-		return new HashSet
-	}
+	
 
 
 	def static dispatch HashSet<PropertyCallExp> wd(Operation e) {
