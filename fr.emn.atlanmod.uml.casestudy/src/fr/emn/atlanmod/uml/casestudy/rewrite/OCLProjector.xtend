@@ -78,8 +78,9 @@ class OCLProjector {
 		return proj(e.ownedSource)
 	}
 
+	// see ocl.java for more detail why we can't handle OppositePropertyCallExp
 	def static dispatch boolean proj(OppositePropertyCallExp e) {
-		return proj(e.ownedSource)
+		return false
 	}
 
 	def static dispatch boolean proj(VariableExp e) {

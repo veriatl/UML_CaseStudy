@@ -23,6 +23,8 @@ import org.eclipse.ocl.pivot.UnlimitedNaturalLiteralExp
 import org.eclipse.ocl.pivot.VariableDeclaration
 import org.eclipse.ocl.pivot.VariableExp
 import org.eclipse.ocl.pivot.Variable
+import org.eclipse.ocl.pivot.internal.OppositePropertyCallExpImpl
+import org.eclipse.ocl.pivot.PivotPackage
 
 class OCL {
 	static private HashSet<String> wdSetInner = new HashSet<String>
@@ -81,6 +83,8 @@ class OCL {
 	
 	def static dispatch String gen(PropertyCallExp e) '''«gen(e.ownedSource)».«e.referredProperty.name»'''
 	
+	
+	// bug: I don't understand Eclipse OCL way of getting oppositePropertyCallExp (only provided by PivotPackage, but we cannot cast to this class)
 	def static dispatch String gen(OppositePropertyCallExp e) '''«gen(e.ownedSource)».«e.referredProperty.name»'''
 	
 	
