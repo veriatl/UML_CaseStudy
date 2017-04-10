@@ -2788,7 +2788,7 @@ package UML
 			result.is(1, 1)
 	
 		inv boolean_result:
-			result.type = Boolean
+			result.type.name = 'Boolean'
 	
 		inv multiplicity_of_input:
 			object.is(1, 1)
@@ -3094,7 +3094,7 @@ package UML
 			first.type = null and second.type = null
 	
 		inv result_is_boolean:
-			result.type = Boolean
+			result.type.name = 'Boolean'
 	
 	context UnmarshallAction
 	
