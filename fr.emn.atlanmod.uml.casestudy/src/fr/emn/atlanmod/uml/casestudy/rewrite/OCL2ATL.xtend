@@ -117,7 +117,7 @@ class OCL2ATL {
 					  			IF !OCL.isCollection(e)»
 					  			«e.type.toString().replace("::", "!")».allInstances()->includes(«OCL.gen(e)») implies (
 					  			«ELSE»
-					  			«OCL.gen(e)»->size()>0 implies (
+					  			(«OCL.gen(e)»->size()>0 or «OCL.gen(e)»->size()=0) implies (
 					  			«ENDIF»«
 					  		ENDIF»«
 					  	ENDIF»«
@@ -151,7 +151,7 @@ class OCL2ATL {
 					  			IF !OCL.isCollection(e)»
 					  			«if (postMode) e.type.toString().replace("::", "!").replace(model+"!", modelReplacer+"!") else e.type.toString().replace("::", "!")».allInstances()->includes(«OCL.gen(e)») implies (
 					  			«ELSE»
-					  			«OCL.gen(e)»->size()>0 implies (
+					  			(«OCL.gen(e)»->size()>0 or «OCL.gen(e)»->size()=0) implies (
 					  			«ENDIF»«
 					  		ENDIF»«
 					  	ENDIF»«
